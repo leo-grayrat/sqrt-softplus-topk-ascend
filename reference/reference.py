@@ -28,6 +28,23 @@ def topk_first(router_logits: torch.Tensor, k: int) -> torch.Tensor:
     return torch.sqrt(_softplus_reference(logits.float()))
 
 
+def stable_topk_first(router_logits: torch.Tensor, k: int) -> torch.Tensor:
+    """Top-k first, then use a branchless stable softplus form in FP32.
+
+    softplus(x) = max(x, 0) + log(1 + exp(-abs(x)))
+    """
+    logits = torch.topk(
+        router_logits,
+        k,
+        dim=-1,
+        largest=True,
+        sorted=True,
+    ).values
+    x = logits.float()
+    softplus = torch.clamp_min(x, 0.0) + torch.log1p(torch.exp(-torch.abs(x)))
+    return torch.sqrt(softplus).to(router_logits.dtype)
+
+
 def expected_output(router_logits: torch.Tensor, k: int) -> torch.Tensor:
     """Apply the declared output-dtype contract to the published computation."""
     return official(router_logits, k).to(router_logits.dtype)
