@@ -1,0 +1,33 @@
+import torch
+
+
+def _softplus_reference(x: torch.Tensor) -> torch.Tensor:
+    """Published stable softplus branch used by the competition reference."""
+    return torch.where(x > 20.0, x, torch.log1p(torch.exp(x)))
+
+
+def official(router_logits: torch.Tensor, k: int) -> torch.Tensor:
+    """Mirror the published PyTorch reference computation.
+
+    The published code calls ``router_logits.float()`` and does not cast the
+    result back, so this function returns FP32 even for FP16 input.
+    """
+    scores = torch.sqrt(_softplus_reference(router_logits.float()))
+    return torch.sort(scores, dim=-1, descending=True).values[:, :k]
+
+
+def topk_first(router_logits: torch.Tensor, k: int) -> torch.Tensor:
+    """Select logits first, then transform only the selected k values."""
+    logits = torch.topk(
+        router_logits,
+        k,
+        dim=-1,
+        largest=True,
+        sorted=True,
+    ).values
+    return torch.sqrt(_softplus_reference(logits.float()))
+
+
+def expected_output(router_logits: torch.Tensor, k: int) -> torch.Tensor:
+    """Apply the declared output-dtype contract to the published computation."""
+    return official(router_logits, k).to(router_logits.dtype)
