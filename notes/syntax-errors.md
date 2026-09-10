@@ -61,3 +61,25 @@ run_kernel((GM_ADDR)inputDevice_router_logits, ..., (GM_ADDR)outputDevice_topk_s
 原因：`GM_ADDR` 展开为带 `__gm__` / `cce_global` 属性的指针类型，而这行代码位于 host 侧。Bisheng 在解析 host 侧强制类型转换时忽略该设备地址空间属性，于是给出 warning。
 
 判断：这行代码在官方空工程里原本就存在；当前编译仍成功完成链接，所以它不是本项目 kernel 的编译失败原因，也暂不修改官方模板。见 issue #6（当前保留为已知问题）。
+
+## 5. CPU 孪生调试的 `<<<>>>` 需要 CPU launch 支持头
+
+症状：
+
+```text
+use of undeclared identifier no AscCPUKernelLaunch found under AscendC namespace or multiple found
+```
+
+当前实例：`debug/cpu_topk_probe` 以 `CMAKE_ASC_RUN_MODE=cpu` 编译时，probe 自身以及被 include 的 `submission/kernel.asc` 中所有 `<<<>>>` launch 一起报错。
+
+原因定位：重新核对 CANN 9.0 当前官方样例后，CPU debug 并非一律禁止 `<<<>>>`；官方样例会在 `ASCENDC_CPU_DEBUG` 下包含 `cpu_debug_launch.h` 以提供 CPU launch 支持。probe 最初漏了该头文件。
+
+处理：仅在 probe 中加入：
+
+```cpp
+#ifdef ASCENDC_CPU_DEBUG
+#include "cpu_debug_launch.h"
+#endif
+```
+
+参赛 `submission/kernel.asc` 不改。见 issue #12；等待用户本地重新编译验证后再确认关闭。
