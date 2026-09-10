@@ -13,16 +13,22 @@ add_executable(topk_hierarchical_probe
     topk_hierarchical_probe.asc
 )
 
-target_link_libraries(topk_hierarchical_probe PRIVATE
-    tiling_api
-    register
-    platform
-    unified_dlog
-    dl
-    m
-    graph_base
+add_executable(topk_prefix_merge_probe
+    topk_prefix_merge_probe.asc
 )
 
-target_compile_options(topk_hierarchical_probe PRIVATE
-    $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>
-)
+foreach(probe_target IN ITEMS topk_hierarchical_probe topk_prefix_merge_probe)
+    target_link_libraries(${probe_target} PRIVATE
+        tiling_api
+        register
+        platform
+        unified_dlog
+        dl
+        m
+        graph_base
+    )
+
+    target_compile_options(${probe_target} PRIVATE
+        $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>
+    )
+endforeach()
