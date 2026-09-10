@@ -60,4 +60,4 @@ run_kernel((GM_ADDR)inputDevice_router_logits, ..., (GM_ADDR)outputDevice_topk_s
 
 原因：`GM_ADDR` 展开为带 `__gm__` / `cce_global` 属性的指针类型，而这行代码位于 host 侧。Bisheng 在解析 host 侧强制类型转换时忽略该设备地址空间属性，于是给出 warning。
 
-判断：这行代码在官方空工程里原本就存在；当前编译仍成功完成链接，所以它不是本项目 kernel 的编译失败原因，也暂不修改官方模板。见已关闭 issue #6。
+判断：这行代码在官方空工程里原本就存在；当前编译仍成功完成链接，所以它不是本项目 kernel 的编译失败原因，也暂不修改官方模板。对应 issue 待编号。
