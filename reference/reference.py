@@ -28,15 +28,29 @@ def topk_first(router_logits: torch.Tensor, k: int) -> torch.Tensor:
     return torch.sqrt(_softplus_reference(logits.float()))
 
 
-def hierarchical_topk_first(router_logits: torch.Tensor, k: int, chunk: int = 32) -> torch.Tensor:
-    """每个 32 元素块先取局部 top-k，再从候选中取全局 top-k。"""
+def hierarchical_topk_first(
+    router_logits: torch.Tensor,
+    k: int,
+    chunk: int = 32,
+    candidate_alignment: int | None = None,
+) -> torch.Tensor:
+    """每个 32 元素块先取局部 top-k，再从候选中取全局 top-k。
+
+    ``candidate_alignment`` 用于模拟 Ascend TopK NORMAL 对 inner 为 32
+    的整数倍的要求：局部候选在行尾补 -inf 后再做最终 TopK。
+    """
     pad = (-router_logits.shape[-1]) % chunk
     logits = router_logits
     if pad:
         logits = torch.nn.functional.pad(logits, (0, pad), value=float("-inf"))
     chunks = logits.reshape(*logits.shape[:-1], -1, chunk)
     local = torch.topk(chunks, k, dim=-1, largest=True, sorted=True).values
-    selected = torch.topk(local.flatten(-2), k, dim=-1, largest=True, sorted=True).values
+    candidates = local.flatten(-2)
+    if candidate_alignment:
+        candidate_pad = (-candidates.shape[-1]) % candidate_alignment
+        if candidate_pad:
+            candidates = torch.nn.functional.pad(candidates, (0, candidate_pad), value=float("-inf"))
+    selected = torch.topk(candidates, k, dim=-1, largest=True, sorted=True).values
     x = selected.float()
     softplus = torch.clamp_min(x, 0.0) + torch.log1p(torch.exp(-torch.abs(x)))
     return torch.sqrt(softplus).to(router_logits.dtype)
