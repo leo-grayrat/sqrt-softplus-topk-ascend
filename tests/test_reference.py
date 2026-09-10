@@ -1,7 +1,13 @@
 import pytest
 import torch
 
-from reference.reference import expected_output, official, stable_topk_first, topk_first
+from reference.reference import (
+    expected_output,
+    hierarchical_topk_first,
+    official,
+    stable_topk_first,
+    topk_first,
+)
 
 
 @pytest.mark.parametrize(
@@ -71,3 +77,16 @@ def test_stable_topk_first_matches_official_within_competition_tolerance(dtype):
             expected = official(x, k).to(dtype)
             actual = stable_topk_first(x, k)
             torch.testing.assert_close(actual, expected, atol=atol, rtol=rtol)
+
+
+@pytest.mark.parametrize("dtype", [torch.float16, torch.float32])
+@pytest.mark.parametrize(("e", "k"), [(256, 2), (257, 6), (1024, 16)])
+def test_hierarchical_topk_matches_official(dtype, e, k):
+    generator = torch.Generator().manual_seed(20260910 + e + k)
+    x = torch.randn((8, e), generator=generator, dtype=torch.float32).to(dtype)
+    x[0, 0] = float("-inf")
+
+    expected = official(x, k).to(dtype)
+    actual = hierarchical_topk_first(x, k)
+    atol = rtol = 1e-3 if dtype == torch.float16 else 1e-4
+    torch.testing.assert_close(actual, expected, atol=atol, rtol=rtol)
