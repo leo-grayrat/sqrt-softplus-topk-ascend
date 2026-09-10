@@ -17,7 +17,14 @@ add_executable(topk_prefix_merge_probe
     topk_prefix_merge_probe.asc
 )
 
-foreach(probe_target IN ITEMS topk_hierarchical_probe topk_prefix_merge_probe)
+add_executable(topk_prefix_merge_padding_probe
+    topk_prefix_merge_padding_probe.asc
+)
+
+foreach(probe_target IN ITEMS
+        topk_hierarchical_probe
+        topk_prefix_merge_probe
+        topk_prefix_merge_padding_probe)
     target_link_libraries(${probe_target} PRIVATE
         tiling_api
         register
