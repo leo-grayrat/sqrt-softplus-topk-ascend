@@ -25,11 +25,16 @@ add_executable(topk_prefix_production_probe
     topk_prefix_production_probe.asc
 )
 
+add_executable(topk_dense_repeat_probe
+    topk_dense_repeat_probe.asc
+)
+
 foreach(probe_target IN ITEMS
         topk_hierarchical_probe
         topk_prefix_merge_probe
         topk_prefix_merge_padding_probe
-        topk_prefix_production_probe)
+        topk_prefix_production_probe
+        topk_dense_repeat_probe)
     target_link_libraries(${probe_target} PRIVATE
         tiling_api
         register
