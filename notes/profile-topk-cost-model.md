@@ -53,9 +53,29 @@ Op profiling finish. Welcome to next use.
 
 因此脚本必须检查是否真的生成 `*_instr_exe.csv`；没有 CSV 就立即停止，不运行另一边，也不生成 summary。
 
-### 3. simulator 名与编译目标不是一套标识
+### 3. simulator 路径、编译架构、正式 SoC 名是三套概念
 
-`msprof op simulator` 使用本机 simulator 名 `Ascend920A`；原生 ASC 编译则直接使用架构 `dav-2201`。当前脚本不再走 `ascendc_library`，因此也不再需要 `ascend910b1` 这一套 legacy `SOC_VERSION` 映射。
+原生 ASC 编译使用架构：
+
+```text
+dav-2201
+```
+
+本机 simulator 文件也落在：
+
+```text
+$ASCEND_HOME_PATH/tools/simulator/dav_2201/lib
+```
+
+但 AscendC runtime 的 `GetSocVersion()` 识别的是正式 SoC 名，例如：
+
+```text
+Ascend910B1 / Ascend910B2 / Ascend910B3 / ...
+```
+
+`Ascend920A` 这个 simulator 标签不在它的支持列表里。因此不能把 `Ascend920A` 直接传给 `msprof --soc-version`；否则 msprof 会让 `aclrtGetSocName()` 返回 `Ascend920A`，随后 AscendC runtime 在 launch 前直接判 `UNKNOWN`。
+
+当前脚本保留首参数 `Ascend920A` 仅作为输出目录标签；真正选择 simulator 由 `LD_LIBRARY_PATH=$ASCEND_HOME_PATH/tools/simulator/dav_2201/lib` 完成，并且不再向 msprof 传 `--soc-version`。
 
 ### 4. 临时 profiling 源不能带 host tiling/graph 依赖
 
@@ -74,8 +94,6 @@ Op profiling finish. Welcome to next use.
 算法正文来自待测 worktree，不维护第二份手写实现。
 
 ### 5. `ascendc_library` 的 AIV auto-gen 与当前 `__vector__` kernel 冲突
-
-这是本轮最重要的结论。
 
 最小 device 源进入 legacy `ascendc_library` 后，连续三次都卡在同一个位置：
 
@@ -125,9 +143,9 @@ CPU twin-debug 能验证 API、layout、正确性，但不能证明 simulator/NP
 
 本仓库已有 nested include / 增量依赖跟踪不稳定的历史。profiling 每次都在临时 detached worktree 中 clean configure/build，避免 stale build 影响判断。
 
-### 8. 当前失败已缩小为“仅在 msprof 开启 profiling 时 launch 失败”
+### 8. msprof-only launch failure 的根因：错误的 SoC 名注入
 
-原生 ASC sim 二进制已经直接运行通过：
+原生 ASC sim 二进制直接运行已经通过：
 
 ```text
 RUN profile-one rows=1 E=1024 k=8 inner=1024
@@ -142,31 +160,47 @@ libruntime_camodel.so
 libnpu_drv_camodel.so
 ```
 
-因此 kernel、simulator、camodel 链接和 correctness 本身都已证明可用。
+显式追加 `LD_PRELOAD=libruntime_camodel.so:libnpu_drv_camodel.so` 后，msprof 行为完全不变，因此 runtime 链接与 preload 都被排除。
 
-但把同一个二进制放进：
+随后开启 CANN DEBUG 日志，首次得到决定性错误：
 
-```bash
-msprof op simulator ...
+```text
+[ERROR] ASCENDCKERNEL ... [GetSocVersion] unsupport soc name: Ascend920A
 ```
 
-后，会稳定出现：
+在此之前 runtime 已经正常解析：
+
+```text
+.Kernel_Type...
+funcType=3
+kernelType=2
+```
+
+所以 kernel metadata 本身没有问题。
+
+CANN 的 `tools/build/asc_rt/ascendc_runtime.cpp` 中，`GetSocVersion()` 直接读取 `aclrtGetSocName()`，只接受 `Ascend910B*`、`Ascend310P*`、`Ascend950`、`Ascend350`。如果不匹配，就返回 `UNKNOWN`；随后 `AscendLaunchKernelWithHostArgs()` 在不支持的 SoC 分支直接 `return 1`。这与日志中的：
 
 ```text
 [Bisheng] Launch kernel failure! ret 1
 ```
 
-且没有 `*_instr_exe.csv`。显式设置官方示例中常见的：
+完全对应。
+
+根因是 profiling 脚本此前把 simulator 标签 `Ascend920A` 传给：
 
 ```text
-LD_PRELOAD=libruntime_camodel.so:libnpu_drv_camodel.so
+msprof op simulator --soc-version=Ascend920A
 ```
 
-后行为完全不变，因此 `LD_PRELOAD` 也已排除。
+msprof 因此把 `Ascend920A` 暴露给子进程的 `aclrtGetSocName()`，导致只有 profiling 模式下 launch 失败；直接运行没有这层错误注入，所以能够 PASS。
 
-公开 CANN runtime 源码显示，profiling 开启后 `<<<>>>` 直调会额外查询 kernel 的 kType / cross-core / core-ratio metadata，再上报 profiling 信息；普通运行不走这条额外路径。因此当前优先检查 profiler 开启后 metadata 查询是否失败，而不是继续改 kernel 算法或 simulator 链接。
+当前修复：
 
-新增 `tools/diagnose_msprof_launch.sh`：直接运行先做 sanity check，再以 CANN DEBUG 日志级别执行 msprof，完整日志落盘，只在终端筛选 metadata / profiling / launch 相关关键行。
+- 不再传 `--soc-version=Ascend920A`；
+- 使用 `LD_LIBRARY_PATH=$ASCEND_HOME_PATH/tools/simulator/dav_2201/lib` 指定 simulator；
+- 保留 `Ascend920A` 仅作为输出目录标签，避免再混淆 simulator 标签与正式 SoC 名。
+
+对应修复提交：`aa90b2f`。尚待本机复验。
 
 ## 当前工具
 
@@ -186,16 +220,10 @@ source /home/leo/Ascend/cann-9.0.0/set_env.sh
 bash tools/profile_topk_costs.sh Ascend920A 1 1024 8
 ```
 
-默认架构为 `dav-2201`。如需显式指定：
+首参数当前只作为输出标签；默认架构为 `dav-2201`。如需显式指定：
 
 ```bash
 bash tools/profile_topk_costs.sh Ascend920A 1 1024 8 dav-2201
-```
-
-当前若复现 msprof-only launch failure，先运行：
-
-```bash
-bash tools/diagnose_msprof_launch.sh
 ```
 
 只有同时出现：
