@@ -8,8 +8,10 @@
 
 #include "acl/acl.h"
 
-#ifdef PROFILE_PIVOT
-extern void sqrt_softplus_pivot_top_k_custom_do(
+// 由生成的 kernel_profile.asc 在同一 ASC translation unit 中定义；内部直接
+// 使用 <<<>>> 调用真实 production kernel。这样避开 ascendc_library 的
+// auto_gen 包装层，同时仍保留独立的 host correctness harness。
+void LaunchProfileKernel(
     uint32_t blockDim,
     void* stream,
     uint8_t* routerLogits,
@@ -19,18 +21,6 @@ extern void sqrt_softplus_pivot_top_k_custom_do(
     int32_t inner,
     int32_t k,
     int32_t blockNum);
-#else
-extern void sqrt_softplus_prefix_merge_top_k_dispatch_custom_do(
-    uint32_t blockDim,
-    void* stream,
-    uint8_t* routerLogits,
-    uint8_t* topkScores,
-    int32_t rows,
-    int32_t experts,
-    int32_t inner,
-    int32_t k,
-    int32_t blockNum);
-#endif
 
 namespace {
 
@@ -118,8 +108,7 @@ bool RunOne(aclrtStream stream, int32_t rows, int32_t experts, int32_t k)
     std::fflush(stdout);
 
     if (ok) {
-#ifdef PROFILE_PIVOT
-        sqrt_softplus_pivot_top_k_custom_do(
+        LaunchProfileKernel(
             static_cast<uint32_t>(blockNum),
             stream,
             inputDevice,
@@ -129,18 +118,6 @@ bool RunOne(aclrtStream stream, int32_t rows, int32_t experts, int32_t k)
             inner,
             k,
             blockNum);
-#else
-        sqrt_softplus_prefix_merge_top_k_dispatch_custom_do(
-            static_cast<uint32_t>(blockNum),
-            stream,
-            inputDevice,
-            outputDevice,
-            rows,
-            experts,
-            inner,
-            k,
-            blockNum);
-#endif
         ok = CheckAcl("aclrtSynchronizeStream", aclrtSynchronizeStream(stream));
     }
 
