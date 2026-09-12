@@ -2,12 +2,12 @@
 set -euo pipefail
 
 if [[ $# -lt 1 || $# -gt 5 ]]; then
-    echo "用法: $0 <simulator型号，如 Ascend920A> [rows] [E] [k] [NPU架构]" >&2
+    echo "用法: $0 <输出标签，如 Ascend920A> [rows] [E] [k] [NPU架构]" >&2
     echo "例如: $0 Ascend920A 1 1024 8 dav-2201" >&2
     exit 2
 fi
 
-SIM_SOC="$1"
+SIM_LABEL="$1"
 ROWS="${2:-1}"
 EXPERTS="${3:-1024}"
 K="${4:-8}"
@@ -29,14 +29,21 @@ fi
 ROOT="$(git rev-parse --show-toplevel)"
 REPO_NAME="$(basename "$ROOT")"
 WORK_ROOT="${TMPDIR:-/tmp}/${REPO_NAME}-profile-${USER:-user}"
-OUT_ROOT="$ROOT/profile-output/${SIM_SOC}_r${ROWS}_e${EXPERTS}_k${K}"
+OUT_ROOT="$ROOT/profile-output/${SIM_LABEL}_r${ROWS}_e${EXPERTS}_k${K}"
 BASE_WT="$WORK_ROOT/baseline"
 PIVOT_WT="$WORK_ROOT/pivot"
 HARNESS_SRC="$ROOT/tools/profile_harness"
+SIM_LIB="$ASCEND_HOME_PATH/tools/simulator/$NPU_ARCH/lib"
+
+if [[ ! -d "$SIM_LIB" ]]; then
+    echo "simulator lib 不存在: $SIM_LIB" >&2
+    exit 1
+fi
 
 mkdir -p "$WORK_ROOT" "$OUT_ROOT"
 
-echo "profiling config: arch=$NPU_ARCH simulator=$SIM_SOC rows=$ROWS E=$EXPERTS k=$K"
+echo "profiling config: arch=$NPU_ARCH output_label=$SIM_LABEL rows=$ROWS E=$EXPERTS k=$K"
+echo "simulator libs: $SIM_LIB"
 
 git -C "$ROOT" fetch origin main pivot-topk-rewrite
 
@@ -169,10 +176,16 @@ build_and_profile() {
     cmake --build "$build" -j"$(nproc)" --target topk_profile_one
 
     echo
-    echo "=== profiling $label: arch=$NPU_ARCH simulator=$SIM_SOC rows=$ROWS E=$EXPERTS k=$K ==="
+    echo "=== profiling $label: arch=$NPU_ARCH rows=$ROWS E=$EXPERTS k=$K ==="
 
+    # 不向 msprof 传 --soc-version。CANN 9.0 AscendC runtime 的 GetSocVersion()
+    # 只接受 Ascend910B*/Ascend310P*/Ascend950/Ascend350 等正式 SoC 名；此前把
+    # simulator 标签 Ascend920A 传入后，msprof 会让 aclrtGetSocName() 返回
+    # Ascend920A，最终在 kernel launch 前直接判 UNKNOWN 并返回 1。
+    # 官方 msopprof 文档允许省略 --soc-version，并由 LD_LIBRARY_PATH 指定
+    # simulator；这里直接使用与原生 ASC sim 二进制一致的 dav-2201 camodel 库。
+    LD_LIBRARY_PATH="$SIM_LIB:${LD_LIBRARY_PATH:-}" \
     msprof op simulator \
-        --soc-version="$SIM_SOC" \
         --output="$output" \
         "$build/topk_profile_one" "$ROWS" "$EXPERTS" "$K"
 
