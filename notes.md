@@ -13,3 +13,5 @@
 - 发现明确问题先建 GitHub issue；修复后必须等本地或 CANNJudge 复验通过再关闭。
 - CANN / Bisheng 语法与编译坑记录在 `notes/syntax-errors.md`。
 - 性能实验记录在 `notes/perf-experiments.md`；没有真实 NPU/Judge 数据时，不写“性能提升”。
+- profiling / simulator 的构建、型号映射与已踩坑记录在 `notes/profile-topk-cost-model.md`；对应进行中的成本模型任务是 issue #31。
+- CPU twin-debug 只能证明 API / layout / correctness，不等价于 simulator/NPU kernel launch，也不作为性能证据。
