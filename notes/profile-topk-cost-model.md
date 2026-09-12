@@ -121,32 +121,29 @@ note: expanded from macro 'DT_FLOAT'
 - 顶部只保留 `<cmath>` 与 `kernel_operator.h`；
 - 不维护第二份手写算法，也不再给 device target 添加 host tiling/graph include path。
 
-对应提交：`b7332df`、`48cae50`。本机后续日志已经越过此前的 `DT_*` 宏冲突，说明这一层修复方向成立。
+对应提交：`b7332df`、`48cae50`。该改动已让 precompile、host object 与 AIC device 编译通过。
 
-### 7. `ascendc_library` 的 AIV 自动包装要求显式 `__aicore__` kernel 入口
+### 7. `ascendc_library` 自动包装要求 kernel 具备外部链接
 
-最小 device 源继续编译后，host object 与 AIC device 已成功，AIV 自动生成包装层报错：
+最小 device 源后，编译继续推进到 AIV 自动生成包装层，报错集中为：
 
 ```text
-error: __attribute__((aic)), __attribute__((aiv)), bisheng::core_ratio
-attribute needs to appear with cce kernel func.
+__attribute__((aic)), __attribute__((aiv)), bisheng::core_ratio attribute
+needs to appear with cce kernel func
 ```
 
-对应 production `.asc` 中的入口写法是：
+最初将 production 的 `__global__ __vector__ void` 仅改为 `__vector__ __global__ __aicore__ void`，错误完全不变。因此“缺少 `__aicore__`”不是充分根因，前一判断已被本机日志否定。
 
-```cpp
-__global__ __vector__ void ...
-```
+进一步检查发现 profiling 临时源仍继承了 production 的匿名 `namespace { ... }`。原始 `.asc` 单文件直编可以接受内部链接 kernel；但 `ascendc_library` 会自动生成外部 `<kernel>_do(...)` stub，并在 auto-gen 层把原 kernel 重命名为 `<kernel>_origin`。官方 kernel-launch 示例也都把 kernel 入口放在全局命名空间，并通常使用 `extern "C"`。
 
-CANN 9.0 SIMD 文档给出的 vector kernel 入口形式为：
+当前最小修复：
 
-```cpp
-__vector__ __global__ __aicore__ void ...
-```
+- profiling 临时源去掉匿名 namespace 外壳；
+- kernel helper / class / body 保持原样；
+- 仅临时入口规范化为 `extern "C" __global__ __vector__ __aicore__ void`；
+- production / Judge 源不改。
 
-直接 `.asc` 编译能接受现有 production 写法，但 `ascendc_library` 的 AIV 自动包装会给函数加 AIV 属性，并要求该函数同时是 cce kernel，因此临时 profiling 副本需要显式 `__aicore__`。
-
-当前生成器会自动把所有 `__global__ __vector__ void` 入口规范化为 `__vector__ __global__ __aicore__ void`，并检查至少替换一个入口；production 源不改。对应提交：`66bd4a8e`。尚待本机复验。
+对应提交：`fd87c867`。尚待本机复验。
 
 ### 8. nested include / 增量构建仍需谨慎
 
