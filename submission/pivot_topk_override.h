@@ -32,7 +32,9 @@ public:
         pipe_.InitBuffer(sortedBuffer_, sortedBytes);
         pipe_.InitBuffer(mergeABuffer_, PREFIX_MERGE_BUFFER_BYTES);
         pipe_.InitBuffer(mergeBBuffer_, PREFIX_MERGE_BUFFER_BYTES);
-        pipe_.InitBuffer(candidateBuffer_, 64u * sizeof(float));
+        // GatherMask normal mode要求从传入 dst 视图起至少仍有 256B。
+        // 有效候选最多 64 floats，但后续块会从 dstOffset 处继续写，因此留 128 floats。
+        pipe_.InitBuffer(candidateBuffer_, 128u * sizeof(float));
         pipe_.InitBuffer(pivotBuffer_, 64u * sizeof(float));
         pipe_.InitBuffer(maskScratchBuffer_, 128u);
         pipe_.InitBuffer(maskListBuffer_, 128u);
@@ -87,7 +89,7 @@ private:
         const AscendC::LocalTensor<float>& dst,
         const AscendC::LocalTensor<float>& src)
     {
-        AscendC::Duplicate(dst, -INFINITY, 64);
+        AscendC::Duplicate(dst, -INFINITY, 128);
         AscendC::PipeBarrier<PIPE_V>();
 
         AscendC::LocalTensor<uint32_t> patterns =
