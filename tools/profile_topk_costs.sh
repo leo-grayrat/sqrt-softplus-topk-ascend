@@ -58,11 +58,13 @@ from pathlib import Path
 import sys
 
 src = Path(sys.argv[1]).read_text(encoding="utf-8")
-marker = '\nextern "C" void run_kernel('
+# BuildTopKTiling 以及后面的 run_kernel 都是 host 侧逻辑。profiling 的
+# ascendc_library 只保留 device kernel 与 override definitions。
+marker = "\nbool BuildTopKTiling("
 pos = src.find(marker)
 if pos < 0:
-    raise SystemExit("未找到 run_kernel marker，无法生成 device-only kernel")
-Path(sys.argv[2]).write_text(src[:pos] + "\n", encoding="utf-8")
+    raise SystemExit("未找到 BuildTopKTiling marker，无法生成 device-only kernel")
+Path(sys.argv[2]).write_text(src[:pos] + "\n}  // namespace\n", encoding="utf-8")
 PY
 }
 
