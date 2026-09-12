@@ -79,29 +79,49 @@ Op profiling finish. Welcome to next use.
 
 ### 5. CANN 9.0 legacy precompile 不接受临时 `.asc` 源作为模板扫描输入
 
-官方 `ascendc_library` 语法本身允许传 kernel 源文件，但 CANN 9.0 当前走到 `legacy_modules` 的 precompile 阶段时，临时源命名为 `kernel_profile.asc` 会出现：
+临时源命名为 `kernel_profile.asc` 时，precompile 阶段出现：
 
 ```text
 usage: extract_src_template.py [-h] [-d DST_DIR] filepaths [filepaths ...]
 extract_src_template.py: error: the following arguments are required: filepaths
 ```
 
-这说明 precompile 子工程最终没有向模板提取脚本传入任何源码路径。官方 Kernel 直调样例均把 device 源写成 `.cpp`。将临时 device-only 副本改名为 `kernel_profile.cpp` 后，precompile 已能真正编译该源文件，因此这一点已经得到本机验证。production `submission/kernel.asc` 本身不改。
+改成 `kernel_profile.cpp` 后，precompile 已真正开始编译该文件。这一点已由本机日志验证。production 的 `submission/kernel.asc` 本身不改。
 
-### 6. `ascendc_library` 的 device precompile 不自动继承 host tiling 的 `register/` 头搜索路径
+### 6. host tiling 头不能混进 device precompile
 
-`.cpp` 被正确识别后，precompile 进一步报错：
+`.cpp` 被正确识别后，临时源顶部仍保留 production 的：
 
-```text
-.../asc/include/tiling/matmul/matmul_tilingdata.h:18:10: fatal error:
-'register/tilingdata_base.h' file not found
+```cpp
+#include "tiling/tiling_api.h"
+#include "tiling/platform/platform_ascendc.h"
 ```
 
-临时 device 源仍保留 production 文件顶部的 `tiling/tiling_api.h`，后者会继续引用 `register/tilingdata_base.h`。普通 host 工程通过 `find_package(ASC)` 能找到这套头文件，但 `ascendc_library` 的 device precompile target 不会自动继承同样的 include path。
+第一次表现为缺少：
 
-官方 Kernel 直调 CMake 提供 `ascendc_include_directories(...)` 用于给 device target 增加额外头文件搜索路径。当前修复是在 CANN 安装目录下用 `find_path` 自动定位 `register/tilingdata_base.h` 的 include root，然后仅对 `ascendc_kernels_sim` 补该路径；不裁 production 代码、不改 kernel 内容。
+```text
+register/tilingdata_base.h
+```
 
-这个修复尚未完成本机复验，因此目前仍记为“已定位的根因 + 待验证修复”。
+为 device target 补 host `register/` include path 后，错误进一步展开成大量：
+
+```text
+graph/types.h: error: expected identifier
+note: expanded from macro 'DT_FLOAT'
+```
+
+这不是几十个独立错误，而是一个明确的宏冲突：device 侧 `kernel_type.h` 定义了 `DT_FLOAT/DT_INT8/...` 宏，host 图类型 `graph/types.h` 又声明同名枚举。说明问题不该通过继续补 host include 解决；`tiling/graph` 这条 host 依赖本来就不应该进入 device profiling 源。
+
+当前修复改为自动生成真正的最小 device-only 源：
+
+- 从待测 worktree 的 `submission/kernel.asc` 抽取公共常量、`StableSoftplusSqrt`、`TransformSelected`；
+- 抽取真实 `SqrtSoftplusPrefixMergeTopKKernel`；
+- baseline 追加同一 worktree 的 `dense_repeat_override.h`；
+- pivot 追加 `pivot_topk_override.h`；
+- 顶部只保留 `<cmath>` 与 `kernel_operator.h`；
+- 不维护第二份手写算法，也不再给 device target 添加 host tiling/graph include path。
+
+对应提交：`b7332df`、`48cae50`。该版本尚待本机重新编译验证。
 
 ### 7. nested include / 增量构建仍需谨慎
 
