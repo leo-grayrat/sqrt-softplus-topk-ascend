@@ -125,11 +125,55 @@ CPU twin-debug 能验证 API、layout、正确性，但不能证明 simulator/NP
 
 本仓库已有 nested include / 增量依赖跟踪不稳定的历史。profiling 每次都在临时 detached worktree 中 clean configure/build，避免 stale build 影响判断。
 
+### 8. 当前失败已缩小为“仅在 msprof 开启 profiling 时 launch 失败”
+
+原生 ASC sim 二进制已经直接运行通过：
+
+```text
+RUN profile-one rows=1 E=1024 k=8 inner=1024
+PASS: single-shape profile driver
+exit=0
+```
+
+`ldd` / ELF RPATH 也确认实际使用了 simulator 的：
+
+```text
+libruntime_camodel.so
+libnpu_drv_camodel.so
+```
+
+因此 kernel、simulator、camodel 链接和 correctness 本身都已证明可用。
+
+但把同一个二进制放进：
+
+```bash
+msprof op simulator ...
+```
+
+后，会稳定出现：
+
+```text
+[Bisheng] Launch kernel failure! ret 1
+```
+
+且没有 `*_instr_exe.csv`。显式设置官方示例中常见的：
+
+```text
+LD_PRELOAD=libruntime_camodel.so:libnpu_drv_camodel.so
+```
+
+后行为完全不变，因此 `LD_PRELOAD` 也已排除。
+
+公开 CANN runtime 源码显示，profiling 开启后 `<<<>>>` 直调会额外查询 kernel 的 kType / cross-core / core-ratio metadata，再上报 profiling 信息；普通运行不走这条额外路径。因此当前优先检查 profiler 开启后 metadata 查询是否失败，而不是继续改 kernel 算法或 simulator 链接。
+
+新增 `tools/diagnose_msprof_launch.sh`：直接运行先做 sanity check，再以 CANN DEBUG 日志级别执行 msprof，完整日志落盘，只在终端筛选 metadata / profiling / launch 相关关键行。
+
 ## 当前工具
 
 - `tools/profile_topk_costs.sh`：建立 main / pivot detached worktree，生成单形状原生 ASC profiling 源并分别采集；
 - `tools/profile_harness/CMakeLists.txt`：原生 ASC sim 构建；
 - `tools/profile_harness/main.cpp`：单 shape host correctness harness，由生成的 `.asc` include；
+- `tools/diagnose_msprof_launch.sh`：抓取 msprof-only launch failure 的 DEBUG 细节；
 - `tools/summarize_topk_profile.py`：聚合 instruction / pipe / code cycles；
 - issue #31：记录 profiling 进度、失败原因与最终结论。
 
@@ -146,6 +190,12 @@ bash tools/profile_topk_costs.sh Ascend920A 1 1024 8
 
 ```bash
 bash tools/profile_topk_costs.sh Ascend920A 1 1024 8 dav-2201
+```
+
+当前若复现 msprof-only launch failure，先运行：
+
+```bash
+bash tools/diagnose_msprof_launch.sh
 ```
 
 只有同时出现：
