@@ -2,8 +2,8 @@
 set -euo pipefail
 
 if [[ $# -lt 1 || $# -gt 5 ]]; then
-    echo "用法: $0 <simulator型号，如 Ascend920A> [rows] [E] [k] [编译SoC]" >&2
-    echo "例如: $0 Ascend920A 1 1024 8 ascend910b1" >&2
+    echo "用法: $0 <simulator型号，如 Ascend920A> [rows] [E] [k] [NPU架构]" >&2
+    echo "例如: $0 Ascend920A 1 1024 8 dav-2201" >&2
     exit 2
 fi
 
@@ -11,23 +11,7 @@ SIM_SOC="$1"
 ROWS="${2:-1}"
 EXPERTS="${3:-1024}"
 K="${4:-8}"
-
-# msprof simulator 使用安装目录里的 simulator 名称；ascendc_library 的
-# SOC_VERSION 则使用编译器支持的具体 SoC 名称。二者不是同一套标识。
-if [[ $# -ge 5 ]]; then
-    COMPILE_SOC="$5"
-else
-    case "$SIM_SOC" in
-        Ascend920A)
-            COMPILE_SOC="ascend910b1"
-            ;;
-        *)
-            echo "未定义 simulator '$SIM_SOC' 到编译 SoC 的默认映射。" >&2
-            echo "请显式提供第 5 个参数，例如 ascend910b1。" >&2
-            exit 2
-            ;;
-    esac
-fi
+NPU_ARCH="${5:-dav-2201}"
 
 if ! command -v cmake >/dev/null 2>&1; then
     echo "未找到 cmake；请先配置 CANN 开发环境。" >&2
@@ -52,7 +36,7 @@ HARNESS_SRC="$ROOT/tools/profile_harness"
 
 mkdir -p "$WORK_ROOT" "$OUT_ROOT"
 
-echo "profiling config: compile_soc=$COMPILE_SOC simulator=$SIM_SOC rows=$ROWS E=$EXPERTS k=$K"
+echo "profiling config: arch=$NPU_ARCH simulator=$SIM_SOC rows=$ROWS E=$EXPERTS k=$K"
 
 git -C "$ROOT" fetch origin main pivot-topk-rewrite
 
@@ -69,25 +53,26 @@ cleanup_worktree "$PIVOT_WT"
 git -C "$ROOT" worktree add --detach "$BASE_WT" origin/main
 git -C "$ROOT" worktree add --detach "$PIVOT_WT" origin/pivot-topk-rewrite
 
-generate_device_source() {
-    local source_kernel="$1"
-    local override_header="$2"
-    local output_kernel="$3"
+generate_profile_source() {
+    local label="$1"
+    local source_kernel="$2"
+    local override_header="$3"
+    local output_kernel="$4"
 
-    python3 - "$source_kernel" "$override_header" "$output_kernel" <<'PY'
+    python3 - "$label" "$source_kernel" "$override_header" "$output_kernel" <<'PY'
 from pathlib import Path
 import sys
 
-kernel_path = Path(sys.argv[1])
-override_path = Path(sys.argv[2])
-out_path = Path(sys.argv[3])
+label = sys.argv[1]
+kernel_path = Path(sys.argv[2])
+override_path = Path(sys.argv[3])
+out_path = Path(sys.argv[4])
 
 src = kernel_path.read_text(encoding="utf-8")
 override = override_path.read_text(encoding="utf-8")
 
-# profiling 只需要 FP32 k<=8 的真实 production selector。不要把 host-only
-# tiling/graph 头和不相关的 TopK/Hierarchical kernel 一起送进 device precompile：
-# kernel_type.h 的 DT_* 宏会与 graph/types.h 的同名枚举直接冲突。
+# 只抽取 FP32 k<=8 所需的真实 production device 段，避免把 host tiling/graph
+# 依赖带入 profiling。算法正文来自待测 worktree，不维护第二份手写实现。
 namespace_marker = "namespace {"
 namespace_pos = src.find(namespace_marker)
 common_end = src.find("// k=1 时无需完整 TopK", namespace_pos)
@@ -97,44 +82,55 @@ prefix_end = src.find("// k<=16：", prefix_begin)
 if min(namespace_pos, common_end, prefix_begin, prefix_end) < 0:
     raise SystemExit("无法定位 production 公共段或 prefix-merge 段，停止生成 profiling kernel")
 
-# production 文件把 device helper / kernel 放在匿名 namespace 中，这对原始 .asc
-# 直接编译可工作；ascendc_library 则会自动生成可外部调用的 *_do stub，并在
-# auto_gen 层重命名原 kernel，因此 profiling 副本必须让 kernel 具有外部链接。
-# 这里只去掉匿名 namespace 外壳，内部类/常量/算法正文保持逐段同源。
 common_begin = namespace_pos + len(namespace_marker)
 common = src[common_begin:common_end]
 prefix = src[prefix_begin:prefix_end]
 
+if label == "baseline":
+    kernel_name = "sqrt_softplus_prefix_merge_top_k_dispatch_custom"
+elif label == "pivot":
+    kernel_name = "sqrt_softplus_pivot_top_k_custom"
+else:
+    raise SystemExit(f"未知 profiling variant: {label}")
+
+# 使用 CANN 9.0 原生 ASC 单 translation unit：production kernel 保持原来的
+# __global__ __vector__ 写法；host wrapper 直接用 <<<>>> launch。这样完全绕过
+# legacy ascendc_library 在 AIV auto-gen 阶段对 __global__ 的重定义。
 out = (
     '#include <cmath>\n'
     '#include "kernel_operator.h"\n\n'
+    'namespace {\n'
     + common
     + prefix
     + "\n"
     + override
-    + "\n"
+    + "\n}  // namespace\n\n"
+    + "void LaunchProfileKernel(\n"
+      "    uint32_t blockDim,\n"
+      "    void* stream,\n"
+      "    uint8_t* routerLogits,\n"
+      "    uint8_t* topkScores,\n"
+      "    int32_t rows,\n"
+      "    int32_t experts,\n"
+      "    int32_t inner,\n"
+      "    int32_t k,\n"
+      "    int32_t blockNum)\n"
+      "{\n"
+    + f"    {kernel_name}<<<blockDim, nullptr, stream>>>(\n"
+      "        routerLogits, topkScores, rows, experts, inner, k, blockNum);\n"
+      "}\n\n"
+      '#include "main.cpp"\n'
 )
 
-# CANN kernel-launch / ascendc_library 的 kernel 入口需要外部链接。官方示例
-# 使用 extern "C" __global__ __aicore__，纯 Vector kernel 可额外用 __vector__
-# 标记。production .asc 当前是 `__global__ __vector__ void`；只在临时副本中
-# 加上 C linkage 与 __aicore__，不修改 Judge 源。
-old_entry = "__global__ __vector__ void"
-entry_count = out.count(old_entry)
-if entry_count == 0:
-    raise SystemExit("未找到 __global__ __vector__ kernel 入口，停止生成 profiling kernel")
-out = out.replace(
-    old_entry,
-    'extern "C" __global__ __vector__ __aicore__ void')
-if old_entry in out:
-    raise SystemExit("profiling kernel 入口规范化不完整")
-if "namespace {" in out:
-    raise SystemExit("profiling device 源仍残留匿名 namespace")
+# 这里故意要求临时源仍保留 production 的 ASC kernel 风格；若以后 production
+# 入口发生变化，先人工确认，不让 profiling 脚本静默改写修饰符。
+if "__global__ __vector__ void" not in out:
+    raise SystemExit("未找到 production __global__ __vector__ kernel 入口")
+if "__aicore__ void sqrt_softplus_" in out:
+    raise SystemExit("profiling kernel 被意外改写成 legacy __aicore__ 入口")
 
 out_path.write_text(out, encoding="utf-8")
-print(
-    f"generated {out_path}: exported and normalized {entry_count} vector kernel "
-    f"entr{'y' if entry_count == 1 else 'ies'}")
+print(f"generated native ASC profile source: {out_path} ({label}, kernel={kernel_name})")
 PY
 }
 
@@ -158,35 +154,23 @@ build_and_profile() {
     cp "$HARNESS_SRC/CMakeLists.txt" "$harness/CMakeLists.txt"
     cp "$HARNESS_SRC/main.cpp" "$harness/main.cpp"
 
-    # CANN 9.0 legacy ascendc precompile 的模板提取阶段只识别常规 C/C++ 源；
-    # 仓库 production 仍保持 .asc，这里的临时 device-only 副本使用 .cpp。
-    # 源码内容由真实 production 公共段 + prefix kernel + 对应 override 自动拼接，
-    # 不复制 host tiling 依赖，也不维护第二份手写算法。
-    generate_device_source \
+    generate_profile_source \
+        "$label" \
         "$wt/submission/kernel.asc" \
         "$override_header" \
-        "$harness/kernel_profile.cpp"
+        "$harness/kernel_profile.asc"
 
     cmake \
         -S "$harness" \
         -B "$build" \
-        -DRUN_MODE=sim \
-        -DSOC_VERSION="$COMPILE_SOC" \
-        -DPROFILE_VARIANT="$label" \
-        -DASCEND_CANN_PACKAGE_PATH="$ASCEND_HOME_PATH"
+        -DCMAKE_ASC_RUN_MODE=sim \
+        -DCMAKE_ASC_ARCHITECTURES="$NPU_ARCH"
 
     cmake --build "$build" -j"$(nproc)" --target topk_profile_one
 
     echo
-    echo "=== profiling $label: compile=$COMPILE_SOC simulator=$SIM_SOC rows=$ROWS E=$EXPERTS k=$K ==="
+    echo "=== profiling $label: arch=$NPU_ARCH simulator=$SIM_SOC rows=$ROWS E=$EXPERTS k=$K ==="
 
-    local sim_lib="$ASCEND_HOME_PATH/tools/simulator/$SIM_SOC/lib"
-    if [[ ! -d "$sim_lib" ]]; then
-        echo "[FAIL] simulator lib 不存在: $sim_lib" >&2
-        exit 1
-    fi
-
-    LD_LIBRARY_PATH="$sim_lib:${LD_LIBRARY_PATH:-}" \
     msprof op simulator \
         --soc-version="$SIM_SOC" \
         --output="$output" \
