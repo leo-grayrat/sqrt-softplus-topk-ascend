@@ -96,4 +96,16 @@ In NPU mode ... rounded down by 32B.
 
 当前实例：prefix-merge probe 最终把前 `k` 个 `(score,index)` pair 暂存到输出队列时，按 `k*2` 个 `float` 调用基础 `DataCopy`。`k=2` 时只有 4 个 float = 16B，CPU 直接报错，NPU 语义会向下取整为 0B。
 
-处理：LocalTensor 间基础搬运按 32B 粒度向上取整；真正写回 GM 时仍可用 `DataCopyPad` 按实际 `k*2*sizeof(float)` 字节输出。当前修复见 issue #23，等待用户重新运行 probe 验证后再关闭。
+处理：LocalTensor 间基础搬运按 32B 粒度向上取整；真正写回 GM 时仍可用 `DataCopyPad` 按实际 `k*2*sizeof(float)` 字节输出。当前修复见 issue #23，已由用户本地完整多层 probe 验证通过。
+
+## 7. `MrgSort` 不能用 `validBit=1` 表示单条有效队列
+
+症状：CPU checker 报：
+
+```text
+Failed to check validBit value in MrgSort, its valid value is 3 / 7 / 15
+```
+
+当前实例：prefix-merge tree 某层队列数为 `4n+1` 时，最后一组只有 1 条输入；原逻辑按 `(1<<active)-1` 得到 `validBit=1`。`E=129` padding 到 `inner=160` 后有 5 个 Sort32 块，第一层正好稳定触发。
+
+处理：单条剩余队列不调用 `MrgSort`，直接把其前 `k` 个 pair 按 32B 对齐透传到下一层槽位；只有 `active=2/3/4` 时才调用 `MrgSort`，对应 validBit 3/7/15。见 issue #25，等待用户本地重新运行 padding probe 验证。
