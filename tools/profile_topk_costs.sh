@@ -19,6 +19,10 @@ if ! command -v msprof >/dev/null 2>&1; then
     echo "未找到 msprof；请先 source CANN set_env.sh。" >&2
     exit 1
 fi
+if [[ -z "${ASCEND_HOME_PATH:-}" ]]; then
+    echo "ASCEND_HOME_PATH 为空；请先 source CANN set_env.sh。" >&2
+    exit 1
+fi
 
 ROOT="$(git rev-parse --show-toplevel)"
 REPO_NAME="$(basename "$ROOT")"
@@ -45,6 +49,23 @@ cleanup_worktree "$PIVOT_WT"
 git -C "$ROOT" worktree add --detach "$BASE_WT" origin/main
 git -C "$ROOT" worktree add --detach "$PIVOT_WT" origin/pivot-topk-rewrite
 
+generate_device_source() {
+    local source_kernel="$1"
+    local output_kernel="$2"
+
+    python3 - "$source_kernel" "$output_kernel" <<'PY'
+from pathlib import Path
+import sys
+
+src = Path(sys.argv[1]).read_text(encoding="utf-8")
+marker = '\nextern "C" void run_kernel('
+pos = src.find(marker)
+if pos < 0:
+    raise SystemExit("未找到 run_kernel marker，无法生成 device-only kernel")
+Path(sys.argv[2]).write_text(src[:pos] + "\n", encoding="utf-8")
+PY
+}
+
 build_and_profile() {
     local label="$1"
     local wt="$2"
@@ -54,19 +75,36 @@ build_and_profile() {
 
     rm -rf "$harness" "$output"
     mkdir -p "$harness"
+
     cp "$HARNESS_SRC/CMakeLists.txt" "$harness/CMakeLists.txt"
-    cp "$HARNESS_SRC/topk_profile_one.asc" "$harness/topk_profile_one.asc"
+    cp "$HARNESS_SRC/main.cpp" "$harness/main.cpp"
+    generate_device_source "$wt/submission/kernel.asc" "$harness/kernel_profile.asc"
+
+    # production kernel 内部继续 include submission 下的实验 override 头；复制到
+    # harness 同目录，使 device-only 临时源保持和被测 worktree 一致。
+    find "$wt/submission" -maxdepth 1 -type f -name '*.h' -exec cp {} "$harness/" \;
 
     cmake \
         -S "$harness" \
         -B "$build" \
-        -DCMAKE_ASC_RUN_MODE=sim \
-        -DCMAKE_ASC_ARCHITECTURES=dav-2201
+        -DRUN_MODE=sim \
+        -DSOC_VERSION="$SOC_VERSION" \
+        -DPROFILE_VARIANT="$label" \
+        -DASCEND_CANN_PACKAGE_PATH="$ASCEND_HOME_PATH"
 
     cmake --build "$build" -j"$(nproc)" --target topk_profile_one
 
     echo
     echo "=== profiling $label: rows=$ROWS E=$EXPERTS k=$K ==="
+
+    # 官方 simulator 文档要求将对应具体型号的 simulator lib 放入搜索路径。
+    local sim_lib="$ASCEND_HOME_PATH/tools/simulator/$SOC_VERSION/lib"
+    if [[ ! -d "$sim_lib" ]]; then
+        echo "[FAIL] simulator lib 不存在: $sim_lib" >&2
+        exit 1
+    fi
+
+    LD_LIBRARY_PATH="$sim_lib:${LD_LIBRARY_PATH:-}" \
     msprof op simulator \
         --soc-version="$SOC_VERSION" \
         --output="$output" \
