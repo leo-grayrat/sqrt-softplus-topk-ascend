@@ -58,12 +58,20 @@ private:
         int32_t srcStrideFloats)
     {
         const uint32_t prefixFloats = static_cast<uint32_t>(k_ * 2);
-        for (int32_t queue = 0; queue < queueCount; ++queue) {
-            const uint32_t srcOffset = static_cast<uint32_t>(queue * srcStrideFloats);
-            const uint32_t dstOffset = static_cast<uint32_t>(queue) * prefixFloats;
-            AscendC::DataCopy(dst[dstOffset], src[srcOffset], prefixFloats);
-            AscendC::PipeBarrier<PIPE_V>();
-        }
+        const uint32_t prefixBlocks =
+            prefixFloats * sizeof(float) / ALIGN_BYTES;
+        const uint32_t srcGapBlocks =
+            (static_cast<uint32_t>(srcStrideFloats) - prefixFloats) *
+            sizeof(float) / ALIGN_BYTES;
+
+        AscendC::DataCopyParams params;
+        params.blockCount = static_cast<uint16_t>(queueCount);
+        params.blockLen = static_cast<uint16_t>(prefixBlocks);
+        params.srcStride = static_cast<uint16_t>(srcGapBlocks);
+        params.dstStride = 0;
+
+        AscendC::DataCopy(dst, src, params);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void MergeFinal(
