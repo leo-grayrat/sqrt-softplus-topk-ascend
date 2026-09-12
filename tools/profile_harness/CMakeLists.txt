@@ -1,68 +1,26 @@
 cmake_minimum_required(VERSION 3.16)
-project(topk_profile_one LANGUAGES CXX)
 
-set(RUN_MODE "sim" CACHE STRING "cpu/sim/npu")
-# ascendc_library 使用编译器 SoC 标识；msprof simulator 型号由外层脚本单独传递。
-set(SOC_VERSION "ascend910b1" CACHE STRING "compiler SoC type")
-set(PROFILE_VARIANT "baseline" CACHE STRING "baseline/pivot")
-set(ASCEND_CANN_PACKAGE_PATH "$ENV{ASCEND_HOME_PATH}" CACHE STRING "CANN install root")
-
-if(NOT ASCEND_CANN_PACKAGE_PATH)
-    message(FATAL_ERROR "ASCEND_HOME_PATH is empty; source CANN set_env.sh first")
-endif()
+# profiling 使用 CANN 9.0 原生 ASC 语言构建，而不是 legacy ascendc_library。
+# 后者会在 AIV auto-gen 阶段把 __global__ 重定义为 inline，与 production
+# 的 __global__ __vector__ kernel 入口冲突。
+set(CMAKE_ASC_ARCHITECTURES "dav-2201" CACHE STRING "NPU architecture")
 
 find_package(ASC REQUIRED)
-
-if(EXISTS ${ASCEND_CANN_PACKAGE_PATH}/compiler/tikcpp/ascendc_kernel_cmake)
-    set(ASCENDC_CMAKE_DIR ${ASCEND_CANN_PACKAGE_PATH}/compiler/tikcpp/ascendc_kernel_cmake)
-elseif(EXISTS ${ASCEND_CANN_PACKAGE_PATH}/tools/tikcpp/ascendc_kernel_cmake)
-    set(ASCENDC_CMAKE_DIR ${ASCEND_CANN_PACKAGE_PATH}/tools/tikcpp/ascendc_kernel_cmake)
-else()
-    message(FATAL_ERROR "ascendc_kernel_cmake not found under ${ASCEND_CANN_PACKAGE_PATH}")
-endif()
-
-include(${ASCENDC_CMAKE_DIR}/ascendc.cmake)
-
-# CANN 9.0 legacy ascendc precompile 只会把常规 C/C++ 源传给
-# extract_src_template.py；临时 device 源因此生成成 .cpp，而不是仓库里的 .asc 后缀。
-# tools/profile_topk_costs.sh 已把它裁成纯 device 所需代码，因此这里不再引入
-# host tiling/graph include 路径。
-ascendc_library(ascendc_kernels_${RUN_MODE} STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/kernel_profile.cpp
-)
-
-ascendc_compile_options(ascendc_kernels_${RUN_MODE} PRIVATE
-    -g
-    -O2
-)
-ascendc_compile_definitions(ascendc_kernels_${RUN_MODE} PRIVATE
-    -DASCENDC_TRACE_ON
-)
+project(topk_profile_one LANGUAGES ASC CXX)
 
 add_executable(topk_profile_one
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kernel_profile.asc
 )
 
-set_target_properties(topk_profile_one PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES)
 target_compile_options(topk_profile_one PRIVATE
-    -O2
-    -D_GLIBCXX_USE_CXX11_ABI=0
+    $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES} -g -O2>
 )
 
-if(PROFILE_VARIANT STREQUAL "pivot")
-    target_compile_definitions(topk_profile_one PRIVATE PROFILE_PIVOT=1)
-elseif(NOT PROFILE_VARIANT STREQUAL "baseline")
-    message(FATAL_ERROR "PROFILE_VARIANT must be baseline or pivot")
-endif()
+target_compile_definitions(topk_profile_one PRIVATE
+    ASCENDC_TRACE_ON
+)
 
 target_link_libraries(topk_profile_one PRIVATE
-    host_intf_pub
-    ascendc_kernels_${RUN_MODE}
-    graph_base
-    tiling_api
-    register
-    platform
-    ascendalog
     dl
     m
 )
