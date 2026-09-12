@@ -21,7 +21,8 @@ if ! command -v msprof >/dev/null 2>&1; then
 fi
 
 ROOT="$(git rev-parse --show-toplevel)"
-WORK_ROOT="$ROOT/.profile-worktrees"
+REPO_NAME="$(basename "$ROOT")"
+WORK_ROOT="${TMPDIR:-/tmp}/${REPO_NAME}-profile-${USER:-user}"
 OUT_ROOT="$ROOT/profile-output/${SOC_VERSION}_r${ROWS}_e${EXPERTS}_k${K}"
 BASE_WT="$WORK_ROOT/baseline"
 PIVOT_WT="$WORK_ROOT/pivot"
@@ -81,4 +82,4 @@ echo "  */OPPROF_*/simulator/core0.veccore0/*_instr_exe.csv"
 echo "  */OPPROF_*/simulator/core0.veccore0/*_code_exe.csv"
 echo "  */OPPROF_*/simulator/core0.veccore0/trace.json"
 echo
-echo "请不要用这次 simulator 时长代替 Judge 时长；这里只比较指令/流水结构。"
+echo "请不要用 simulator 时长代替 Judge 时长；这里只比较指令和流水结构。"
