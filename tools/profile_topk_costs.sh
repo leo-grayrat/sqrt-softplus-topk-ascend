@@ -100,7 +100,9 @@ build_and_profile() {
 
     cp "$HARNESS_SRC/CMakeLists.txt" "$harness/CMakeLists.txt"
     cp "$HARNESS_SRC/main.cpp" "$harness/main.cpp"
-    generate_device_source "$wt/submission/kernel.asc" "$harness/kernel_profile.asc"
+    # CANN 9.0 legacy ascendc precompile 的模板提取阶段只识别常规 C/C++ 源；
+    # 仓库 production 仍保持 .asc，这里的临时 device-only 副本改用 .cpp。
+    generate_device_source "$wt/submission/kernel.asc" "$harness/kernel_profile.cpp"
 
     # production kernel 内部继续 include submission 下的实验 override 头；复制到
     # harness 同目录，使 device-only 临时源保持和被测 worktree 一致。
