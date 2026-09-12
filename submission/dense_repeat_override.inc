@@ -25,13 +25,15 @@ public:
         const uint32_t sortedBytes = inputBytes * 2u;
         const uint32_t denseBytes =
             static_cast<uint32_t>(chunkCount_ * k_ * 2) * sizeof(float);
+        const uint32_t mergeBytes =
+            denseBytes < 256u ? 256u : denseBytes;
 
         pipe_.InitBuffer(inputQueue_, 1, inputBytes);
         pipe_.InitBuffer(indexBuffer_, inputBytes);
         pipe_.InitBuffer(sortedBuffer_, sortedBytes);
         pipe_.InitBuffer(denseABuffer_, denseBytes);
         pipe_.InitBuffer(denseBBuffer_, denseBytes);
-        pipe_.InitBuffer(mergeBuffer_, denseBytes);
+        pipe_.InitBuffer(mergeBuffer_, mergeBytes);
         pipe_.InitBuffer(
             outputQueue_,
             1,
