@@ -108,7 +108,22 @@ out = (
     + override
     + "\n\n}  // namespace\n"
 )
+
+# production .asc 目前使用 `__global__ __vector__ void`。直接 .asc 编译可接受，
+# 但 ascendc_library 会为 AIV 自动包装并要求 kernel 同时具有 cce-kernel
+# (`__aicore__`) 属性。CANN 9.0 SIMD 文档给出的正式入口形式是
+# `__vector__ __global__ __aicore__ void`。这里只规范化临时 profiling 副本，
+# 不修改提交到 Judge 的 production 源。
+old_entry = "__global__ __vector__ void"
+entry_count = out.count(old_entry)
+if entry_count == 0:
+    raise SystemExit("未找到 __global__ __vector__ kernel 入口，停止生成 profiling kernel")
+out = out.replace(old_entry, "__vector__ __global__ __aicore__ void")
+if old_entry in out:
+    raise SystemExit("profiling kernel 入口规范化不完整")
+
 out_path.write_text(out, encoding="utf-8")
+print(f"generated {out_path}: normalized {entry_count} vector kernel entr{'y' if entry_count == 1 else 'ies'}")
 PY
 }
 
