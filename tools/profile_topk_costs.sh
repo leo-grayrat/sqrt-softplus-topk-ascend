@@ -12,6 +12,7 @@ ROWS="${2:-1}"
 EXPERTS="${3:-1024}"
 K="${4:-8}"
 NPU_ARCH="${5:-dav-2201}"
+SIM_ARCH_DIR="${NPU_ARCH//-/_}"
 
 if ! command -v cmake >/dev/null 2>&1; then
     echo "未找到 cmake；请先配置 CANN 开发环境。" >&2
@@ -33,7 +34,7 @@ OUT_ROOT="$ROOT/profile-output/${SIM_LABEL}_r${ROWS}_e${EXPERTS}_k${K}"
 BASE_WT="$WORK_ROOT/baseline"
 PIVOT_WT="$WORK_ROOT/pivot"
 HARNESS_SRC="$ROOT/tools/profile_harness"
-SIM_LIB="$ASCEND_HOME_PATH/tools/simulator/$NPU_ARCH/lib"
+SIM_LIB="$ASCEND_HOME_PATH/tools/simulator/$SIM_ARCH_DIR/lib"
 
 if [[ ! -d "$SIM_LIB" ]]; then
     echo "simulator lib 不存在: $SIM_LIB" >&2
@@ -42,7 +43,7 @@ fi
 
 mkdir -p "$WORK_ROOT" "$OUT_ROOT"
 
-echo "profiling config: arch=$NPU_ARCH output_label=$SIM_LABEL rows=$ROWS E=$EXPERTS k=$K"
+echo "profiling config: arch=$NPU_ARCH simulator_dir=$SIM_ARCH_DIR output_label=$SIM_LABEL rows=$ROWS E=$EXPERTS k=$K"
 echo "simulator libs: $SIM_LIB"
 
 git -C "$ROOT" fetch origin main pivot-topk-rewrite
@@ -183,7 +184,8 @@ build_and_profile() {
     # simulator 标签 Ascend920A 传入后，msprof 会让 aclrtGetSocName() 返回
     # Ascend920A，最终在 kernel launch 前直接判 UNKNOWN 并返回 1。
     # 官方 msopprof 文档允许省略 --soc-version，并由 LD_LIBRARY_PATH 指定
-    # simulator；这里直接使用与原生 ASC sim 二进制一致的 dav-2201 camodel 库。
+    # simulator；这里使用原生 ASC 架构名对应的 simulator 目录。注意编译架构
+    # 使用 dav-2201，而本机 CANN simulator 目录使用 dav_2201。
     LD_LIBRARY_PATH="$SIM_LIB:${LD_LIBRARY_PATH:-}" \
     msprof op simulator \
         --output="$output" \
