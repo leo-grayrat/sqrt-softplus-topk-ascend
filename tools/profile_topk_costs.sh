@@ -71,20 +71,44 @@ git -C "$ROOT" worktree add --detach "$PIVOT_WT" origin/pivot-topk-rewrite
 
 generate_device_source() {
     local source_kernel="$1"
-    local output_kernel="$2"
+    local override_header="$2"
+    local output_kernel="$3"
 
-    python3 - "$source_kernel" "$output_kernel" <<'PY'
+    python3 - "$source_kernel" "$override_header" "$output_kernel" <<'PY'
 from pathlib import Path
 import sys
 
-src = Path(sys.argv[1]).read_text(encoding="utf-8")
-# BuildTopKTiling 以及后面的 run_kernel 都是 host 侧逻辑。profiling 的
-# ascendc_library 只保留 device kernel 与 override definitions。
-marker = "\nbool BuildTopKTiling("
-pos = src.find(marker)
-if pos < 0:
-    raise SystemExit("未找到 BuildTopKTiling marker，无法生成 device-only kernel")
-Path(sys.argv[2]).write_text(src[:pos] + "\n}  // namespace\n", encoding="utf-8")
+kernel_path = Path(sys.argv[1])
+override_path = Path(sys.argv[2])
+out_path = Path(sys.argv[3])
+
+src = kernel_path.read_text(encoding="utf-8")
+override = override_path.read_text(encoding="utf-8")
+
+# profiling 只需要 FP32 k<=8 的真实 production selector。不要把 host-only
+# tiling/graph 头和不相关的 TopK/Hierarchical kernel 一起送进 device precompile：
+# kernel_type.h 的 DT_* 宏会与 graph/types.h 的同名枚举直接冲突。
+namespace_pos = src.find("namespace {")
+common_end = src.find("// k=1 时无需完整 TopK", namespace_pos)
+prefix_begin = src.find("// FP32 小 k：Sort32", common_end)
+prefix_end = src.find("// k<=16：", prefix_begin)
+
+if min(namespace_pos, common_end, prefix_begin, prefix_end) < 0:
+    raise SystemExit("无法定位 production 公共段或 prefix-merge 段，停止生成 profiling kernel")
+
+common = src[namespace_pos:common_end]
+prefix = src[prefix_begin:prefix_end]
+
+out = (
+    '#include <cmath>\n'
+    '#include "kernel_operator.h"\n\n'
+    + common
+    + prefix
+    + "\n"
+    + override
+    + "\n\n}  // namespace\n"
+)
+out_path.write_text(out, encoding="utf-8")
 PY
 }
 
@@ -94,19 +118,28 @@ build_and_profile() {
     local harness="$wt/debug/topk_profile_one"
     local build="$harness/build_sim_profile"
     local output="$OUT_ROOT/$label"
+    local override_header
+
+    if [[ "$label" == "baseline" ]]; then
+        override_header="$wt/submission/dense_repeat_override.h"
+    else
+        override_header="$wt/submission/pivot_topk_override.h"
+    fi
 
     rm -rf "$harness" "$output"
     mkdir -p "$harness"
 
     cp "$HARNESS_SRC/CMakeLists.txt" "$harness/CMakeLists.txt"
     cp "$HARNESS_SRC/main.cpp" "$harness/main.cpp"
-    # CANN 9.0 legacy ascendc precompile 的模板提取阶段只识别常规 C/C++ 源；
-    # 仓库 production 仍保持 .asc，这里的临时 device-only 副本改用 .cpp。
-    generate_device_source "$wt/submission/kernel.asc" "$harness/kernel_profile.cpp"
 
-    # production kernel 内部继续 include submission 下的实验 override 头；复制到
-    # harness 同目录，使 device-only 临时源保持和被测 worktree 一致。
-    find "$wt/submission" -maxdepth 1 -type f -name '*.h' -exec cp {} "$harness/" \;
+    # CANN 9.0 legacy ascendc precompile 的模板提取阶段只识别常规 C/C++ 源；
+    # 仓库 production 仍保持 .asc，这里的临时 device-only 副本使用 .cpp。
+    # 源码内容由真实 production 公共段 + prefix kernel + 对应 override 自动拼接，
+    # 不复制 host tiling 依赖，也不维护第二份手写算法。
+    generate_device_source \
+        "$wt/submission/kernel.asc" \
+        "$override_header" \
+        "$harness/kernel_profile.cpp"
 
     cmake \
         -S "$harness" \
