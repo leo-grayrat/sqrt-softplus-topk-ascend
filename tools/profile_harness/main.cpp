@@ -220,7 +220,7 @@ int main(int argc, char** argv)
     }
     bool deviceSet = CheckAcl("aclrtSetDevice", aclrtSetDevice(0));
     aclrtStream stream = nullptr;
-    bool ok = deviceSet && CheckAcl("aclrtCreateStream", &stream ? aclrtCreateStream(&stream) : ACL_ERROR_INVALID_PARAM);
+    bool ok = deviceSet && CheckAcl("aclrtCreateStream", aclrtCreateStream(&stream));
 
     if (ok) {
         ok = RunOne(stream, rows, experts, k);
