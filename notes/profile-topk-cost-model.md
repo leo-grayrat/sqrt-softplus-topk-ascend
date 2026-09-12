@@ -121,9 +121,34 @@ note: expanded from macro 'DT_FLOAT'
 - 顶部只保留 `<cmath>` 与 `kernel_operator.h`；
 - 不维护第二份手写算法，也不再给 device target 添加 host tiling/graph include path。
 
-对应提交：`b7332df`、`48cae50`。该版本尚待本机重新编译验证。
+对应提交：`b7332df`、`48cae50`。本机后续日志已经越过此前的 `DT_*` 宏冲突，说明这一层修复方向成立。
 
-### 7. nested include / 增量构建仍需谨慎
+### 7. `ascendc_library` 的 AIV 自动包装要求显式 `__aicore__` kernel 入口
+
+最小 device 源继续编译后，host object 与 AIC device 已成功，AIV 自动生成包装层报错：
+
+```text
+error: __attribute__((aic)), __attribute__((aiv)), bisheng::core_ratio
+attribute needs to appear with cce kernel func.
+```
+
+对应 production `.asc` 中的入口写法是：
+
+```cpp
+__global__ __vector__ void ...
+```
+
+CANN 9.0 SIMD 文档给出的 vector kernel 入口形式为：
+
+```cpp
+__vector__ __global__ __aicore__ void ...
+```
+
+直接 `.asc` 编译能接受现有 production 写法，但 `ascendc_library` 的 AIV 自动包装会给函数加 AIV 属性，并要求该函数同时是 cce kernel，因此临时 profiling 副本需要显式 `__aicore__`。
+
+当前生成器会自动把所有 `__global__ __vector__ void` 入口规范化为 `__vector__ __global__ __aicore__ void`，并检查至少替换一个入口；production 源不改。对应提交：`66bd4a8e`。尚待本机复验。
+
+### 8. nested include / 增量构建仍需谨慎
 
 本仓库已有 CMake 对嵌套 `.h/.inc` 依赖跟踪不稳定的历史。profiling harness 每次都在临时 worktree 中 clean configure/build，避免把 stale build 误认为新代码结果。
 
