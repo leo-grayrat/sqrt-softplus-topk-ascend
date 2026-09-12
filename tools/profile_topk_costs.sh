@@ -1,15 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -lt 1 || $# -gt 4 ]]; then
-    echo "用法: $0 <Ascend具体型号，如 Ascend920A> [rows] [E] [k]" >&2
+if [[ $# -lt 1 || $# -gt 5 ]]; then
+    echo "用法: $0 <simulator型号，如 Ascend920A> [rows] [E] [k] [编译SoC]" >&2
+    echo "例如: $0 Ascend920A 1 1024 8 ascend910b1" >&2
     exit 2
 fi
 
-SOC_VERSION="$1"
+SIM_SOC="$1"
 ROWS="${2:-1}"
 EXPERTS="${3:-1024}"
 K="${4:-8}"
+
+# msprof simulator 使用安装目录里的 simulator 名称；ascendc_library 的
+# SOC_VERSION 则使用编译器支持的具体 SoC 名称。二者不是同一套标识。
+if [[ $# -ge 5 ]]; then
+    COMPILE_SOC="$5"
+else
+    case "$SIM_SOC" in
+        Ascend920A)
+            COMPILE_SOC="ascend910b1"
+            ;;
+        *)
+            echo "未定义 simulator '$SIM_SOC' 到编译 SoC 的默认映射。" >&2
+            echo "请显式提供第 5 个参数，例如 ascend910b1。" >&2
+            exit 2
+            ;;
+    esac
+fi
 
 if ! command -v cmake >/dev/null 2>&1; then
     echo "未找到 cmake；请先配置 CANN 开发环境。" >&2
@@ -27,12 +45,14 @@ fi
 ROOT="$(git rev-parse --show-toplevel)"
 REPO_NAME="$(basename "$ROOT")"
 WORK_ROOT="${TMPDIR:-/tmp}/${REPO_NAME}-profile-${USER:-user}"
-OUT_ROOT="$ROOT/profile-output/${SOC_VERSION}_r${ROWS}_e${EXPERTS}_k${K}"
+OUT_ROOT="$ROOT/profile-output/${SIM_SOC}_r${ROWS}_e${EXPERTS}_k${K}"
 BASE_WT="$WORK_ROOT/baseline"
 PIVOT_WT="$WORK_ROOT/pivot"
 HARNESS_SRC="$ROOT/tools/profile_harness"
 
 mkdir -p "$WORK_ROOT" "$OUT_ROOT"
+
+echo "profiling config: compile_soc=$COMPILE_SOC simulator=$SIM_SOC rows=$ROWS E=$EXPERTS k=$K"
 
 git -C "$ROOT" fetch origin main pivot-topk-rewrite
 
@@ -90,17 +110,16 @@ build_and_profile() {
         -S "$harness" \
         -B "$build" \
         -DRUN_MODE=sim \
-        -DSOC_VERSION="$SOC_VERSION" \
+        -DSOC_VERSION="$COMPILE_SOC" \
         -DPROFILE_VARIANT="$label" \
         -DASCEND_CANN_PACKAGE_PATH="$ASCEND_HOME_PATH"
 
     cmake --build "$build" -j"$(nproc)" --target topk_profile_one
 
     echo
-    echo "=== profiling $label: rows=$ROWS E=$EXPERTS k=$K ==="
+    echo "=== profiling $label: compile=$COMPILE_SOC simulator=$SIM_SOC rows=$ROWS E=$EXPERTS k=$K ==="
 
-    # 官方 simulator 文档要求将对应具体型号的 simulator lib 放入搜索路径。
-    local sim_lib="$ASCEND_HOME_PATH/tools/simulator/$SOC_VERSION/lib"
+    local sim_lib="$ASCEND_HOME_PATH/tools/simulator/$SIM_SOC/lib"
     if [[ ! -d "$sim_lib" ]]; then
         echo "[FAIL] simulator lib 不存在: $sim_lib" >&2
         exit 1
@@ -108,7 +127,7 @@ build_and_profile() {
 
     LD_LIBRARY_PATH="$sim_lib:${LD_LIBRARY_PATH:-}" \
     msprof op simulator \
-        --soc-version="$SOC_VERSION" \
+        --soc-version="$SIM_SOC" \
         --output="$output" \
         "$build/topk_profile_one" "$ROWS" "$EXPERTS" "$K"
 
