@@ -25,31 +25,10 @@ include(${ASCENDC_CMAKE_DIR}/ascendc.cmake)
 
 # CANN 9.0 legacy ascendc precompile 只会把常规 C/C++ 源传给
 # extract_src_template.py；临时 device 源因此生成成 .cpp，而不是仓库里的 .asc 后缀。
+# tools/profile_topk_costs.sh 已把它裁成纯 device 所需代码，因此这里不再引入
+# host tiling/graph include 路径。
 ascendc_library(ascendc_kernels_${RUN_MODE} STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/kernel_profile.cpp
-)
-
-# production kernel 顶部仍包含 tiling/tiling_api.h；它会继续引用
-# register/tilingdata_base.h。普通 host 工程通过 find_package(ASC) 能找到它，
-# 但 ascendc_library 的 device precompile target 不自动继承该搜索路径。
-# 使用官方 ascendc_include_directories 为 kernel target 显式补齐。
-find_path(ASCEND_REGISTER_INCLUDE_DIR
-    NAMES register/tilingdata_base.h
-    PATHS ${ASCEND_CANN_PACKAGE_PATH}
-    PATH_SUFFIXES
-        x86_64-linux/include
-        aarch64-linux/include
-        include
-    NO_DEFAULT_PATH
-)
-if(NOT ASCEND_REGISTER_INCLUDE_DIR)
-    message(FATAL_ERROR
-        "register/tilingdata_base.h not found under ${ASCEND_CANN_PACKAGE_PATH}; "
-        "check CANN installation")
-endif()
-message(STATUS "Ascend register include: ${ASCEND_REGISTER_INCLUDE_DIR}")
-ascendc_include_directories(ascendc_kernels_${RUN_MODE} PRIVATE
-    ${ASCEND_REGISTER_INCLUDE_DIR}
 )
 
 ascendc_compile_options(ascendc_kernels_${RUN_MODE} PRIVATE
