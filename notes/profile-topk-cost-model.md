@@ -86,11 +86,24 @@ usage: extract_src_template.py [-h] [-d DST_DIR] filepaths [filepaths ...]
 extract_src_template.py: error: the following arguments are required: filepaths
 ```
 
-这说明 precompile 子工程最终没有向模板提取脚本传入任何源码路径。官方 Kernel 直调样例均把 device 源写成 `.cpp`。当前假设是 legacy precompile 只把常规 C/C++ 源加入模板扫描列表，因此 profiling 脚本现在只把临时 device-only 副本从 `.asc` 改名为 `.cpp`；production `submission/kernel.asc` 本身不改。
+这说明 precompile 子工程最终没有向模板提取脚本传入任何源码路径。官方 Kernel 直调样例均把 device 源写成 `.cpp`。将临时 device-only 副本改名为 `kernel_profile.cpp` 后，precompile 已能真正编译该源文件，因此这一点已经得到本机验证。production `submission/kernel.asc` 本身不改。
 
-这个修复尚未完成本机复验，因此在重新跑通之前只记为“根因假设/当前修复”，不记为已解决。
+### 6. `ascendc_library` 的 device precompile 不自动继承 host tiling 的 `register/` 头搜索路径
 
-### 6. nested include / 增量构建仍需谨慎
+`.cpp` 被正确识别后，precompile 进一步报错：
+
+```text
+.../asc/include/tiling/matmul/matmul_tilingdata.h:18:10: fatal error:
+'register/tilingdata_base.h' file not found
+```
+
+临时 device 源仍保留 production 文件顶部的 `tiling/tiling_api.h`，后者会继续引用 `register/tilingdata_base.h`。普通 host 工程通过 `find_package(ASC)` 能找到这套头文件，但 `ascendc_library` 的 device precompile target 不会自动继承同样的 include path。
+
+官方 Kernel 直调 CMake 提供 `ascendc_include_directories(...)` 用于给 device target 增加额外头文件搜索路径。当前修复是在 CANN 安装目录下用 `find_path` 自动定位 `register/tilingdata_base.h` 的 include root，然后仅对 `ascendc_kernels_sim` 补该路径；不裁 production 代码、不改 kernel 内容。
+
+这个修复尚未完成本机复验，因此目前仍记为“已定位的根因 + 待验证修复”。
+
+### 7. nested include / 增量构建仍需谨慎
 
 本仓库已有 CMake 对嵌套 `.h/.inc` 依赖跟踪不稳定的历史。profiling harness 每次都在临时 worktree 中 clean configure/build，避免把 stale build 误认为新代码结果。
 
