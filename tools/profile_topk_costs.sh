@@ -88,7 +88,8 @@ override = override_path.read_text(encoding="utf-8")
 # profiling 只需要 FP32 k<=8 的真实 production selector。不要把 host-only
 # tiling/graph 头和不相关的 TopK/Hierarchical kernel 一起送进 device precompile：
 # kernel_type.h 的 DT_* 宏会与 graph/types.h 的同名枚举直接冲突。
-namespace_pos = src.find("namespace {")
+namespace_marker = "namespace {"
+namespace_pos = src.find(namespace_marker)
 common_end = src.find("// k=1 时无需完整 TopK", namespace_pos)
 prefix_begin = src.find("// FP32 小 k：Sort32", common_end)
 prefix_end = src.find("// k<=16：", prefix_begin)
@@ -96,7 +97,12 @@ prefix_end = src.find("// k<=16：", prefix_begin)
 if min(namespace_pos, common_end, prefix_begin, prefix_end) < 0:
     raise SystemExit("无法定位 production 公共段或 prefix-merge 段，停止生成 profiling kernel")
 
-common = src[namespace_pos:common_end]
+# production 文件把 device helper / kernel 放在匿名 namespace 中，这对原始 .asc
+# 直接编译可工作；ascendc_library 则会自动生成可外部调用的 *_do stub，并在
+# auto_gen 层重命名原 kernel，因此 profiling 副本必须让 kernel 具有外部链接。
+# 这里只去掉匿名 namespace 外壳，内部类/常量/算法正文保持逐段同源。
+common_begin = namespace_pos + len(namespace_marker)
+common = src[common_begin:common_end]
 prefix = src[prefix_begin:prefix_end]
 
 out = (
@@ -106,24 +112,29 @@ out = (
     + prefix
     + "\n"
     + override
-    + "\n\n}  // namespace\n"
+    + "\n"
 )
 
-# production .asc 目前使用 `__global__ __vector__ void`。直接 .asc 编译可接受，
-# 但 ascendc_library 会为 AIV 自动包装并要求 kernel 同时具有 cce-kernel
-# (`__aicore__`) 属性。CANN 9.0 SIMD 文档给出的正式入口形式是
-# `__vector__ __global__ __aicore__ void`。这里只规范化临时 profiling 副本，
-# 不修改提交到 Judge 的 production 源。
+# CANN kernel-launch / ascendc_library 的 kernel 入口需要外部链接。官方示例
+# 使用 extern "C" __global__ __aicore__，纯 Vector kernel 可额外用 __vector__
+# 标记。production .asc 当前是 `__global__ __vector__ void`；只在临时副本中
+# 加上 C linkage 与 __aicore__，不修改 Judge 源。
 old_entry = "__global__ __vector__ void"
 entry_count = out.count(old_entry)
 if entry_count == 0:
     raise SystemExit("未找到 __global__ __vector__ kernel 入口，停止生成 profiling kernel")
-out = out.replace(old_entry, "__vector__ __global__ __aicore__ void")
+out = out.replace(
+    old_entry,
+    'extern "C" __global__ __vector__ __aicore__ void')
 if old_entry in out:
     raise SystemExit("profiling kernel 入口规范化不完整")
+if "namespace {" in out:
+    raise SystemExit("profiling device 源仍残留匿名 namespace")
 
 out_path.write_text(out, encoding="utf-8")
-print(f"generated {out_path}: normalized {entry_count} vector kernel entr{'y' if entry_count == 1 else 'ies'}")
+print(
+    f"generated {out_path}: exported and normalized {entry_count} vector kernel "
+    f"entr{'y' if entry_count == 1 else 'ies'}")
 PY
 }
 
