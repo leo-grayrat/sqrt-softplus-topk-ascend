@@ -42,7 +42,7 @@ simulator 本身已正确加载 `dav_2201`，shape 也正确，因此问题在 k
 
 当前做法改为官方结构：
 
-- device：`ascendc_library(... STATIC kernel_profile.asc)`；
+- device：`ascendc_library(... STATIC kernel_profile.cpp)`；
 - host：独立 `main.cpp`；
 - host 链接生成的 sim kernel library；
 - 通过 `<kernel>_do(...)` stub launch；
@@ -77,7 +77,20 @@ Op profiling finish. Welcome to next use.
 
 但实际不会生成 `*_instr_exe.csv`。因此脚本现在把 CSV 存在性作为成功门槛；没有 instruction CSV 就立即退出，不运行另一边，也不生成 summary。
 
-### 5. nested include / 增量构建仍需谨慎
+### 5. CANN 9.0 legacy precompile 不接受临时 `.asc` 源作为模板扫描输入
+
+官方 `ascendc_library` 语法本身允许传 kernel 源文件，但 CANN 9.0 当前走到 `legacy_modules` 的 precompile 阶段时，临时源命名为 `kernel_profile.asc` 会出现：
+
+```text
+usage: extract_src_template.py [-h] [-d DST_DIR] filepaths [filepaths ...]
+extract_src_template.py: error: the following arguments are required: filepaths
+```
+
+这说明 precompile 子工程最终没有向模板提取脚本传入任何源码路径。官方 Kernel 直调样例均把 device 源写成 `.cpp`。当前假设是 legacy precompile 只把常规 C/C++ 源加入模板扫描列表，因此 profiling 脚本现在只把临时 device-only 副本从 `.asc` 改名为 `.cpp`；production `submission/kernel.asc` 本身不改。
+
+这个修复尚未完成本机复验，因此在重新跑通之前只记为“根因假设/当前修复”，不记为已解决。
+
+### 6. nested include / 增量构建仍需谨慎
 
 本仓库已有 CMake 对嵌套 `.h/.inc` 依赖跟踪不稳定的历史。profiling harness 每次都在临时 worktree 中 clean configure/build，避免把 stale build 误认为新代码结果。
 
