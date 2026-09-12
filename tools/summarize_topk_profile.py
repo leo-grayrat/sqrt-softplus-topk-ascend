@@ -25,7 +25,10 @@ def collect_instr(root: Path):
     totals = defaultdict(lambda: [0.0, 0.0, 0.0])
     files = sorted(root.rglob("*_instr_exe.csv"))
     if not files:
-        raise FileNotFoundError(f"{root} 下没有 *_instr_exe.csv")
+        visible = sorted(str(p.relative_to(root)) for p in root.rglob("*") if p.is_file())[:30]
+        detail = "\n".join(f"  - {p}" for p in visible)
+        raise FileNotFoundError(
+            f"{root} 下没有 *_instr_exe.csv。现有文件前 30 项：\n{detail or '  <none>'}")
 
     for path in files:
         with path.open("r", encoding="utf-8-sig", newline="") as f:
@@ -63,6 +66,22 @@ def print_instr_table(title: str, totals, limit: int):
     for (pipe, instr), (calls, cycles, time_us) in rows:
         safe_instr = instr.replace("|", "\\|")
         print(f"| {pipe} | `{safe_instr}` | {calls:.0f} | {cycles:.0f} | {time_us:.3f} |")
+
+
+def print_pipe_table(title: str, totals):
+    pipes = defaultdict(lambda: [0.0, 0.0, 0.0])
+    for (pipe, _instr), values in totals.items():
+        pipes[pipe][0] += values[0]
+        pipes[pipe][1] += values[1]
+        pipes[pipe][2] += values[2]
+
+    print(f"\n## {title}")
+    print("| pipe | calls | cycles | time_us |")
+    print("| --- | ---: | ---: | ---: |")
+    for pipe, (calls, cycles, time_us) in sorted(
+        pipes.items(), key=lambda item: item[1][1], reverse=True
+    ):
+        print(f"| {pipe} | {calls:.0f} | {cycles:.0f} | {time_us:.3f} |")
 
 
 def print_code_table(title: str, totals, limit: int):
@@ -106,19 +125,23 @@ def main() -> int:
     parser.add_argument("--limit", type=int, default=25)
     args = parser.parse_args()
 
-    base_root = latest_opprof(args.profile_root / "baseline") / "simulator"
-    pivot_root = latest_opprof(args.profile_root / "pivot") / "simulator"
+    base_root = latest_opprof(args.profile_root / "baseline")
+    pivot_root = latest_opprof(args.profile_root / "pivot")
 
     base_instr, base_instr_files = collect_instr(base_root)
     pivot_instr, pivot_instr_files = collect_instr(pivot_root)
     base_code, base_code_files = collect_code(base_root)
     pivot_code, pivot_code_files = collect_code(pivot_root)
 
+    print(f"baseline OPPROF: {base_root}")
+    print(f"pivot OPPROF: {pivot_root}")
     print(f"baseline instruction CSV: {len(base_instr_files)}")
     print(f"pivot instruction CSV: {len(pivot_instr_files)}")
     print(f"baseline code CSV: {len(base_code_files)}")
     print(f"pivot code CSV: {len(pivot_code_files)}")
 
+    print_pipe_table("Baseline：按 pipe 聚合", base_instr)
+    print_pipe_table("Pivot：按 pipe 聚合", pivot_instr)
     print_instr_table("Baseline：最贵 instruction", base_instr, args.limit)
     print_instr_table("Pivot：最贵 instruction", pivot_instr, args.limit)
     print_delta(base_instr, pivot_instr, args.limit)
