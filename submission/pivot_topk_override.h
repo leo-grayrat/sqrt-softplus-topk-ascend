@@ -32,12 +32,13 @@ public:
         pipe_.InitBuffer(sortedBuffer_, sortedBytes);
         pipe_.InitBuffer(mergeABuffer_, PREFIX_MERGE_BUFFER_BYTES);
         pipe_.InitBuffer(mergeBBuffer_, PREFIX_MERGE_BUFFER_BYTES);
-        // GatherMask normal mode要求从传入 dst 视图起至少仍有 256B。
-        // 有效候选最多 64 floats，但后续块会从 dstOffset 处继续写，因此留 128 floats。
         pipe_.InitBuffer(candidateBuffer_, 128u * sizeof(float));
         pipe_.InitBuffer(pivotBuffer_, 64u * sizeof(float));
         pipe_.InitBuffer(maskScratchBuffer_, 128u);
-        pipe_.InitBuffer(maskListBuffer_, 128u);
+        // GatherMask 的 LocalTensor 起点要求 32B 对齐。每个 FP32 compare mask 只有
+        // 64 bits，因此按 32B 槽位保存：每个 block 占 4 个 uint64_t，只有第一个有效。
+        // 这样多 repeat GatherMask 可令 src1RepeatStride=1，所有 pattern 起点均对齐。
+        pipe_.InitBuffer(maskListBuffer_, 512u);
         pipe_.InitBuffer(reduceTmpBuffer_, inputBytes);
         pipe_.InitBuffer(floatWorkBuffer_, ALIGN_BYTES);
         pipe_.InitBuffer(floatTmpBuffer_, ALIGN_BYTES);
@@ -78,7 +79,8 @@ private:
             AscendC::PipeBarrier<PIPE_V>();
 
             const uint64_t bits = scratchWords.GetValue(0);
-            maskList.SetValue(static_cast<uint32_t>(block), bits);
+            // 4 * uint64_t = 32B，保证每个 repeat 的 src1Pattern 起点对齐。
+            maskList.SetValue(static_cast<uint32_t>(block * 4), bits);
             total += static_cast<int32_t>(AscendC::GetBitCount<1>(bits));
         }
         AscendC::PipeBarrier<PIPE_V>();
@@ -94,21 +96,18 @@ private:
 
         AscendC::LocalTensor<uint32_t> patterns =
             maskListBuffer_.Get<uint32_t>();
-        uint32_t dstOffset = 0;
-        for (int32_t block = 0; block < scanBlocks_; ++block) {
-            uint64_t retained = 0;
-            const uint32_t srcOffset = static_cast<uint32_t>(block * 64);
-            AscendC::GatherMask(
-                dst[dstOffset],
-                src[srcOffset],
-                patterns[static_cast<uint32_t>(block * 2)],
-                false,
-                0,
-                {1, 1, 0, 0},
-                retained);
-            AscendC::PipeBarrier<PIPE_V>();
-            dstOffset += static_cast<uint32_t>(retained);
-        }
+        uint64_t retained = 0;
+        // FP32 normal mode每 repeat 消费256B=64元素。src0 每轮前进8个32B block；
+        // pattern 每轮前进1个32B槽位。dst 始终从对齐基址开始，硬件连续压缩输出。
+        AscendC::GatherMask(
+            dst,
+            src,
+            patterns,
+            false,
+            0,
+            {1, static_cast<uint8_t>(scanBlocks_), 8, 1},
+            retained);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void FinalizeSmallCandidates(
