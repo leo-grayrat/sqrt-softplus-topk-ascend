@@ -56,7 +56,44 @@ for rows in 1 3; do
 done
 ```
 
-正确性通过后再做 simulator profile，对比 main 与本分支的 `rows=1,E=1024,k=8`。
+### 第一次本机验证无效
+
+第一次运行时，本地尚未 fetch 到新分支，先执行：
+
+```text
+git switch bulk-prefix-pack
+```
+
+得到：
+
+```text
+fatal: invalid reference: bulk-prefix-pack
+```
+
+随后 `git pull` 仍停留在 `profile-topk-cost-model`，因此 `tools/check_bulk_prefix_pack.py` 也不存在。后续 16 个 CPU twin-debug case 虽全部 PASS，但测试的是旧 production baseline，**不能作为 bulk 实现正确性证据**。
+
+正确切换方式：
+
+```bash
+git fetch origin bulk-prefix-pack
+git switch -c bulk-prefix-pack --track origin/bulk-prefix-pack
+```
+
+若之后本地分支已经建立，则：
+
+```bash
+git switch bulk-prefix-pack
+git pull --ff-only
+```
+
+确认：
+
+```bash
+git branch --show-current
+git rev-parse --short HEAD
+```
+
+正确性真正通过后再做 simulator profile，对比 main 与本分支的 `rows=1,E=1024,k=8`。
 
 ## 判定标准
 
