@@ -2,13 +2,7 @@
 
 日期：2026-09-12
 
-目标：停止继续凭算法复杂度猜 dav-2201 性能。对当前最佳 production 基线与失败的 pivot-filter 使用同一输入做 `msprof op simulator`，直接比较指令、流水线和代码行周期。
-
-这一步只建立成本模型，不继续优化 pivot，也不把 simulator 时间当 Judge 时间。
-
-## 当前状态
-
-profiling 分支：`profile-topk-cost-model`。
+目标：停止继续凭算法复杂度猜 dav-2201 性能。对当前最佳 production baseline 与失败的 pivot-filter 使用同一输入做 simulator profiling，直接比较指令、流水线和代码行周期。
 
 首轮只测：
 
@@ -18,141 +12,124 @@ E    = 1024
 k    = 8
 ```
 
-pivot-filter 在 CANNJudge 上出现高度集中的退化：case 3 `252.11 -> 849.19 us`，case 7 `59.09 -> 111.09 us`，case 9 `96.82 -> 178.44 us`，case 13 `634.57 us -> 1.26 ms`。因此现在的目标不是继续改算法，而是先回答 dav-2201 上各 primitive 实际贵在哪里。
+pivot-filter 在 CANNJudge 上出现高度集中的退化：case 3 `252.11 -> 849.19 us`，case 7 `59.09 -> 111.09 us`，case 9 `96.82 -> 178.44 us`，case 13 `634.57 us -> 1.26 ms`。当前目标不是继续优化 pivot，而是先回答 dav-2201 上各 primitive 实际贵在哪里。
 
-当前 profiling harness 已改成 simulator/NPU 正式构建结构：device 端由 `ascendc_library` 构建，host 端单独编译并通过生成的 `<kernel>_do(...)` stub launch。这个新版结构尚未完成一次本机成功 profile，因此相关 issue #31 保持 open。
+## 当前方案
+
+profiling 分支：`profile-topk-cost-model`。
+
+当前 harness 已放弃 legacy `ascendc_library`，改用 CANN 9.0 原生 ASC 构建：
+
+```cmake
+find_package(ASC REQUIRED)
+project(topk_profile_one LANGUAGES ASC CXX)
+add_executable(topk_profile_one kernel_profile.asc)
+```
+
+配置时使用：
+
+```text
+CMAKE_ASC_RUN_MODE=sim
+CMAKE_ASC_ARCHITECTURES=dav-2201
+```
+
+`kernel_profile.asc` 由脚本从对应 worktree 自动生成，只保留真实 production 的 FP32 k<=8 device 段：公共 transform、prefix-merge，以及 baseline 的 `dense_repeat_override.h` 或 pivot 的 `pivot_topk_override.h`。host 侧仍然只跑一次指定 shape，并在同一 `.asc` translation unit 内通过 `<<<>>>` 直接 launch kernel。
 
 ## 已踩坑
 
 ### 1. correctness probe 不能直接拿来 profiling
 
-最初脚本调用 production correctness probe，并在命令后传 `1 1024 8`。但 pivot probe 的 `main()` 根本不读取命令行参数，而是固定跑完整 75-case，所以日志实际从 `E=64,k=2` 开始。
+首版脚本复用 production correctness probe，并在命令后传 `1 1024 8`。但 pivot probe 的 `main()` 固定执行完整 75-case，不读取命令行 shape，所以日志实际从 `E=64,k=2` 开始。
 
-结论：profiling driver 必须只 launch 一次指定 shape，不能复用批量 correctness harness。
+结论：profiling driver 必须只 launch 一次目标 shape。
 
-### 2. CPU twin-debug 的构建方式不能直接类比 simulator/NPU
+### 2. `msprof ... finish` 不等于 profiling 成功
 
-单个 `.asc` 用 `add_executable` 的方式在 CPU twin-debug 下可以运行，但同样结构切到 simulator 后出现：
-
-```text
-[Bisheng] Launch kernel failure! ret 1
-```
-
-simulator 本身已正确加载 `dav_2201`，shape 也正确，因此问题在 kernel launch/build 链，而不是算法。
-
-当前做法改为官方结构：
-
-- device：`ascendc_library(... STATIC kernel_profile.cpp)`；
-- host：独立 `main.cpp`；
-- host 链接生成的 sim kernel library；
-- 通过 `<kernel>_do(...)` stub launch；
-- profiling 构建启用 `-g -O2` 与 `ASCENDC_TRACE_ON`。
-
-### 3. 编译 SoC 名与 simulator 名不是一套标识
-
-本机 simulator 目录里存在 `Ascend920A`，`msprof op simulator --soc-version=Ascend920A` 也能正确加载：
-
-```text
-.../simulator/dav_2201/lib/config_stars.json
-```
-
-但 `ascendc_kernel_cmake` 的 `SOC_VERSION` 不接受 `Ascend920A`，支持列表使用 `ascend910b1`、`ascend910b2` 等编译 SoC 名。
-
-当前默认映射：
-
-```text
-compile SOC_VERSION = ascend910b1
-simulator model     = Ascend920A
-```
-
-脚本必须把这两个参数分开，不能把同一个字符串同时传给 CMake 和 msprof。
-
-### 4. `msprof ... finish` 不等于 profiling 成功
-
-child process 失败时，msprof 仍可能继续解析并打印：
+child process 失败时，msprof 仍可能打印：
 
 ```text
 Op profiling finish. Welcome to next use.
 ```
 
-但实际不会生成 `*_instr_exe.csv`。因此脚本现在把 CSV 存在性作为成功门槛；没有 instruction CSV 就立即退出，不运行另一边，也不生成 summary。
+因此脚本必须检查是否真的生成 `*_instr_exe.csv`；没有 CSV 就立即停止，不运行另一边，也不生成 summary。
 
-### 5. CANN 9.0 legacy precompile 不接受临时 `.asc` 源作为模板扫描输入
+### 3. simulator 名与编译目标不是一套标识
 
-临时源命名为 `kernel_profile.asc` 时，precompile 阶段出现：
+`msprof op simulator` 使用本机 simulator 名 `Ascend920A`；原生 ASC 编译则直接使用架构 `dav-2201`。当前脚本不再走 `ascendc_library`，因此也不再需要 `ascend910b1` 这一套 legacy `SOC_VERSION` 映射。
+
+### 4. 临时 profiling 源不能带 host tiling/graph 依赖
+
+曾经把 production 文件顶部的 `tiling/tiling_api.h` 一并送进 device precompile，先出现 `register/tilingdata_base.h` 缺失，补 include 后又出现大量 `DT_FLOAT/DT_INT8/...` 宏与 `graph/types.h` 枚举冲突。
+
+这些几十个 error 实际是同一个根因：host tiling/graph 头本来就不该进入 device profiling 源。
+
+当前脚本只抽取：
+
+- 公共常量；
+- `StableSoftplusSqrt` / `TransformSelected`；
+- `SqrtSoftplusPrefixMergeTopKKernel`；
+- baseline 对应 `dense_repeat_override.h`；
+- pivot 对应 `pivot_topk_override.h`。
+
+算法正文来自待测 worktree，不维护第二份手写实现。
+
+### 5. `ascendc_library` 的 AIV auto-gen 与当前 `__vector__` kernel 冲突
+
+这是本轮最重要的结论。
+
+最小 device 源进入 legacy `ascendc_library` 后，连续三次都卡在同一个位置：
 
 ```text
-usage: extract_src_template.py [-h] [-d DST_DIR] filepaths [filepaths ...]
-extract_src_template.py: error: the following arguments are required: filepaths
+ascendc_kernels_sim_aiv_device
+-> auto_gen_kernel_profile.cpp
+-> __attribute__((aic)), __attribute__((aiv)), bisheng::core_ratio attribute
+   needs to appear with cce kernel func
 ```
 
-改成 `kernel_profile.cpp` 后，precompile 已真正开始编译该文件。这一点已由本机日志验证。production 的 `submission/kernel.asc` 本身不改。
+期间尝试过：
 
-### 6. host tiling 头不能混进 device precompile
+```text
+__global__ __vector__ void
+__vector__ __global__ __aicore__ void
+extern "C" __global__ __vector__ __aicore__ void
+```
 
-`.cpp` 被正确识别后，临时源顶部仍保留 production 的：
+还尝试过移出匿名 namespace。错误阶段和错误文本完全不变，因此这些都没有触及根因。
+
+最终直接查看 CANN 自动生成文件：
 
 ```cpp
-#include "tiling/tiling_api.h"
-#include "tiling/platform/platform_ascendc.h"
+#undef __global__
+#define __global__ inline
+#include "kernel_profile.cpp"
+
+#undef __global__
+#if ASCENDC_CPU_DEBUG
+#define __global__
+#else
+#define __global__ __attribute__((cce_kernel))
+#endif
 ```
 
-第一次表现为缺少：
+关键点是：AIV auto-gen 在 include 原 kernel 源之前主动把 `__global__` 改成 `inline`。所以源码中的 `__vector__` / `__aicore__` 属性最终落到一个普通 inline 函数上，而不是 `cce_kernel`，从而稳定触发同一个错误。
 
-```text
-register/tilingdata_base.h
-```
+因此前两轮“缺 `__aicore__`”“匿名 namespace/extern C”的判断已被本机日志否定。继续改 kernel 修饰符没有意义。
 
-为 device target 补 host `register/` include path 后，错误进一步展开成大量：
+处理结论：**profiling 不再使用 `ascendc_library`。** 改回 CANN 9.0 原生 ASC 语言构建，让 `.asc` 保持 production 的 `__global__ __vector__` 形式，并通过 `CMAKE_ASC_RUN_MODE=sim` 做仿真编译。
 
-```text
-graph/types.h: error: expected identifier
-note: expanded from macro 'DT_FLOAT'
-```
+### 6. CPU twin-debug 仍只作为 correctness/API 检查
 
-这不是几十个独立错误，而是一个明确的宏冲突：device 侧 `kernel_type.h` 定义了 `DT_FLOAT/DT_INT8/...` 宏，host 图类型 `graph/types.h` 又声明同名枚举。说明问题不该通过继续补 host include 解决；`tiling/graph` 这条 host 依赖本来就不应该进入 device profiling 源。
+CPU twin-debug 能验证 API、layout、正确性，但不能证明 simulator/NPU launch 一定成功，也不能作为性能证据。
 
-当前修复改为自动生成真正的最小 device-only 源：
+### 7. clean build
 
-- 从待测 worktree 的 `submission/kernel.asc` 抽取公共常量、`StableSoftplusSqrt`、`TransformSelected`；
-- 抽取真实 `SqrtSoftplusPrefixMergeTopKKernel`；
-- baseline 追加同一 worktree 的 `dense_repeat_override.h`；
-- pivot 追加 `pivot_topk_override.h`；
-- 顶部只保留 `<cmath>` 与 `kernel_operator.h`；
-- 不维护第二份手写算法，也不再给 device target 添加 host tiling/graph include path。
-
-对应提交：`b7332df`、`48cae50`。该改动已让 precompile、host object 与 AIC device 编译通过。
-
-### 7. `ascendc_library` 自动包装要求 kernel 具备外部链接
-
-最小 device 源后，编译继续推进到 AIV 自动生成包装层，报错集中为：
-
-```text
-__attribute__((aic)), __attribute__((aiv)), bisheng::core_ratio attribute
-needs to appear with cce kernel func
-```
-
-最初将 production 的 `__global__ __vector__ void` 仅改为 `__vector__ __global__ __aicore__ void`，错误完全不变。因此“缺少 `__aicore__`”不是充分根因，前一判断已被本机日志否定。
-
-进一步检查发现 profiling 临时源仍继承了 production 的匿名 `namespace { ... }`。原始 `.asc` 单文件直编可以接受内部链接 kernel；但 `ascendc_library` 会自动生成外部 `<kernel>_do(...)` stub，并在 auto-gen 层把原 kernel 重命名为 `<kernel>_origin`。官方 kernel-launch 示例也都把 kernel 入口放在全局命名空间，并通常使用 `extern "C"`。
-
-当前最小修复：
-
-- profiling 临时源去掉匿名 namespace 外壳；
-- kernel helper / class / body 保持原样；
-- 仅临时入口规范化为 `extern "C" __global__ __vector__ __aicore__ void`；
-- production / Judge 源不改。
-
-对应提交：`fd87c867`。尚待本机复验。
-
-### 8. nested include / 增量构建仍需谨慎
-
-本仓库已有 CMake 对嵌套 `.h/.inc` 依赖跟踪不稳定的历史。profiling harness 每次都在临时 worktree 中 clean configure/build，避免把 stale build 误认为新代码结果。
+本仓库已有 nested include / 增量依赖跟踪不稳定的历史。profiling 每次都在临时 detached worktree 中 clean configure/build，避免 stale build 影响判断。
 
 ## 当前工具
 
-- `tools/profile_topk_costs.sh`：建立 main / pivot detached worktree，生成 device-only 临时 kernel，分别采集同 shape profile；
-- `tools/profile_harness/`：官方 simulator kernel-launch 结构；
+- `tools/profile_topk_costs.sh`：建立 main / pivot detached worktree，生成单形状原生 ASC profiling 源并分别采集；
+- `tools/profile_harness/CMakeLists.txt`：原生 ASC sim 构建；
+- `tools/profile_harness/main.cpp`：单 shape host correctness harness，由生成的 `.asc` include；
 - `tools/summarize_topk_profile.py`：聚合 instruction / pipe / code cycles；
 - issue #31：记录 profiling 进度、失败原因与最终结论。
 
@@ -165,7 +142,11 @@ source /home/leo/Ascend/cann-9.0.0/set_env.sh
 bash tools/profile_topk_costs.sh Ascend920A 1 1024 8
 ```
 
-脚本默认把 `Ascend920A` 映射到编译 `ascend910b1`。如本机后续确认需要别的具体 B1/B2/B3 编译型号，可以用脚本的显式 compile SoC 参数覆盖。
+默认架构为 `dav-2201`。如需显式指定：
+
+```bash
+bash tools/profile_topk_costs.sh Ascend920A 1 1024 8 dav-2201
+```
 
 只有同时出现：
 
