@@ -7,6 +7,8 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+VARIANTS = ("bulk_control", "specialized_sequential", "batch4")
+
 
 def latest_opprof(root: Path) -> Path:
     matches = sorted(root.glob("OPPROF_*"), key=lambda p: p.stat().st_mtime)
@@ -59,17 +61,8 @@ def parse_kernel_time(log_path: Path) -> tuple[float, float]:
     return float(duration), float(running)
 
 
-def show_key(title: str, control, batch, key):
-    c = control.get(key, [0.0, 0.0, 0.0])
-    b = batch.get(key, [0.0, 0.0, 0.0])
-    ratio = b[1] / c[1] if c[1] else float("inf")
-    ratio_text = "inf" if ratio == float("inf") else f"{ratio:.3f}x"
-    print(f"\n## {title}")
-    print("| variant | calls | cycles | instr_time_us |")
-    print("| --- | ---: | ---: | ---: |")
-    print(f"| bulk_control | {c[0]:.0f} | {c[1]:.0f} | {c[2]:.3f} |")
-    print(f"| batch4 | {b[0]:.0f} | {b[1]:.0f} | {b[2]:.3f} |")
-    print(f"\ncycle ratio={ratio_text}, delta={b[1]-c[1]:+.0f}")
+def reduction(a: float, b: float) -> float:
+    return 1.0 - b / a if a else 0.0
 
 
 def main() -> int:
@@ -78,27 +71,33 @@ def main() -> int:
         return 2
 
     root = Path(sys.argv[1])
-    control_root = latest_opprof(root / "bulk_control")
-    batch_root = latest_opprof(root / "batch4")
-    control = collect(control_root)
-    batch = collect(batch_root)
-
-    control_duration, control_running = parse_kernel_time(root / "bulk_control_msprof.log")
-    batch_duration, batch_running = parse_kernel_time(root / "batch4_msprof.log")
-    speedup = control_running / batch_running if batch_running else float("inf")
-    reduction = 1.0 - batch_running / control_running if control_running else 0.0
-
-    print(f"bulk_control OPPROF: {control_root}")
-    print(f"batch4 OPPROF: {batch_root}")
+    data = {}
+    times = {}
+    opprof = {}
+    for variant in VARIANTS:
+        opprof[variant] = latest_opprof(root / variant)
+        data[variant] = collect(opprof[variant])
+        times[variant] = parse_kernel_time(root / f"{variant}_msprof.log")
+        print(f"{variant} OPPROF: {opprof[variant]}")
 
     print("\n## Kernel wall time")
     print("| variant | duration_us | running_time_us |")
     print("| --- | ---: | ---: |")
-    print(f"| bulk_control | {control_duration:.3f} | {control_running:.3f} |")
-    print(f"| batch4 | {batch_duration:.3f} | {batch_running:.3f} |")
-    print(f"\nrunning_time speedup={speedup:.3f}x, reduction={reduction*100:.1f}%")
+    for variant in VARIANTS:
+        duration, running = times[variant]
+        print(f"| {variant} | {duration:.3f} | {running:.3f} |")
 
-    for title, key in [
+    bulk = times["bulk_control"][1]
+    spec = times["specialized_sequential"][1]
+    batch = times["batch4"][1]
+    print("\n## Pairwise attribution")
+    print("| comparison | speedup | running-time reduction |")
+    print("| --- | ---: | ---: |")
+    print(f"| bulk_control -> specialized_sequential | {bulk/spec:.3f}x | {reduction(bulk, spec)*100:.1f}% |")
+    print(f"| specialized_sequential -> batch4 | {spec/batch:.3f}x | {reduction(spec, batch)*100:.1f}% |")
+    print(f"| bulk_control -> batch4 | {bulk/batch:.3f}x | {reduction(bulk, batch)*100:.1f}% |")
+
+    keys = [
         ("VECTOR BAR", ("VECTOR", "BAR")),
         ("VECTOR MOV_UB_TO_UB", ("VECTOR", "MOV_UB_TO_UB")),
         ("VECTOR VBS32", ("VECTOR", "VBS32")),
@@ -107,42 +106,42 @@ def main() -> int:
         ("SCALAR ST_XD_XN_IMM", ("SCALAR", "ST_XD_XN_IMM")),
         ("SCALAR STI_XN_IMM", ("SCALAR", "STI_XN_IMM")),
         ("SCALAR STP_XI_XJ_XN", ("SCALAR", "STP_XI_XJ_XN")),
-    ]:
-        show_key(title, control, batch, key)
+        ("SCALAR LD_XD_XN_IMM", ("SCALAR", "LD_XD_XN_IMM")),
+    ]
 
-    cp = pipe_totals(control)
-    bp = pipe_totals(batch)
+    print("\n## Selected instructions")
+    print("| instruction | variant | calls | cycles | instr_time_us |")
+    print("| --- | --- | ---: | ---: | ---: |")
+    for title, key in keys:
+        for variant in VARIANTS:
+            vals = data[variant].get(key, [0.0, 0.0, 0.0])
+            print(f"| {title} | {variant} | {vals[0]:.0f} | {vals[1]:.0f} | {vals[2]:.3f} |")
+
     print("\n## Pipe totals")
     print("| pipe | variant | calls | cycles | instr_time_us |")
     print("| --- | --- | ---: | ---: | ---: |")
+    totals = {variant: pipe_totals(data[variant]) for variant in VARIANTS}
     for pipe in ("SCALAR", "VECTOR", "MTE2", "MTE3", "ALL", "FLOWCTRL"):
-        print(
-            f"| {pipe} | bulk_control | {cp[pipe][0]:.0f} | {cp[pipe][1]:.0f} | {cp[pipe][2]:.3f} |"
-        )
-        print(
-            f"| {pipe} | batch4 | {bp[pipe][0]:.0f} | {bp[pipe][1]:.0f} | {bp[pipe][2]:.3f} |"
-        )
+        for variant in VARIANTS:
+            vals = totals[variant][pipe]
+            print(f"| {pipe} | {variant} | {vals[0]:.0f} | {vals[1]:.0f} | {vals[2]:.3f} |")
 
-    deltas = []
-    for key in set(control) | set(batch):
-        c = control.get(key, [0.0, 0.0, 0.0])[1]
-        b = batch.get(key, [0.0, 0.0, 0.0])[1]
-        deltas.append((abs(b - c), b - c, key, c, b))
-
-    print("\n## Largest instruction-cycle deltas")
-    print("| pipe | instruction | bulk_control | batch4 | delta |")
-    print("| --- | --- | ---: | ---: | ---: |")
-    for _, delta, (pipe, instr), c, b in sorted(deltas, reverse=True)[:20]:
-        print(f"| {pipe} | `{instr}` | {c:.0f} | {b:.0f} | {delta:+.0f} |")
-
-    print("\n## Spike decision")
-    ratio = batch_running / control_running if control_running else float("inf")
-    if ratio <= 0.75:
-        print("STRONG_POSITIVE: batch4 lowers simulator running_time by at least 25%.")
-    elif ratio < 0.90:
-        print("BORDERLINE: measurable batching gain, but below the predeclared strong threshold.")
+    print("\n## Attribution decision")
+    spec_gain = reduction(bulk, spec)
+    batch_gain = reduction(spec, batch)
+    if batch_gain >= 0.20:
+        print("BATCHING_POSITIVE: after controlling for specialization, cross-row batching still saves at least 20% running time.")
+    elif batch_gain >= 0.10:
+        print("BATCHING_MODEST: batching adds a real 10-20% gain beyond specialization, but is not a large-gap explanation.")
+    elif batch_gain > 0.0:
+        print("SPECIALIZATION_DOMINATES: most of the original 19% gain came from compile-time specialization; batching adds less than 10%.")
     else:
-        print("STOP: batch4 stays within 10% of bulk-control; do not rescue with B=8/bank/final-merge tuning.")
+        print("NO_BATCHING_GAIN: after controlling for specialization, batch4 does not improve running time.")
+
+    if spec_gain >= 0.10:
+        print("SPECIALIZATION_SIGNAL: fixed-shape specialization alone saves at least 10%; consider production dispatch specialization separately.")
+    else:
+        print("SPECIALIZATION_SMALL: fixed-shape specialization alone saves less than 10%.")
 
     return 0
 
