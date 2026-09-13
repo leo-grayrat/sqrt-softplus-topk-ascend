@@ -240,11 +240,15 @@ __global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom(
     AscendC::InitSocState();
 
     const int32_t chunkCount = inner / PREFIX_CHUNK;
+    // MergeRepeated 只处理完整 4 路组并返回 floor(queueCount / 4)。
+    // 20/24/28 会分别产生 5/6/7 条下一层队列，再次进入 MergeRepeated 时
+    // 丢掉尾部，因此只允许递归归并树完整的 4/8/12/16/32。
     const bool useDenseRepeat =
         experts == inner &&
         (k == 4 || k == 8) &&
         chunkCount >= 4 &&
-        chunkCount % 4 == 0;
+        chunkCount % 4 == 0 &&
+        (chunkCount <= 16 || chunkCount == 32);
 
     if (useDenseRepeat) {
         SqrtSoftplusDenseRepeatTopKKernel op;
