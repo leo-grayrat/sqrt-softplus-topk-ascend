@@ -28,6 +28,7 @@ WORK_ROOT="${TMPDIR:-/tmp}/${REPO_NAME}-row-batch4-${USER:-user}"
 OUT_ROOT="$ROOT/profile-output/${SIM_LABEL}_rowbatch4_e1024_k8"
 CONTROL_WT="$WORK_ROOT/bulk-control-wt"
 HARNESS_SRC="$ROOT/tools/profile_harness"
+SPECIALIZED_HEADER="$ROOT/tools/row_batch4/dense_row_specialized_sequential_profile.h"
 BATCH_HEADER="$ROOT/tools/row_batch4/dense_row_batch4_profile.h"
 SIM_LIB="$ASCEND_HOME_PATH/tools/simulator/$SIM_ARCH_DIR/lib"
 
@@ -39,14 +40,17 @@ if [[ ! -f "$HARNESS_SRC/CMakeLists.txt" || ! -f "$HARNESS_SRC/main.cpp" ]]; the
     echo "缺少 tools/profile_harness；请在 profile-topk-cost-model 分支运行。" >&2
     exit 1
 fi
-if [[ ! -f "$BATCH_HEADER" ]]; then
-    echo "缺少 batch4 profiling header: $BATCH_HEADER" >&2
-    exit 1
-fi
+for required in "$SPECIALIZED_HEADER" "$BATCH_HEADER"; do
+    if [[ ! -f "$required" ]]; then
+        echo "缺少 profiling header: $required" >&2
+        exit 1
+    fi
+done
 
 mkdir -p "$WORK_ROOT" "$OUT_ROOT"
 
 echo "row-batch4 profiling config: arch=$NPU_ARCH rows=4 E=1024 k=8 blockNum=1"
+echo "variants: bulk_control / specialized_sequential / batch4"
 echo "simulator libs: $SIM_LIB"
 
 git -C "$ROOT" fetch origin bulk-prefix-pack
@@ -54,19 +58,6 @@ if [[ -d "$CONTROL_WT" ]]; then
     git -C "$ROOT" worktree remove --force "$CONTROL_WT" >/dev/null 2>&1 || true
 fi
 git -C "$ROOT" worktree add --detach "$CONTROL_WT" origin/bulk-prefix-pack
-
-extract_common_python='''
-from pathlib import Path
-import sys
-src = Path(sys.argv[1]).read_text(encoding="utf-8")
-namespace_marker = "namespace {"
-namespace_pos = src.find(namespace_marker)
-common_end = src.find("// k=1 时无需完整 TopK", namespace_pos)
-if min(namespace_pos, common_end) < 0:
-    raise SystemExit("无法定位 production 公共段")
-common_begin = namespace_pos + len(namespace_marker)
-print(src[common_begin:common_end], end="")
-'''
 
 generate_control_source() {
     local out="$1"
@@ -116,17 +107,22 @@ print(f"generated bulk_control: {out_path}")
 PY
 }
 
-generate_batch_source() {
-    local out="$1"
-    python3 - "$CONTROL_WT/submission/kernel.asc" "$BATCH_HEADER" "$out" <<'PY'
+generate_fixed_source() {
+    local label="$1"
+    local header="$2"
+    local kernel_name="$3"
+    local out="$4"
+    python3 - "$CONTROL_WT/submission/kernel.asc" "$header" "$kernel_name" "$label" "$out" <<'PY'
 from pathlib import Path
 import sys
 
 kernel_path = Path(sys.argv[1])
-batch_path = Path(sys.argv[2])
-out_path = Path(sys.argv[3])
+header_path = Path(sys.argv[2])
+kernel_name = sys.argv[3]
+label = sys.argv[4]
+out_path = Path(sys.argv[5])
 src = kernel_path.read_text(encoding="utf-8")
-batch = batch_path.read_text(encoding="utf-8")
+header = header_path.read_text(encoding="utf-8")
 
 namespace_marker = "namespace {"
 namespace_pos = src.find(namespace_marker)
@@ -143,20 +139,36 @@ out = (
     'namespace {\n'
     + common
     + '\n'
-    + batch
+    + header
     + '\n}  // namespace\n\n'
     + 'void LaunchProfileKernel(\n'
       '    uint32_t blockDim, void* stream, uint8_t* routerLogits, uint8_t* topkScores,\n'
       '    int32_t rows, int32_t experts, int32_t inner, int32_t k, int32_t blockNum)\n'
       '{\n'
-      '    sqrt_softplus_dense_row_batch4_profile_custom<<<blockDim, nullptr, stream>>>(\n'
+    + f'    {kernel_name}<<<blockDim, nullptr, stream>>>(\n'
       '        routerLogits, topkScores, rows, experts, inner, k, blockNum);\n'
       '}\n\n'
       '#include "main.cpp"\n'
 )
 out_path.write_text(out, encoding="utf-8")
-print(f"generated batch4: {out_path}")
+print(f"generated {label}: {out_path}")
 PY
+}
+
+generate_specialized_source() {
+    generate_fixed_source \
+        specialized_sequential \
+        "$SPECIALIZED_HEADER" \
+        sqrt_softplus_dense_row_specialized_sequential_profile_custom \
+        "$1"
+}
+
+generate_batch_source() {
+    generate_fixed_source \
+        batch4 \
+        "$BATCH_HEADER" \
+        sqrt_softplus_dense_row_batch4_profile_custom \
+        "$1"
 }
 
 build_and_profile() {
@@ -200,6 +212,7 @@ build_and_profile() {
 }
 
 build_and_profile bulk_control generate_control_source
+build_and_profile specialized_sequential generate_specialized_source
 build_and_profile batch4 generate_batch_source
 
 echo
