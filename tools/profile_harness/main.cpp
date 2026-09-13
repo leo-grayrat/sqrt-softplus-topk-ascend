@@ -58,7 +58,12 @@ void FillInput(float* input, int32_t rows, int32_t experts, int32_t k)
     }
 }
 
-bool RunOne(aclrtStream stream, int32_t rows, int32_t experts, int32_t k)
+bool RunOne(
+    aclrtStream stream,
+    int32_t rows,
+    int32_t experts,
+    int32_t k,
+    int32_t blockNum)
 {
     const size_t inputElems = static_cast<size_t>(rows) * static_cast<size_t>(experts);
     const size_t outputElems = static_cast<size_t>(rows) * static_cast<size_t>(k);
@@ -103,8 +108,13 @@ bool RunOne(aclrtStream stream, int32_t rows, int32_t experts, int32_t k)
     }
 
     const int32_t inner = (experts + 31) / 32 * 32;
-    const int32_t blockNum = rows;
-    std::printf("RUN profile-one rows=%d E=%d k=%d inner=%d\n", rows, experts, k, inner);
+    std::printf(
+        "RUN profile-one rows=%d E=%d k=%d inner=%d blockNum=%d\n",
+        rows,
+        experts,
+        k,
+        inner,
+        blockNum);
     std::fflush(stdout);
 
     if (ok) {
@@ -178,17 +188,20 @@ bool RunOne(aclrtStream stream, int32_t rows, int32_t experts, int32_t k)
 
 int main(int argc, char** argv)
 {
-    if (argc != 4) {
-        std::fprintf(stderr, "用法: %s rows E k\n", argv[0]);
+    if (argc != 4 && argc != 5) {
+        std::fprintf(stderr, "用法: %s rows E k [blockNum]\n", argv[0]);
         return 2;
     }
 
     const int32_t rows = std::atoi(argv[1]);
     const int32_t experts = std::atoi(argv[2]);
     const int32_t k = std::atoi(argv[3]);
+    const int32_t blockNum = argc == 5 ? std::atoi(argv[4]) : rows;
     if (rows <= 0 || rows > 64 || experts < 64 || experts > 1024 ||
-        k < 2 || k > 8 || k > experts) {
-        std::fprintf(stderr, "参数范围: 1<=rows<=64, 64<=E<=1024, 2<=k<=8\n");
+        k < 2 || k > 8 || k > experts || blockNum <= 0 || blockNum > rows) {
+        std::fprintf(
+            stderr,
+            "参数范围: 1<=rows<=64, 64<=E<=1024, 2<=k<=8, 1<=blockNum<=rows\n");
         return 2;
     }
 
@@ -200,7 +213,7 @@ int main(int argc, char** argv)
     bool ok = deviceSet && CheckAcl("aclrtCreateStream", aclrtCreateStream(&stream));
 
     if (ok) {
-        ok = RunOne(stream, rows, experts, k);
+        ok = RunOne(stream, rows, experts, k, blockNum);
     }
 
     if (stream != nullptr) {
