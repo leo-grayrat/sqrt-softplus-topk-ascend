@@ -13,13 +13,8 @@
 - rows=4：7.80 us
 - rows=8：14.34 us
 
-总 running time 近似：
-
-`T(rows) = 1.25 + 1.64 * rows us`
-
-SCALAR cycles 近似：
-
-`C_scalar(rows) = 21,324 + 3,949 * rows`
+总 running time 近似：`T(rows) = 1.25 + 1.64 * rows us`。
+SCALAR cycles 近似：`C_scalar(rows) = 21,324 + 3,949 * rows`。
 
 因此一次性 kernel / TPipe 固定成本存在，但不足以解释 Judge 中 6x、20x、50x 的大差距；主要问题仍在每行重复工作。
 
@@ -31,106 +26,90 @@ SCALAR cycles 近似：
 
 ## 固定形状
 
-第一版只支持：
-
-- FP32
-- rows=4
-- E=1024
-- inner=1024
-- k=8
-- blockNum=1
-
-不做通用 production gate，不处理 padding，不扩展 B=8。
+第一版只支持 FP32 / rows=4 / E=1024 / inner=1024 / k=8 / blockNum=1，不做通用 production gate，不处理 padding，不扩展 B=8。
 
 ## batch4 数据流
 
 4 行一次搬入 UB。每行 1024 个 float，共 4096 个元素。
 
-1. 一次 `ArithProgression<int32_t>` 生成 4096 个连续 payload index；index 只作为 `Sort32` 的伴随 payload，最终结果不使用 index。
-2. 一次 `Sort32(..., repeatTimes=128)`，因为每行有 32 个 32-element chunk，4 行总共 128 repeats。
-3. 用一次 strided `DataCopyParams` 将 128 个 chunk 的前 8 个 `(value,index)` pair 压成连续 128 条 prefix queue。
-4. `MrgSort.repeatTimes=32`：128 条 queue -> 32 条 queue。
-5. 再次 strided pack。
-6. `MrgSort.repeatTimes=8`：32 条 queue -> 8 条 queue。此时布局仍按 row 保持连续，每行恰好剩 2 条 queue。
-7. 第一版 final 2-way merge 仍逐行做 4 次；随后逐行 GatherMask / softplus+sqrt / 写回。这样只测前两层批量发射，不把尾层特殊布局优化混入同一实验。
+1. 一次 `ArithProgression<int32_t>` 生成 4096 个连续 payload index；
+2. 一次 `Sort32(..., repeatTimes=128)`；
+3. 一次 strided `DataCopyParams` 将 128 个 chunk 的前 8 个 `(value,index)` pair 压成连续 128 条 prefix queue；
+4. `MrgSort.repeatTimes=32`：128 -> 32 queues；
+5. 再次 strided pack；
+6. `MrgSort.repeatTimes=8`：32 -> 8 queues，此时每行剩 2 条；
+7. final 2-way merge / GatherMask / softplus+sqrt / 写回仍逐行做。
 
-## UB 粗算
+UB 粗算约 90 KB，低于 dav-2201 192 KB UB。
 
-按当前布局：
+## 第一轮 A/B
 
-- input：16 KB
-- index：16 KB
-- Sort32 pair 输出：32 KB
-- dense A：8 KB
-- dense B：8 KB
-- merge scratch：8 KB
-- final scratch：1 KB
-- output / transform scratch：< 1 KB
+第一轮比较：
 
-总计约 90 KB，明显低于 dav-2201 192 KB UB。第一版选择 B=4；不直接上 B=8。
-
-## 第一轮 A/B 与归因问题
-
-第一轮比较了：
-
-- `bulk_control`：`bulk-prefix-pack` 的通用逐行 production kernel；
-- `batch4`：固定 `rows=4,E=1024,k=8` 的 profiling-only batch kernel。
+- `bulk_control`：通用逐行 production kernel；
+- `batch4`：固定 `4x1024x8` 的 profiling-only batch kernel。
 
 结果：
 
-- bulk_control：duration 7.260 us，running 6.170 us；
-- batch4：duration 5.260 us，running 4.980 us；
-- running time 降低 19.3%，1.239x speedup。
+- bulk_control：running 6.170 us；
+- batch4：running 4.980 us；
+- 合计下降 19.3%，1.239x。
 
-结构变化：
+结构变化：SCALAR cycles 32,489 -> 19,148；`ST_XD_XN_IMM` 11,016 -> 4,083；SCALAR `WAIT_FLAG` 1,310 -> 0；MTE2 3,482 -> 2,186；MTE3 2,419 -> 1,274。`VBS32`/`VMS4V2` calls 显著减少，但各自总 cycles 基本不变；VECTOR BAR cycles 59,542 -> 59,384，几乎不变。
 
-- SCALAR cycles：32,489 -> 19,148；
-- `ST_XD_XN_IMM`：11,016 -> 4,083；
-- SCALAR `WAIT_FLAG`：1,310 -> 0；
-- MTE2 cycles：3,482 -> 2,186；
-- MTE3 cycles：2,419 -> 1,274；
-- `VBS32` calls：4 -> 1，但 cycles 2,248 -> 2,194；
-- `VMS4V2` calls：12 -> 6，但 cycles 2,024 -> 1,988；
-- VECTOR BAR cycles 基本不变：59,542 -> 59,384。
+第一轮存在混杂：batch4 同时做了固定形状专门化，因此不能把 19.3% 全归因 batching。
 
-这说明“跨行重组后标量/API 状态成本显著减少”的方向是对的，但第一轮 A/B 不能把 19.3% 全归因于 batching：`batch4` 同时把 rows/E/k/chunkCount 固定成了编译期常量，而 `bulk_control` 仍是通用 runtime kernel。大量 scalar store 的下降可能同时来自编译期专门化、循环展开与分支消除。
+## 第二轮三组归因
 
-因此第一轮只证明“固定形状 + batching 的组合有 19.3% simulator 收益”，不能证明 batching 本身有 19.3%。
+新增 `specialized_sequential`：固定 `rows=4,E=1024,k=8,blockNum=1`，merge 路径和 buffer 尺寸全部编译期确定，但仍逐行执行四次单行 Sort32 / Pack / Merge / Gather / Transform。
 
-## 第二轮三组归因实验
-
-新增 `specialized_sequential`：
-
-- 与 batch4 相同，固定 `rows=4,E=1024,k=8,blockNum=1`；
-- buffer 尺寸、k、chunkCount、merge 层数均为编译期常量；
-- 明确展开固定的 `32 -> 8 -> 2 -> 1` merge 序列；
-- 但仍按 `for row=0..3` 顺序执行四次单行 Sort32 / Pack / Merge / Gather / Transform，不做跨行 vector batching。
-
-三组含义：
+三组：
 
 1. `bulk_control`：通用 + 逐行；
 2. `specialized_sequential`：固定形状 + 逐行；
 3. `batch4`：固定形状 + 跨行 batching。
 
+### 实测
+
+| variant | duration_us | running_time_us |
+| --- | ---: | ---: |
+| bulk_control | 7.260 | 6.170 |
+| specialized_sequential | 6.490 | 6.020 |
+| batch4 | 5.260 | 4.980 |
+
 归因：
 
-- `bulk_control -> specialized_sequential` = 编译期专门化收益；
-- `specialized_sequential -> batch4` = batching 的额外收益；
-- `bulk_control -> batch4` = 两者合计。
+- bulk_control -> specialized_sequential：1.025x，**2.4%**；
+- specialized_sequential -> batch4：1.209x，**17.3%**；
+- bulk_control -> batch4：1.239x，**19.3%**。
 
-第二轮才用于判断 batching 是否值得继续 production 化。
+因此第一轮收益主要来自 batching，而不是固定形状专门化。
 
-## 第二轮判定
+### 指令结构
 
-以 simulator running time 为方向性指标：
+specialized_sequential -> batch4：
 
-- 若 `specialized_sequential -> batch4` 仍 >=20%：batching 本身为正，值得继续研究；
-- 若 batching 额外收益仅 10-20%：有真实收益，但不足以解释榜首数量级差距；
-- 若 batching <10%，而 `bulk_control -> specialized_sequential` 明显：第一轮收益主要来自编译期专门化，应转向 production specialization；
-- 若两者都小：停止该支线。
+- SCALAR cycles：27,086 -> 19,148；
+- SCALAR calls：2,340 -> 1,507；
+- `ST_XD_XN_IMM`：7,342 -> 4,083；
+- SCALAR `WAIT_FLAG`：1,387 -> 0；
+- `LD_XD_XN_IMM`：1,796 -> 1,278；
+- MTE2：3,502 -> 2,186 cycles；
+- MTE3：2,352 -> 1,274 cycles；
+- `VBS32`：4 calls / 2,248 cycles -> 1 call / 2,194 cycles；
+- `VMS4V2`：12 calls / 2,024 cycles -> 6 calls / 1,988 cycles；
+- VECTOR BAR：51,719 -> 59,384 cycles，未下降。
 
-无论第二轮结果如何，都不把 simulator 百分比直接等同 Judge 百分比。`bulk-prefix-pack` 已证明 simulator 的 barrier 记账可与真实 NPU 收益脱钩。
+这说明收益主要来自减少逐行 API 发射、标量参数/地址/状态操作和 MTE flag/wait，而不是减少 Sort32/MrgSort 算术本身，也不是减少 VECTOR BAR。
+
+## 当前结论
+
+1. 固定 E/k/rows 的编译期专门化单独只有 2.4%，不值得作为主方向。
+2. 跨行 batching 本身在 `E=1024,k=8` 上有真实 simulator 正信号，约 17.3%，但达不到预设 25% 强正阈值。
+3. 该收益不足以解释榜首数量级差距，因此不能把 B=4 production 化当成主线终点。
+4. 但 production 的 FP32 `k<=8` 当前完全按行处理；对于小 E、大 rows，每行真实 vector 工作更少，而同类逐行控制成本仍存在，batching 的相对收益有可能显著放大。相比继续优化 E=1024 的 final merge，这一假设的信息增益更高。
+5. 下一轮若继续本支线，应优先测小 E（如 E=64/128/256）的大 batch batching scaling，而不是 B=8 或 bank-layout 微调。
 
 ## 范围约束
 
-这是 profiling-only spike。代码只放在 `profile-topk-cost-model` 分支的 `tools/` 下；不改 `submission/`，不提交 Judge。若第二轮明确识别出 specialization 或 batching 的独立正信号，再另开 production 设计。
+当前仍为 profiling-only。正式 submission 未改。只有在小 E 上出现明显更强的 batching 收益，并且不会因减少 block 数而损失并行度时，才值得设计 production gate（例如仅在 rows 足够大、groupCount 仍能填满所有可用 vector core 时启用）。
