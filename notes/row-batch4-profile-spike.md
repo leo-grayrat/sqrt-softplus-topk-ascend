@@ -69,29 +69,68 @@ SCALAR cycles 近似：
 
 总计约 90 KB，明显低于 dav-2201 192 KB UB。第一版选择 B=4；不直接上 B=8。
 
-## 对照实验
+## 第一轮 A/B 与归因问题
 
-不能直接把 main 的 rows=4 7.80 us 作为唯一 control，因为 batch4 会使用 strided prefix pack，而 bulk-prefix-pack 已知会让 simulator 自己变快但不改善 Judge。
+第一轮比较了：
 
-因此同一脚本必须比较：
+- `bulk_control`：`bulk-prefix-pack` 的通用逐行 production kernel；
+- `batch4`：固定 `rows=4,E=1024,k=8` 的 profiling-only batch kernel。
 
-- `bulk-control`：`bulk-prefix-pack` 分支，原有逐行 `ProcessRow()`，rows=4, E=1024, k=8, blockNum=1；
-- `batch4`：相同 bulk packing 语义，只把 ArithProgression / Sort32 / 前两层 MrgSort 跨 4 行批量发射。
+结果：
 
-这样可尽量把 simulator 的 packing 记账效应从 batching 收益中剥离。
+- bulk_control：duration 7.260 us，running 6.170 us；
+- batch4：duration 5.260 us，running 4.980 us；
+- running time 降低 19.3%，1.239x speedup。
 
-## 成功标准
+结构变化：
 
-先要求 batch4 simulator correctness PASS。
+- SCALAR cycles：32,489 -> 19,148；
+- `ST_XD_XN_IMM`：11,016 -> 4,083；
+- SCALAR `WAIT_FLAG`：1,310 -> 0；
+- MTE2 cycles：3,482 -> 2,186；
+- MTE3 cycles：2,419 -> 1,274；
+- `VBS32` calls：4 -> 1，但 cycles 2,248 -> 2,194；
+- `VMS4V2` calls：12 -> 6，但 cycles 2,024 -> 1,988；
+- VECTOR BAR cycles 基本不变：59,542 -> 59,384。
 
-性能只看 batch4 相对 bulk-control：
+这说明“跨行重组后标量/API 状态成本显著减少”的方向是对的，但第一轮 A/B 不能把 19.3% 全归因于 batching：`batch4` 同时把 rows/E/k/chunkCount 固定成了编译期常量，而 `bulk_control` 仍是通用 runtime kernel。大量 scalar store 的下降可能同时来自编译期专门化、循环展开与分支消除。
 
-- 至少约 25% running_time 下降，才认为有继续价值；
-- 若能接近 5 us 或更低，为强正结果；
-- 若仍 >= bulk-control 的约 85%~90%，停止，不继续救 B=8、bank layout 或 final merge batching。
+因此第一轮只证明“固定形状 + batching 的组合有 19.3% simulator 收益”，不能证明 batching 本身有 19.3%。
 
-同时记录 SCALAR、VECTOR、BAR、WAIT_FLAG、VBS32、VMS4V2 的 calls/cycles，用来判断 API 发射与 per-row 控制是否真的减少。
+## 第二轮三组归因实验
+
+新增 `specialized_sequential`：
+
+- 与 batch4 相同，固定 `rows=4,E=1024,k=8,blockNum=1`；
+- buffer 尺寸、k、chunkCount、merge 层数均为编译期常量；
+- 明确展开固定的 `32 -> 8 -> 2 -> 1` merge 序列；
+- 但仍按 `for row=0..3` 顺序执行四次单行 Sort32 / Pack / Merge / Gather / Transform，不做跨行 vector batching。
+
+三组含义：
+
+1. `bulk_control`：通用 + 逐行；
+2. `specialized_sequential`：固定形状 + 逐行；
+3. `batch4`：固定形状 + 跨行 batching。
+
+归因：
+
+- `bulk_control -> specialized_sequential` = 编译期专门化收益；
+- `specialized_sequential -> batch4` = batching 的额外收益；
+- `bulk_control -> batch4` = 两者合计。
+
+第二轮才用于判断 batching 是否值得继续 production 化。
+
+## 第二轮判定
+
+以 simulator running time 为方向性指标：
+
+- 若 `specialized_sequential -> batch4` 仍 >=20%：batching 本身为正，值得继续研究；
+- 若 batching 额外收益仅 10-20%：有真实收益，但不足以解释榜首数量级差距；
+- 若 batching <10%，而 `bulk_control -> specialized_sequential` 明显：第一轮收益主要来自编译期专门化，应转向 production specialization；
+- 若两者都小：停止该支线。
+
+无论第二轮结果如何，都不把 simulator 百分比直接等同 Judge 百分比。`bulk-prefix-pack` 已证明 simulator 的 barrier 记账可与真实 NPU 收益脱钩。
 
 ## 范围约束
 
-这是 profiling-only spike。代码只放在 `profile-topk-cost-model` 分支的 `tools/` 下；不改 `submission/`，不提交 Judge。若 spike 强正，再另开 production 设计。
+这是 profiling-only spike。代码只放在 `profile-topk-cost-model` 分支的 `tools/` 下；不改 `submission/`，不提交 Judge。若第二轮明确识别出 specialization 或 batching 的独立正信号，再另开 production 设计。
