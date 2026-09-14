@@ -9,8 +9,13 @@ required = [
     "SqrtSoftplusVendorPerfTopKKernel",
     "SelectVendorBatchCapacity",
     "SelectVendorBatchRows",
+    "BuildVendorValueMask",
+    "InitValuePattern",
+    "ExtractKValues",
+    "patternBuffer_",
     "activeBlockNum_",
     "VENDOR_KEEP_K = 8",
+    "VENDOR_GATHER_REPEAT = 64",
     "TQue<AscendC::TPosition::VECIN, 2>",
     "InitIndexBatch",
     "RearrangeRows",
@@ -18,11 +23,9 @@ required = [
     "CopyTop8Prefixes",
     "MergeFourTop8",
     "MergeTwoFinal32",
-    "PackTop8Values",
-    "gatherBuffer_",
     "AscendC::Sort32<float>(",
     "AscendC::MrgSort<float>(",
-    "AscendC::GatherMask(",
+    "GatherMask(",
     "inner_",
     "copyAlignedElems",
     "negativeInf",
@@ -40,9 +43,11 @@ for forbidden in [
     "rows >= blockNum * vendorBatchRows",
     "experts % 32 == 0",
     "experts == inner &&",
+    "PackTop8Values",
+    "gatherBuffer_",
 ]:
     if forbidden in header:
-        raise SystemExit(f"FAIL: stale vendor-perf admission restriction remains: {forbidden!r}")
+        raise SystemExit(f"FAIL: stale vendor-perf path remains: {forbidden!r}")
 
 start = header.find("class SqrtSoftplusVendorPerfTopKKernel")
 end = header.find("__global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom", start)
@@ -77,33 +82,29 @@ if "validRows * inner_ / VENDOR_SORT_UNIT" not in body:
     raise SystemExit("FAIL: Sort32 still processes dummy rows in the tail batch")
 if "BuildFinalPairs(pairA, pairB, validRows)" not in body:
     raise SystemExit("FAIL: merge tree still processes dummy rows in the tail batch")
-if "static_cast<uint8_t>(validRows)" not in body:
-    raise SystemExit("FAIL: GatherMask still processes dummy rows in the tail batch")
 
-# Post-selection specialization: GatherMask writes 32 values per row, but k<=8
-# only needs the first eight. Pack those 8-wide rows, then issue one transform
-# over the whole batch. VECOUT->GM srcStride is 32B-granular, so only k=8 can
-# use a single contiguous copyout; k<8 keeps the exact per-row copyout fallback.
-if "PackTop8Values(gathered, out, validRows)" not in body:
-    raise SystemExit("FAIL: top-8 values are not packed across rows before transform")
-if "static_cast<uint32_t>(validRows * VENDOR_KEEP_K)" not in body:
-    raise SystemExit("FAIL: transform is not issued once over validRows*8 values")
+# Round 6 follows Huawei ExtractKFP32Perf: build an alternating value mask for
+# the true runtime k, GatherMask directly into a compact [validRows, k] output,
+# then transform and copy that packed buffer once.
+if "pattern.SetValue(0, BuildVendorValueMask(k_))" not in body:
+    raise SystemExit("FAIL: value pattern is not initialized from runtime k")
+if "params.repeatTimes = static_cast<uint8_t>(rows)" not in body:
+    raise SystemExit("FAIL: true-k GatherMask does not repeat across valid rows")
+if "params.src0RepeatStride" not in body or "VENDOR_FINAL_PAIR_FLOATS / 8" not in body:
+    raise SystemExit("FAIL: true-k GatherMask does not advance by one final-pair row")
+if "ExtractKValues(out, finalPairs, validRows)" not in body:
+    raise SystemExit("FAIL: ComputeGroup does not use direct true-k extraction")
+if "static_cast<uint32_t>(validRows * k_)" not in body:
+    raise SystemExit("FAIL: transform still processes padded top-8 instead of validRows*k")
+
 compute = body[body.find("__aicore__ inline void ComputeGroup"):]
-if "if (k_ == VENDOR_KEEP_K)" not in compute:
-    raise SystemExit("FAIL: k=8 contiguous fast copyout path is missing")
-if "for (int32_t row = 0; row < validRows; ++row)" not in compute:
-    raise SystemExit("FAIL: k<8 exact per-row copyout fallback is missing")
-transform_pos = compute.find("TransformSelected(")
-loop_pos = compute.find("for (int32_t row = 0; row < validRows; ++row)")
-if transform_pos < 0 or (0 <= loop_pos < transform_pos):
-    raise SystemExit("FAIL: transform is still row-at-a-time instead of batched")
-
-# Bisheng treats sizeof(float) as size_t/unsigned long. In a braced
-# DataCopyExtParams initializer, casting only the left multiplicand to uint32_t
-# still leaves the product as unsigned long and triggers -Wc++11-narrowing.
-if "static_cast<uint32_t>(validRows * VENDOR_KEEP_K) * sizeof(float)" in compute:
-    raise SystemExit("FAIL: k=8 copyout byte count still narrows size_t in aggregate initializer")
+if "if (k_ == VENDOR_KEEP_K)" in compute:
+    raise SystemExit("FAIL: stale k=8-only contiguous copyout split remains")
+if "for (int32_t row = 0; row < validRows; ++row)" in compute:
+    raise SystemExit("FAIL: stale per-row copyout remains after true-k compaction")
+if "static_cast<uint64_t>(validRows) * static_cast<uint64_t>(k_) * sizeof(float)" not in compute:
+    raise SystemExit("FAIL: packed copyout byte count is not based on validRows*k")
 if "packedOutputBytes" not in compute:
-    raise SystemExit("FAIL: k=8 copyout byte count is not normalized to uint32_t before initialization")
+    raise SystemExit("FAIL: packed copyout byte count is not normalized to uint32_t")
 
-print("PASS: staged adaptive vendor-perf TopK with batched transform is present")
+print("PASS: vendor-perf TopK uses direct true-k GatherMask extraction and batched transform")
