@@ -63,16 +63,19 @@ public:
         const uint32_t batchInputBytes =
             static_cast<uint32_t>(batchRows_ * inner_) * sizeof(float);
         const uint32_t batchPairBytes = batchInputBytes * 2u;
-        const uint32_t batchOutputBytes =
+        const uint32_t batchGatherBytes =
             static_cast<uint32_t>(batchRows_ * VENDOR_FINAL_VALUES) * sizeof(float);
+        const uint32_t batchPackedBytes =
+            static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(float);
 
         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
         pipe_.InitBuffer(inputBuffer_, batchInputBytes);
-        pipe_.InitBuffer(outputQueue_, 1, batchOutputBytes);
+        pipe_.InitBuffer(outputQueue_, 1, batchPackedBytes);
+        pipe_.InitBuffer(gatherBuffer_, batchGatherBytes);
         pipe_.InitBuffer(indexBuffer_, batchInputBytes);
         pipe_.InitBuffer(pairABuffer_, batchPairBytes);
         pipe_.InitBuffer(pairBBuffer_, batchPairBytes);
-        pipe_.InitBuffer(floatTmpBuffer_, ALIGN_BYTES);
+        pipe_.InitBuffer(floatTmpBuffer_, batchPackedBytes);
     }
 
     __aicore__ inline void Process()
@@ -334,6 +337,21 @@ private:
         return false;
     }
 
+    __aicore__ inline void PackTop8Values(
+        const AscendC::LocalTensor<float>& src,
+        const AscendC::LocalTensor<float>& dst,
+        int32_t rows)
+    {
+        AscendC::DataCopyParams params;
+        params.blockCount = static_cast<uint16_t>(rows);
+        params.blockLen = 1;
+        params.srcStride =
+            static_cast<uint16_t>((VENDOR_FINAL_VALUES - VENDOR_KEEP_K) / 8);
+        params.dstStride = 0;
+        AscendC::DataCopy(dst, src, params);
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
     __aicore__ inline void ComputeGroup(int32_t group)
     {
         const int32_t firstRow = group * batchRows_;
@@ -363,10 +381,10 @@ private:
         const AscendC::LocalTensor<float>& finalPairs =
             finalInA ? pairA : pairB;
 
-        AscendC::LocalTensor<float> out = outputQueue_.AllocTensor<float>();
+        AscendC::LocalTensor<float> gathered = gatherBuffer_.Get<float>();
         uint64_t rsvdCnt = 0;
         AscendC::GatherMask(
-            out,
+            gathered,
             finalPairs,
             static_cast<uint8_t>(1),
             false,
@@ -375,27 +393,32 @@ private:
             rsvdCnt);
         AscendC::PipeBarrier<PIPE_V>();
 
+        AscendC::LocalTensor<float> out = outputQueue_.AllocTensor<float>();
+        PackTop8Values(gathered, out, validRows);
+
         AscendC::LocalTensor<float> tmp = floatTmpBuffer_.Get<float>();
-        for (int32_t row = 0; row < validRows; ++row) {
-            TransformSelected(
-                out[static_cast<uint32_t>(row * VENDOR_FINAL_VALUES)],
-                tmp,
-                tmp,
-                static_cast<uint32_t>(k_));
-        }
+        TransformSelected(
+            out,
+            tmp,
+            tmp,
+            static_cast<uint32_t>(validRows * VENDOR_KEEP_K));
 
         inputQueue_.FreeTensor(staging);
         outputQueue_.EnQue(out);
         out = outputQueue_.DeQue<float>();
 
         const uint32_t outputBytes = static_cast<uint32_t>(k_) * sizeof(float);
-        AscendC::DataCopyExtParams copyOutParams{1, outputBytes, 0, 0, 0};
-        for (int32_t row = 0; row < validRows; ++row) {
-            AscendC::DataCopyPad(
-                outputGm_[static_cast<int64_t>(firstRow + row) * k_],
-                out[static_cast<uint32_t>(row * VENDOR_FINAL_VALUES)],
-                copyOutParams);
-        }
+        AscendC::DataCopyExtParams copyOutParams;
+        copyOutParams.blockCount = static_cast<uint16_t>(validRows);
+        copyOutParams.blockLen = outputBytes;
+        copyOutParams.srcStride =
+            static_cast<uint32_t>(VENDOR_KEEP_K - k_) * sizeof(float);
+        copyOutParams.dstStride = 0;
+        copyOutParams.rsv = 0;
+        AscendC::DataCopyPad(
+            outputGm_[static_cast<int64_t>(firstRow) * k_],
+            out,
+            copyOutParams);
         outputQueue_.FreeTensor(out);
     }
 
@@ -404,6 +427,7 @@ private:
     AscendC::TQue<AscendC::TPosition::VECIN, 2> inputQueue_;
     AscendC::TQue<AscendC::TPosition::VECOUT, 1> outputQueue_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> inputBuffer_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> gatherBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> indexBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairABuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairBBuffer_;
