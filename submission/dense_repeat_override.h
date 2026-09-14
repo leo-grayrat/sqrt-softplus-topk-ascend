@@ -1,7 +1,8 @@
 // Huawei A2/A3 MoeGatingTopKSoftmaxPerf 的 selection 执行结构：
 // 多行一次 Sort32，每 32 个元素固定保留 top-8，跨行批量 MrgSort，输入双缓冲。
 // 本题只输出 scores，因此 Sort32 的 index 仅作 payload，统一置 0 即可。
-// GM 中每行仍按真实 experts 紧密存放；进入 UB 后按 inner=ceil(E/32)*32 补 -inf。
+// GM 中每行仍按真实 experts 紧密存放；CopyIn 先按 32B 行对齐批量搬入 staging，
+// 再重排到 inner=ceil(E/32)*32 的 TopK 行布局并补 -inf。
 constexpr int32_t VENDOR_KEEP_K = 8;
 constexpr int32_t VENDOR_SORT_UNIT = 32;
 constexpr int32_t VENDOR_MERGE_UNIT = 128;
@@ -50,19 +51,23 @@ public:
         activeBlockNum_ = groupCount_ < blockNum_ ? groupCount_ : blockNum_;
 
         const uint32_t rawBytes = static_cast<uint32_t>(experts_) * sizeof(float);
-        const uint32_t copyAlignedBytes = (rawBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES;
+        const uint32_t copyAlignedBytes =
+            (rawBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES;
         copyAlignedElems_ = static_cast<int32_t>(copyAlignedBytes / sizeof(float));
 
         inputGm_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(routerLogits));
         outputGm_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(topkScores));
 
+        const uint32_t batchStageBytes =
+            static_cast<uint32_t>(batchRows_ * copyAlignedElems_) * sizeof(float);
         const uint32_t batchInputBytes =
             static_cast<uint32_t>(batchRows_ * inner_) * sizeof(float);
         const uint32_t batchPairBytes = batchInputBytes * 2u;
         const uint32_t batchOutputBytes =
             static_cast<uint32_t>(batchRows_ * VENDOR_FINAL_VALUES) * sizeof(float);
 
-        pipe_.InitBuffer(inputQueue_, 2, batchInputBytes);
+        pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
+        pipe_.InitBuffer(inputBuffer_, batchInputBytes);
         pipe_.InitBuffer(outputQueue_, 1, batchOutputBytes);
         pipe_.InitBuffer(indexBuffer_, batchInputBytes);
         pipe_.InitBuffer(pairABuffer_, batchPairBytes);
@@ -92,6 +97,16 @@ public:
     }
 
 private:
+    __aicore__ inline int32_t GroupValidRows(int32_t group) const
+    {
+        const int32_t firstRow = group * batchRows_;
+        int32_t validRows = rows_ - firstRow;
+        if (validRows > batchRows_) {
+            validRows = batchRows_;
+        }
+        return validRows;
+    }
+
     __aicore__ inline void InitIndexBatch()
     {
         AscendC::LocalTensor<int32_t> index = indexBuffer_.Get<int32_t>();
@@ -104,41 +119,50 @@ private:
 
     __aicore__ inline void CopyInGroup(int32_t group)
     {
-        AscendC::LocalTensor<float> input = inputQueue_.AllocTensor<float>();
+        AscendC::LocalTensor<float> staging = inputQueue_.AllocTensor<float>();
         const int32_t firstRow = group * batchRows_;
+        const int32_t validRows = GroupValidRows(group);
         const uint32_t rowBytes = static_cast<uint32_t>(experts_) * sizeof(float);
         const uint8_t rightPadding = static_cast<uint8_t>(copyAlignedElems_ - experts_);
         const float negativeInf = -INFINITY;
-        AscendC::DataCopyExtParams copyParams{1, rowBytes, 0, 0, 0};
+
+        AscendC::DataCopyExtParams copyParams;
+        copyParams.blockCount = static_cast<uint16_t>(validRows);
+        copyParams.blockLen = rowBytes;
+        copyParams.srcStride = 0;
+        copyParams.dstStride = 0;
+        copyParams.rsv = 0;
         AscendC::DataCopyPadExtParams<float> padParams{
             true, 0, rightPadding, negativeInf};
 
-        for (int32_t slot = 0; slot < batchRows_; ++slot) {
-            const int32_t row = firstRow + slot;
-            // 尾 batch 的无效 slot 复制本 batch 第一行；其结果最终不会写回 GM。
-            const int32_t sourceRow = row < rows_ ? row : firstRow;
-            AscendC::DataCopyPad(
-                input[static_cast<uint32_t>(slot * inner_)],
-                inputGm_[static_cast<int64_t>(sourceRow) * experts_],
-                copyParams,
-                padParams);
-        }
-        inputQueue_.EnQue(input);
+        AscendC::DataCopyPad(
+            staging,
+            inputGm_[static_cast<int64_t>(firstRow) * experts_],
+            copyParams,
+            padParams);
+        inputQueue_.EnQue(staging);
     }
 
-    __aicore__ inline void PadRows(const AscendC::LocalTensor<float>& input)
+    __aicore__ inline void RearrangeRows(
+        const AscendC::LocalTensor<float>& dst,
+        const AscendC::LocalTensor<float>& staging,
+        int32_t validRows)
     {
-        if (copyAlignedElems_ >= inner_) {
-            return;
-        }
         const float negativeInf = -INFINITY;
-        const uint32_t tail = static_cast<uint32_t>(inner_ - copyAlignedElems_);
-        for (int32_t slot = 0; slot < batchRows_; ++slot) {
+        if (copyAlignedElems_ < inner_) {
             AscendC::Duplicate(
-                input[static_cast<uint32_t>(slot * inner_ + copyAlignedElems_)],
+                dst,
                 negativeInf,
-                tail);
+                static_cast<uint32_t>(validRows * inner_));
+            AscendC::PipeBarrier<PIPE_V>();
         }
+
+        AscendC::DataCopyParams params;
+        params.blockCount = static_cast<uint16_t>(validRows);
+        params.blockLen = static_cast<uint16_t>(copyAlignedElems_ / 8);
+        params.srcStride = 0;
+        params.dstStride = static_cast<uint16_t>((inner_ - copyAlignedElems_) / 8);
+        AscendC::DataCopy(dst, staging, params);
         AscendC::PipeBarrier<PIPE_V>();
     }
 
@@ -239,28 +263,25 @@ private:
     // 返回 true 表示最终 pair 在 pairA，否则在 pairB。
     __aicore__ inline bool BuildFinalPairs(
         const AscendC::LocalTensor<float>& pairA,
-        const AscendC::LocalTensor<float>& pairB)
+        const AscendC::LocalTensor<float>& pairB,
+        int32_t rows)
     {
         if (inner_ <= 512) {
             if (inner_ > VENDOR_MERGE_UNIT) {
-                // <=16 个 Sort32 queue 先压到 16 个 top-8 槽；不足部分补 -inf。
                 CopyTop8Prefixes(
                     pairB, 0, VENDOR_MERGE_UNIT,
-                    pairA, 0, inner_, inner_, batchRows_);
-                // 每行固定执行 4 个 4-way merge，空 queue 已由 -inf 补齐。
-                MergeFourTop8(pairA, pairB, batchRows_ * 4);
-                // 4 个 top-32 结果各留 top-8，压成最终 4 queue。
+                    pairA, 0, inner_, inner_, rows);
+                MergeFourTop8(pairA, pairB, rows * 4);
                 CopyTop8Prefixes(
                     pairB, 0, VENDOR_FINAL_VALUES,
                     pairA, 0, VENDOR_MERGE_UNIT,
-                    VENDOR_MERGE_UNIT, batchRows_);
+                    VENDOR_MERGE_UNIT, rows);
             } else {
-                // <=4 个 Sort32 queue 直接补到固定 4 queue。
                 CopyTop8Prefixes(
                     pairB, 0, VENDOR_FINAL_VALUES,
-                    pairA, 0, inner_, inner_, batchRows_);
+                    pairA, 0, inner_, inner_, rows);
             }
-            MergeFourTop8(pairA, pairB, batchRows_);
+            MergeFourTop8(pairA, pairB, rows);
             return true;
         }
 
@@ -269,13 +290,11 @@ private:
         const int32_t tailPackedCols =
             tailCols > VENDOR_MERGE_UNIT ? VENDOR_MERGE_UNIT : VENDOR_FINAL_VALUES;
         const uint32_t tailPackedBase =
-            static_cast<uint32_t>(batchRows_ * VENDOR_MERGE_UNIT * 2);
+            static_cast<uint32_t>(rows * VENDOR_MERGE_UNIT * 2);
 
-        // 先把 former-512 与 tail 都从 Sort32 结果压紧到 pairB；
-        // 必须在覆盖 pairA 前完成两段拷贝。
         CopyTop8Prefixes(
             pairB, 0, VENDOR_MERGE_UNIT,
-            pairA, 0, inner_, formerCols, batchRows_);
+            pairA, 0, inner_, formerCols, rows);
         CopyTop8Prefixes(
             pairB,
             tailPackedBase,
@@ -284,23 +303,22 @@ private:
             static_cast<uint32_t>(formerCols * 2),
             inner_,
             tailCols,
-            batchRows_);
+            rows);
 
-        // former 512: 16 queue -> 4 个 top-32 -> 4 个 top-8 -> final top-32。
-        MergeFourTop8(pairA, pairB, batchRows_ * 4);
+        MergeFourTop8(pairA, pairB, rows * 4);
         CopyTop8Prefixes(
             pairB, 0, VENDOR_FINAL_VALUES,
             pairA, 0, VENDOR_MERGE_UNIT,
-            VENDOR_MERGE_UNIT, batchRows_);
-        MergeFourTop8(pairA, pairB, batchRows_);
+            VENDOR_MERGE_UNIT, rows);
+        MergeFourTop8(pairA, pairB, rows);
 
         const uint32_t tailFinalBase =
-            static_cast<uint32_t>(batchRows_ * VENDOR_FINAL_PAIR_FLOATS);
+            static_cast<uint32_t>(rows * VENDOR_FINAL_PAIR_FLOATS);
         if (tailCols > VENDOR_MERGE_UNIT) {
             MergeFourTop8(
                 pairA[tailFinalBase],
                 pairB[tailPackedBase],
-                batchRows_ * 4);
+                rows * 4);
             CopyTop8Prefixes(
                 pairB,
                 tailPackedBase,
@@ -309,28 +327,25 @@ private:
                 tailFinalBase,
                 VENDOR_MERGE_UNIT,
                 VENDOR_MERGE_UNIT,
-                batchRows_);
+                rows);
         }
         MergeFourTop8(
             pairA[tailFinalBase],
             pairB[tailPackedBase],
-            batchRows_);
+            rows);
 
-        // k<=8：former/tail 各自只需前 8 个，再做 2-way merge。
-        MergeTwoFinal32(pairB, pairA, tailFinalBase, batchRows_);
+        MergeTwoFinal32(pairB, pairA, tailFinalBase, rows);
         return false;
     }
 
     __aicore__ inline void ComputeGroup(int32_t group)
     {
         const int32_t firstRow = group * batchRows_;
-        int32_t validRows = rows_ - firstRow;
-        if (validRows > batchRows_) {
-            validRows = batchRows_;
-        }
+        const int32_t validRows = GroupValidRows(group);
 
-        AscendC::LocalTensor<float> input = inputQueue_.DeQue<float>();
-        PadRows(input);
+        AscendC::LocalTensor<float> staging = inputQueue_.DeQue<float>();
+        AscendC::LocalTensor<float> input = inputBuffer_.Get<float>();
+        RearrangeRows(input, staging, validRows);
 
         AscendC::LocalTensor<int32_t> signedIndex = indexBuffer_.Get<int32_t>();
         AscendC::LocalTensor<uint32_t> index =
@@ -342,10 +357,10 @@ private:
             pairA,
             input,
             index,
-            batchRows_ * inner_ / VENDOR_SORT_UNIT);
+            validRows * inner_ / VENDOR_SORT_UNIT);
         AscendC::PipeBarrier<PIPE_V>();
 
-        const bool finalInA = BuildFinalPairs(pairA, pairB);
+        const bool finalInA = BuildFinalPairs(pairA, pairB, validRows);
         const AscendC::LocalTensor<float>& finalPairs =
             finalInA ? pairA : pairB;
 
@@ -357,7 +372,7 @@ private:
             static_cast<uint8_t>(1),
             false,
             0,
-            {1, static_cast<uint8_t>(batchRows_), 8, 0},
+            {1, static_cast<uint8_t>(validRows), 8, 0},
             rsvdCnt);
         AscendC::PipeBarrier<PIPE_V>();
 
@@ -370,7 +385,7 @@ private:
                 static_cast<uint32_t>(k_));
         }
 
-        inputQueue_.FreeTensor(input);
+        inputQueue_.FreeTensor(staging);
         outputQueue_.EnQue(out);
         out = outputQueue_.DeQue<float>();
 
@@ -389,6 +404,7 @@ private:
     AscendC::TPipe pipe_;
     AscendC::TQue<AscendC::TPosition::VECIN, 2> inputQueue_;
     AscendC::TQue<AscendC::TPosition::VECOUT, 1> outputQueue_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> inputBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> indexBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairABuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairBBuffer_;
