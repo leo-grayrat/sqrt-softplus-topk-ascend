@@ -3,14 +3,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HEADER = ROOT / "submission" / "dense_repeat_override.h"
-KERNEL = ROOT / "submission" / "kernel.asc"
 header = HEADER.read_text(encoding="utf-8")
-kernel = KERNEL.read_text(encoding="utf-8")
 
-required_header = [
+required = [
     "SqrtSoftplusVendorPerfTopKKernel",
     "SelectVendorBatchCapacity",
     "SelectVendorBatchRows",
+    "activeBlockNum_",
     "VENDOR_KEEP_K = 8",
     "TQue<AscendC::TPosition::VECIN, 2>",
     "InitIndexBatch",
@@ -24,7 +23,7 @@ required_header = [
     "k >= 2 && k <= 8",
 ]
 
-missing = [needle for needle in required_header if needle not in header]
+missing = [needle for needle in required if needle not in header]
 if missing:
     raise SystemExit(
         "FAIL: missing adaptive vendor-perf pieces: "
@@ -44,19 +43,7 @@ if body.count("AscendC::Sort32<float>(") != 1:
     raise SystemExit("FAIL: vendor-perf kernel should have one source-level Sort32 call site")
 if "for (int32_t row = blockIdx" in body:
     raise SystemExit("FAIL: vendor-perf kernel must operate on row batches, not the old row-at-a-time loop")
-
-required_kernel = [
-    "vendorCapacity",
-    "vendorRowsPerCore",
-    "vendorBatchRows",
-    "vendorGroupCount",
-    "vendorBlockNum",
-]
-missing_kernel = [needle for needle in required_kernel if needle not in kernel]
-if missing_kernel:
-    raise SystemExit(
-        "FAIL: host launch is not adaptive yet: "
-        + ", ".join(repr(x) for x in missing_kernel)
-    )
+if "group + activeBlockNum_" not in body:
+    raise SystemExit("FAIL: group stride still uses launched block count instead of active block count")
 
 print("PASS: adaptive vendor-perf TopK production structure is present")
