@@ -67,6 +67,10 @@ if "for (int32_t slot = 0; slot < batchRows_; ++slot)" in copy_body:
 if "blockCount = static_cast<uint16_t>(validRows)" not in copy_body:
     raise SystemExit("FAIL: CopyInGroup does not issue one multi-row DataCopyPad")
 
+if "AscendC::LocalTensor<float> input = staging;" not in body:
+    raise SystemExit("FAIL: aligned rows do not sort directly from staging")
+if "input = inputBuffer_.Get<float>();" not in body:
+    raise SystemExit("FAIL: nonaligned rows do not switch to rearranged input buffer")
 if "validRows * inner_ / VENDOR_SORT_UNIT" not in body:
     raise SystemExit("FAIL: Sort32 still processes dummy rows in the tail batch")
 if "BuildFinalPairs(pairA, pairB, validRows)" not in body:
