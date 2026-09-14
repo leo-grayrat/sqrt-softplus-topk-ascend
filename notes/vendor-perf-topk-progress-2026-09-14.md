@@ -74,38 +74,86 @@ case 13: 285.57 / ~62.2  ~= 4.6x
 
 TBest 只作为旁证，不再作为统一性能目标；尤其 case 3 的 4.36 us 明显偏离前十名约 42--44 us 的正常分布。
 
-## 与 Huawei Perf 源码仍存在的主要差异
+## 第四轮：补齐 vendor 的 staging 与 validRows
 
-### 1. CopyIn / layout staging
+第四轮进一步贴近 Huawei Perf 的输入与尾 batch 执行组织：
 
-Huawei Perf 的 `CopyIn()` 对一个 UB batch 只发一次 `DataCopyPad`：
+- 增加按 32B 对齐行宽的 staging input buffer；
+- 一个 batch 一次 `DataCopyPad`；
+- 非 32-element 对齐时批量 rearrange 到 `inner=ceil(E/32)*32`；
+- Sort32 / prefix copy / MrgSort / GatherMask 只处理真实 `validRows`。
 
-- 列宽已经满足搬运对齐时，可以把 `curRowsNum * col` 当成连续块；
-- 否则用 `blockCount=curRowsNum` 一次搬多行。
+真实 Judge 15/15 Pass：
 
-其输入计算布局使用 32B 对齐行宽，随后通过单独的 `Rearrange()` 把每行重排成 TopK 所需的 32 元素对齐 `colAlign`。源码明确注释：softmax 阶段按 32B 对齐，而 TopK 要求 32-element aligned。
+```text
+case 3 : 154.49 us
+case 7 :  29.97 us
+case 9 :  46.68 us
+case 13: 273.36 us
+```
 
-当前实现跳过这层 staging/rearrange，因此 `CopyInGroup()` 仍在 `for(slot...)` 中逐行 `DataCopyPad` 到 `slot * inner_`。
+相对第三轮仅有小幅收益或噪声，说明 staging / tail-batch 组织值得保留，但不是当前主要瓶颈。
 
-### 2. 尾 batch 的 curRowsNum
+## 第五轮：批量 selected-value 后处理
 
-Huawei Perf 把真实 `curRowsNum` 一直传给 Sort32 / prefix copy / MrgSort / GatherMask；尾 batch 只计算有效行。
+保持 selection / merge / staging / dispatch 不变，只重组 `GatherMask` 之后的后处理：
 
-当前实现虽然最后只写 `validRows`，但 Sort32、merge、Gather 仍按完整 `batchRows_` 处理 dummy rows。
+- 跨行把每行前 8 个值压紧成 `[validRows, 8]`；
+- 原先每行一次 `TransformSelected(8)` 改成整个 batch 一次 `TransformSelected(validRows * 8)`；
+- `k=8` 时可顺带整批 copyout；`k<8` 仍逐行 copyout。
 
-### 3. merge packing 已经较接近 vendor
+真实 Judge 15/15 Pass：
 
-Huawei `MergeSortFP32PerfCopy` 同样用 `blockCount=curRowsNum` + stride 跨行抽每个 Sort32 chunk 的 top-8。当前实现这一部分已经较接近，不优先重写 merge 树。
+```text
+case 3 : 139.62 us
+case 7 :  18.69 us
+case 9 :  28.38 us
+case 13: 172.63 us
+```
 
-## 已批准的下一步
+相对第四轮：
 
-保持 selection 数学结构不变，只继续贴近 vendor Perf 的输入与尾 batch 执行组织：
+```text
+case 3 :  -9.6%
+case 7 : -37.6%
+case 9 : -39.2%
+case 13: -36.8%
+```
 
-1. 增加按 32B 对齐行宽的 staging input buffer；
-2. 一个 batch 只发一次 `DataCopyPad` 搬入 staging；
-3. 批量 rearrange 到当前 `inner=ceil(E/32)*32` 的 TopK 布局，并补 `-inf`；
-4. `ComputeGroup()` 将真实 `validRows` 传给 Sort32 / prefix copy / MrgSort / GatherMask，尾 batch 不再处理 dummy rows；
-5. 自适应 batch capacity、FP32 `k<=8` dispatch、top-8 prefix + merge 树全部保持不变；
-6. 完成 CPU correctness 后直接跑完整 Judge，不增加 simulator 性能准入。
+这是继第三轮后第二次明确的结构级真实收益。
 
-目标不是再证明“vendor Perf 是否值得做”——这一点已经由 case 3/7/9/13 的真实 Judge 结果证明。下一轮只回答：补齐 vendor 的 batch 搬运 / rearrange / curRowsNum 后，是否还能继续缩小目前约 3--5x 的正常前排差距。
+### A/B：batch copyout 不是主因
+
+`vendor-perf-topk-ab-row-copyout` 只撤销 `k=8` 整批 copyout，其余第五轮逻辑不变：
+
+```text
+case 3 : 140.21 us
+case 7 :  18.70 us
+case 9 :  28.04 us
+case 13: 177.88 us
+```
+
+与第五轮基本重合。结论：GM 输出方式不是第五轮主要收益来源，不继续围绕 copyout 深挖。
+
+### A/B：batched transform 是主要收益来源
+
+`vendor-perf-topk-ab-row-transform` 保留 packed layout 与 copyout，只把一次 `TransformSelected(validRows * 8)` 恢复成逐行 `TransformSelected(8)`：
+
+```text
+case 3 : 156.20 us
+case 7 :  27.67 us
+case 9 :  43.05 us
+case 13: 268.87 us
+```
+
+相对第五轮退化约 `+11.9% / +48.0% / +51.7% / +55.8%`，并接近第四轮。
+
+因此可以确认：第五轮 30--40% 级的大头来自把大量极短的 `Abs -> Muls -> Exp -> Adds -> Ln -> Maxs -> Add -> Sqrt` 向量操作从“每行发射一次”合并为跨行较长向量操作。case 7/9 仍比第四轮约快 7--8%，说明 packed 后处理布局本身可能还有少量残余贡献。
+
+## 当前判断与下一步
+
+1. production 保留第五轮 batched `TransformSelected(validRows * 8)`。
+2. batch copyout 降级，不再投入。
+3. simulator 仍只用于机制诊断，Judge 才是性能结论来源。
+4. 下一轮优先检查后处理是否还存在可跨行合并的短 vector op，以及当前始终变换 `top-8` 是否在 `k<8` shape 上做了不必要工作；若能在不引入高额 compaction 成本的前提下只变换真实 k 个值，应做独立 production spike。
+5. 若后处理进一步压缩收益有限，再回到 vendor selection 路径寻找剩余 2--3x 差距的结构来源。
