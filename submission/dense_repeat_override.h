@@ -220,6 +220,124 @@ private:
     int32_t chunkCount_ = 0;
 };
 
+// FP32 k=2..4：不再为整行构造 (value,index) 排序树，而是重复做 exact ReduceMax。
+// CANN 9 ReduceMax(calIndex=true) 的 dst 布局为 [maxValue, encodedIndex]；index 以
+// float 的位模式存储，因此按官方文档 reinterpret 为 uint32_t 后失效对应位置。
+class SqrtSoftplusRepeatedMaxTopKKernel {
+public:
+    __aicore__ inline void Init(
+        GM_ADDR routerLogits,
+        GM_ADDR topkScores,
+        int32_t rows,
+        int32_t experts,
+        int32_t k,
+        int32_t blockNum)
+    {
+        rows_ = rows;
+        experts_ = experts;
+        k_ = k;
+        blockNum_ = blockNum;
+
+        inputGm_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(routerLogits));
+        outputGm_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(topkScores));
+
+        const uint32_t rawInputBytes = static_cast<uint32_t>(experts_) * sizeof(float);
+        inputBytes_ = (rawInputBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES;
+
+        pipe_.InitBuffer(inputQueue_, 1, inputBytes_);
+        pipe_.InitBuffer(outputQueue_, 1, ALIGN_BYTES);
+        pipe_.InitBuffer(reduceResultBuffer_, ALIGN_BYTES);
+        // 对 E<=1024 的 FP32 输入，inputBytes_ 远大于 ReduceMax(calIndex=true)
+        // 的多轮归约 scratch 需求，直接复用同等大小的 VECCALC buffer。
+        pipe_.InitBuffer(reduceTmpBuffer_, inputBytes_);
+        pipe_.InitBuffer(floatWorkBuffer_, ALIGN_BYTES);
+        pipe_.InitBuffer(floatTmpBuffer_, ALIGN_BYTES);
+    }
+
+    __aicore__ inline void Process()
+    {
+        const int32_t blockIdx = static_cast<int32_t>(AscendC::GetBlockIdx());
+        for (int32_t row = blockIdx; row < rows_; row += blockNum_) {
+            ProcessRow(row);
+        }
+    }
+
+private:
+    __aicore__ inline void ProcessRow(int32_t row)
+    {
+        AscendC::LocalTensor<float> srcLocal = inputQueue_.AllocTensor<float>();
+
+        const uint32_t rawBytes = static_cast<uint32_t>(experts_) * sizeof(float);
+        const uint32_t alignedElems = inputBytes_ / sizeof(float);
+        const uint8_t rightPadding = static_cast<uint8_t>(alignedElems - experts_);
+        AscendC::DataCopyExtParams copyInParams{1, rawBytes, 0, 0, 0};
+        AscendC::DataCopyPadExtParams<float> padParams{
+            true, 0, rightPadding, -INFINITY};
+        AscendC::DataCopyPad(
+            srcLocal,
+            inputGm_[static_cast<int64_t>(row) * experts_],
+            copyInParams,
+            padParams);
+        inputQueue_.EnQue(srcLocal);
+        srcLocal = inputQueue_.DeQue<float>();
+
+        AscendC::LocalTensor<float> dstLocal = outputQueue_.AllocTensor<float>();
+        AscendC::LocalTensor<float> reduceOut = reduceResultBuffer_.Get<float>();
+        AscendC::LocalTensor<float> reduceTmp = reduceTmpBuffer_.Get<float>();
+
+        for (int32_t i = 0; i < k_; ++i) {
+            AscendC::ReduceMax<float>(
+                reduceOut,
+                srcLocal,
+                reduceTmp,
+                experts_,
+                true);
+            AscendC::PipeBarrier<PIPE_V>();
+
+            const float maxValue = reduceOut.GetValue(0);
+            float encodedIndex = reduceOut.GetValue(1);
+            const uint32_t maxIndex = *reinterpret_cast<uint32_t*>(&encodedIndex);
+
+            dstLocal.SetValue(static_cast<uint32_t>(i), maxValue);
+            srcLocal.SetValue(maxIndex, -INFINITY);
+            AscendC::PipeBarrier<PIPE_V>();
+        }
+
+        AscendC::LocalTensor<float> floatWork = floatWorkBuffer_.Get<float>();
+        AscendC::LocalTensor<float> floatTmp = floatTmpBuffer_.Get<float>();
+        TransformSelected(dstLocal, floatWork, floatTmp, static_cast<uint32_t>(k_));
+
+        inputQueue_.FreeTensor(srcLocal);
+        outputQueue_.EnQue(dstLocal);
+
+        AscendC::LocalTensor<float> outLocal = outputQueue_.DeQue<float>();
+        const uint32_t outputBytes = static_cast<uint32_t>(k_) * sizeof(float);
+        AscendC::DataCopyExtParams copyOutParams{1, outputBytes, 0, 0, 0};
+        AscendC::DataCopyPad(
+            outputGm_[static_cast<int64_t>(row) * k_],
+            outLocal,
+            copyOutParams);
+        outputQueue_.FreeTensor(outLocal);
+    }
+
+private:
+    AscendC::TPipe pipe_;
+    AscendC::TQue<AscendC::TPosition::VECIN, 1> inputQueue_;
+    AscendC::TQue<AscendC::TPosition::VECOUT, 1> outputQueue_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> reduceResultBuffer_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> reduceTmpBuffer_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> floatWorkBuffer_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> floatTmpBuffer_;
+    AscendC::GlobalTensor<float> inputGm_;
+    AscendC::GlobalTensor<float> outputGm_;
+
+    int32_t rows_ = 0;
+    int32_t experts_ = 0;
+    int32_t k_ = 0;
+    int32_t blockNum_ = 0;
+    uint32_t inputBytes_ = 0;
+};
+
 __global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom(
     GM_ADDR routerLogits,
     GM_ADDR topkScores,
@@ -232,13 +350,21 @@ __global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom(
     AscendC::InitSocState();
 
     const int32_t chunkCount = inner / PREFIX_CHUNK;
+    const bool useRepeatedMax = k >= 2 && k <= 4;
+    // MergeRepeated 只处理完整 4 路组并返回 floor(queueCount / 4)。20/24/28
+    // 在下一层会留下 5/6/7 条队列，再次 repeat 时丢尾部；只保留安全递归形状。
     const bool useDenseRepeat =
         experts == inner &&
         (k == 4 || k == 8) &&
         chunkCount >= 4 &&
-        chunkCount % 4 == 0;
+        chunkCount % 4 == 0 &&
+        (chunkCount <= 16 || chunkCount == 32);
 
-    if (useDenseRepeat) {
+    if (useRepeatedMax) {
+        SqrtSoftplusRepeatedMaxTopKKernel op;
+        op.Init(routerLogits, topkScores, rows, experts, k, blockNum);
+        op.Process();
+    } else if (useDenseRepeat) {
         SqrtSoftplusDenseRepeatTopKKernel op;
         op.Init(routerLogits, topkScores, rows, experts, inner, k, blockNum);
         op.Process();
