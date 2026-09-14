@@ -2,7 +2,7 @@
 // 多行一次 Sort32，每 32 个元素固定保留 top-8，跨行批量 MrgSort，输入双缓冲。
 // 本题只输出 scores，因此 Sort32 的 index 仅作 payload，统一置 0 即可。
 // GM 中每行仍按真实 experts 紧密存放；CopyIn 先按 32B 行对齐批量搬入 staging，
-// 再重排到 inner=ceil(E/32)*32 的 TopK 行布局并补 -inf。
+// 非 32-element 对齐时再重排到 inner=ceil(E/32)*32 的 TopK 行布局并补 -inf。
 constexpr int32_t VENDOR_KEEP_K = 8;
 constexpr int32_t VENDOR_SORT_UNIT = 32;
 constexpr int32_t VENDOR_MERGE_UNIT = 128;
@@ -149,13 +149,11 @@ private:
         int32_t validRows)
     {
         const float negativeInf = -INFINITY;
-        if (copyAlignedElems_ < inner_) {
-            AscendC::Duplicate(
-                dst,
-                negativeInf,
-                static_cast<uint32_t>(validRows * inner_));
-            AscendC::PipeBarrier<PIPE_V>();
-        }
+        AscendC::Duplicate(
+            dst,
+            negativeInf,
+            static_cast<uint32_t>(validRows * inner_));
+        AscendC::PipeBarrier<PIPE_V>();
 
         AscendC::DataCopyParams params;
         params.blockCount = static_cast<uint16_t>(validRows);
@@ -186,7 +184,6 @@ private:
 
         AscendC::DataCopyParams params;
         params.blockCount = static_cast<uint16_t>(rows);
-        // top-8 pair = 8 * (value,index) = 64B = 2 datablocks
         params.blockLen = 2;
         params.srcStride =
             static_cast<uint16_t>((srcRowCols - VENDOR_KEEP_K) * 2 / 8);
@@ -260,7 +257,6 @@ private:
         AscendC::PipeBarrier<PIPE_V>();
     }
 
-    // 返回 true 表示最终 pair 在 pairA，否则在 pairB。
     __aicore__ inline bool BuildFinalPairs(
         const AscendC::LocalTensor<float>& pairA,
         const AscendC::LocalTensor<float>& pairB,
@@ -344,8 +340,11 @@ private:
         const int32_t validRows = GroupValidRows(group);
 
         AscendC::LocalTensor<float> staging = inputQueue_.DeQue<float>();
-        AscendC::LocalTensor<float> input = inputBuffer_.Get<float>();
-        RearrangeRows(input, staging, validRows);
+        AscendC::LocalTensor<float> input = staging;
+        if (copyAlignedElems_ < inner_) {
+            input = inputBuffer_.Get<float>();
+            RearrangeRows(input, staging, validRows);
+        }
 
         AscendC::LocalTensor<int32_t> signedIndex = indexBuffer_.Get<int32_t>();
         AscendC::LocalTensor<uint32_t> index =
@@ -454,5 +453,4 @@ __global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom(
     AscendC::PipeBarrier<PIPE_ALL>();
 }
 
-// run_kernel 中原有 FP32 k<=8 launch 保持不动，只替换 device dispatcher。
 #define sqrt_softplus_prefix_merge_top_k_custom sqrt_softplus_prefix_merge_top_k_dispatch_custom
