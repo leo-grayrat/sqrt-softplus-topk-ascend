@@ -409,9 +409,11 @@ private:
 
         const uint32_t outputBytes = static_cast<uint32_t>(k_) * sizeof(float);
         if (k_ == VENDOR_KEEP_K) {
+            const uint32_t packedOutputBytes = static_cast<uint32_t>(
+                static_cast<uint64_t>(validRows) * VENDOR_KEEP_K * sizeof(float));
             AscendC::DataCopyExtParams copyOutParams{
                 1,
-                static_cast<uint32_t>(validRows * VENDOR_KEEP_K) * sizeof(float),
+                packedOutputBytes,
                 0,
                 0,
                 0};
