@@ -397,11 +397,15 @@ private:
         PackTop8Values(gathered, out, validRows);
 
         AscendC::LocalTensor<float> tmp = floatTmpBuffer_.Get<float>();
-        TransformSelected(
-            out,
-            tmp,
-            tmp,
-            static_cast<uint32_t>(validRows * VENDOR_KEEP_K));
+        for (int32_t row = 0; row < validRows; ++row) {
+            const uint32_t rowBase =
+                static_cast<uint32_t>(row * VENDOR_KEEP_K);
+            TransformSelected(
+                out[rowBase],
+                tmp[rowBase],
+                tmp[rowBase],
+                static_cast<uint32_t>(VENDOR_KEEP_K));
+        }
 
         inputQueue_.FreeTensor(staging);
         outputQueue_.EnQue(out);
