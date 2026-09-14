@@ -80,19 +80,22 @@ if "BuildFinalPairs(pairA, pairB, validRows)" not in body:
 if "static_cast<uint8_t>(validRows)" not in body:
     raise SystemExit("FAIL: GatherMask still processes dummy rows in the tail batch")
 
-# Post-selection specialization: GatherMask may still write 32 values per row,
-# but only the first eight are needed for k<=8. They must be packed into one
-# contiguous [validRows, 8] buffer, transformed in one vector call, and copied
-# back to GM with one strided multi-row DataCopyPad.
+# Post-selection specialization: GatherMask writes 32 values per row, but k<=8
+# only needs the first eight. Pack those 8-wide rows, then issue one transform
+# over the whole batch. VECOUT->GM srcStride is 32B-granular, so only k=8 can
+# use a single contiguous copyout; k<8 keeps the exact per-row copyout fallback.
 if "PackTop8Values(gathered, out, validRows)" not in body:
     raise SystemExit("FAIL: top-8 values are not packed across rows before transform")
 if "static_cast<uint32_t>(validRows * VENDOR_KEEP_K)" not in body:
     raise SystemExit("FAIL: transform is not issued once over validRows*8 values")
-if "copyOutParams.blockCount = static_cast<uint16_t>(validRows)" not in body:
-    raise SystemExit("FAIL: copyout is not one batched multi-row DataCopyPad")
-if "copyOutParams.srcStride" not in body:
-    raise SystemExit("FAIL: batched copyout does not skip packed top8 tail for k<8")
-if "for (int32_t row = 0; row < validRows; ++row)" in body[body.find("__aicore__ inline void ComputeGroup"):]:
-    raise SystemExit("FAIL: ComputeGroup still has row-at-a-time post-selection work")
+compute = body[body.find("__aicore__ inline void ComputeGroup"):]
+if "if (k_ == VENDOR_KEEP_K)" not in compute:
+    raise SystemExit("FAIL: k=8 contiguous fast copyout path is missing")
+if "for (int32_t row = 0; row < validRows; ++row)" not in compute:
+    raise SystemExit("FAIL: k<8 exact per-row copyout fallback is missing")
+transform_pos = compute.find("TransformSelected(")
+loop_pos = compute.find("for (int32_t row = 0; row < validRows; ++row)")
+if transform_pos < 0 or (0 <= loop_pos < transform_pos):
+    raise SystemExit("FAIL: transform is still row-at-a-time instead of batched")
 
-print("PASS: staged adaptive vendor-perf TopK with batched post-selection is present")
+print("PASS: staged adaptive vendor-perf TopK with batched transform is present")
