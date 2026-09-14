@@ -408,27 +408,12 @@ private:
         out = outputQueue_.DeQue<float>();
 
         const uint32_t outputBytes = static_cast<uint32_t>(k_) * sizeof(float);
-        if (k_ == VENDOR_KEEP_K) {
-            const uint32_t packedOutputBytes = static_cast<uint32_t>(
-                static_cast<uint64_t>(validRows) * VENDOR_KEEP_K * sizeof(float));
-            AscendC::DataCopyExtParams copyOutParams{
-                1,
-                packedOutputBytes,
-                0,
-                0,
-                0};
+        AscendC::DataCopyExtParams copyOutParams{1, outputBytes, 0, 0, 0};
+        for (int32_t row = 0; row < validRows; ++row) {
             AscendC::DataCopyPad(
-                outputGm_[static_cast<int64_t>(firstRow) * k_],
-                out,
+                outputGm_[static_cast<int64_t>(firstRow + row) * k_],
+                out[static_cast<uint32_t>(row * VENDOR_KEEP_K)],
                 copyOutParams);
-        } else {
-            AscendC::DataCopyExtParams copyOutParams{1, outputBytes, 0, 0, 0};
-            for (int32_t row = 0; row < validRows; ++row) {
-                AscendC::DataCopyPad(
-                    outputGm_[static_cast<int64_t>(firstRow + row) * k_],
-                    out[static_cast<uint32_t>(row * VENDOR_KEEP_K)],
-                    copyOutParams);
-            }
         }
         outputQueue_.FreeTensor(out);
     }
