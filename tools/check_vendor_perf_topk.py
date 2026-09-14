@@ -98,4 +98,12 @@ loop_pos = compute.find("for (int32_t row = 0; row < validRows; ++row)")
 if transform_pos < 0 or (0 <= loop_pos < transform_pos):
     raise SystemExit("FAIL: transform is still row-at-a-time instead of batched")
 
+# Bisheng treats sizeof(float) as size_t/unsigned long. In a braced
+# DataCopyExtParams initializer, casting only the left multiplicand to uint32_t
+# still leaves the product as unsigned long and triggers -Wc++11-narrowing.
+if "static_cast<uint32_t>(validRows * VENDOR_KEEP_K) * sizeof(float)" in compute:
+    raise SystemExit("FAIL: k=8 copyout byte count still narrows size_t in aggregate initializer")
+if "packedOutputBytes" not in compute:
+    raise SystemExit("FAIL: k=8 copyout byte count is not normalized to uint32_t before initialization")
+
 print("PASS: staged adaptive vendor-perf TopK with batched transform is present")
