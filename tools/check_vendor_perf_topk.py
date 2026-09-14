@@ -19,19 +19,26 @@ required = [
     "AscendC::Sort32<float>(",
     "AscendC::MrgSort<float>(",
     "AscendC::GatherMask(",
-    "experts % 32 == 0",
+    "inner_",
+    "copyAlignedElems",
+    "negativeInf",
     "k >= 2 && k <= 8",
 ]
 
 missing = [needle for needle in required if needle not in header]
 if missing:
     raise SystemExit(
-        "FAIL: missing adaptive vendor-perf pieces: "
+        "FAIL: missing padded vendor-perf pieces: "
         + ", ".join(repr(x) for x in missing)
     )
 
-if "rows >= blockNum * vendorBatchRows" in header:
-    raise SystemExit("FAIL: old full-batch admission gate is still present")
+for forbidden in [
+    "rows >= blockNum * vendorBatchRows",
+    "experts % 32 == 0",
+    "experts == inner &&",
+]:
+    if forbidden in header:
+        raise SystemExit(f"FAIL: stale vendor-perf admission restriction remains: {forbidden!r}")
 
 start = header.find("class SqrtSoftplusVendorPerfTopKKernel")
 end = header.find("__global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom", start)
@@ -45,5 +52,11 @@ if "for (int32_t row = blockIdx" in body:
     raise SystemExit("FAIL: vendor-perf kernel must operate on row batches, not the old row-at-a-time loop")
 if "group + activeBlockNum_" not in body:
     raise SystemExit("FAIL: group stride still uses launched block count instead of active block count")
+if "slot * inner_" not in body:
+    raise SystemExit("FAIL: UB row stride is not padded inner_")
+if "batchRows_ * inner_ / VENDOR_SORT_UNIT" not in body:
+    raise SystemExit("FAIL: Sort32 repeat count is not based on padded inner_")
+if "SelectVendorBatchRows(rows_, blockNum_, inner_)" not in body:
+    raise SystemExit("FAIL: batch capacity is not based on padded inner_")
 
-print("PASS: adaptive vendor-perf TopK production structure is present")
+print("PASS: padded adaptive vendor-perf TopK production structure is present")
