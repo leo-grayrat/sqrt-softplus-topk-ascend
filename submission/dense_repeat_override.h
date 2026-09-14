@@ -1,5 +1,5 @@
 // FP32 k=4/8 且 E 为 128 的倍数时，用紧密 prefix + MrgSort repeatTimes
-// 替代逐 group prefix-merge。第一版严格限制到已通过 CPU twin-debug 的无 padding 形状。
+// 替代逐 group prefix-merge。这里只保留此前已验证过的 dense fallback。
 class SqrtSoftplusDenseRepeatTopKKernel {
 public:
     __aicore__ inline void Init(
@@ -213,7 +213,7 @@ private:
 };
 
 // Huawei A2/A3 MoeGatingTopKSoftmaxPerf 的 selection 执行结构：
-// 多行一次 Sort32，每 32 个元素固定保留 top-8，跨行批量 MrgSort，输入双缓冲。
+// 多行一次 Sort32，每 32 元素固定保留 top-8，跨行批量 MrgSort，输入双缓冲。
 // 本题只输出 scores，因此 Sort32 的 index 仅作 payload，统一置 0 即可。
 constexpr int32_t VENDOR_KEEP_K = 8;
 constexpr int32_t VENDOR_SORT_UNIT = 32;
@@ -221,7 +221,7 @@ constexpr int32_t VENDOR_MERGE_UNIT = 128;
 constexpr int32_t VENDOR_FINAL_VALUES = 32;
 constexpr int32_t VENDOR_FINAL_PAIR_FLOATS = VENDOR_FINAL_VALUES * 2;
 
-__aicore__ inline int32_t SelectVendorBatchRows(int32_t experts)
+__aicore__ inline int32_t SelectVendorBatchCapacity(int32_t experts)
 {
     if (experts <= 256) {
         return 16;
@@ -230,6 +230,16 @@ __aicore__ inline int32_t SelectVendorBatchRows(int32_t experts)
         return 8;
     }
     return 4;
+}
+
+__aicore__ inline int32_t SelectVendorBatchRows(
+    int32_t rows,
+    int32_t blockNum,
+    int32_t experts)
+{
+    const int32_t capacity = SelectVendorBatchCapacity(experts);
+    const int32_t rowsPerCore = (rows + blockNum - 1) / blockNum;
+    return rowsPerCore < capacity ? rowsPerCore : capacity;
 }
 
 class SqrtSoftplusVendorPerfTopKKernel {
@@ -246,8 +256,9 @@ public:
         experts_ = experts;
         k_ = k;
         blockNum_ = blockNum;
-        batchRows_ = SelectVendorBatchRows(experts_);
+        batchRows_ = SelectVendorBatchRows(rows_, blockNum_, experts_);
         groupCount_ = (rows_ + batchRows_ - 1) / batchRows_;
+        activeBlockNum_ = groupCount_ < blockNum_ ? groupCount_ : blockNum_;
 
         inputGm_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(routerLogits));
         outputGm_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(topkScores));
@@ -269,7 +280,7 @@ public:
     __aicore__ inline void Process()
     {
         const int32_t blockIdx = static_cast<int32_t>(AscendC::GetBlockIdx());
-        if (blockIdx >= groupCount_) {
+        if (blockIdx >= activeBlockNum_) {
             return;
         }
 
@@ -278,7 +289,7 @@ public:
         int32_t group = blockIdx;
         CopyInGroup(group);
         while (group < groupCount_) {
-            const int32_t nextGroup = group + blockNum_;
+            const int32_t nextGroup = group + activeBlockNum_;
             if (nextGroup < groupCount_) {
                 CopyInGroup(nextGroup);
             }
@@ -291,9 +302,10 @@ private:
     __aicore__ inline void InitIndexBatch()
     {
         AscendC::LocalTensor<int32_t> index = indexBuffer_.Get<int32_t>();
-        // Sort32 只把 index 当 payload；最终不输出 index，所以无需逐行构造真实专家编号。
-        AscendC::Duplicate(index, static_cast<int32_t>(0),
-                           static_cast<uint32_t>(batchRows_ * experts_));
+        AscendC::Duplicate(
+            index,
+            static_cast<int32_t>(0),
+            static_cast<uint32_t>(batchRows_ * experts_));
         AscendC::PipeBarrier<PIPE_V>();
     }
 
@@ -307,7 +319,6 @@ private:
 
         for (int32_t slot = 0; slot < batchRows_; ++slot) {
             const int32_t row = firstRow + slot;
-            // 尾 batch 的无效 slot 复制本 batch 第一行；其计算结果最终不会写回 GM。
             const int32_t sourceRow = row < rows_ ? row : firstRow;
             AscendC::DataCopyPad(
                 input[static_cast<uint32_t>(slot * experts_)],
@@ -338,7 +349,7 @@ private:
 
         AscendC::DataCopyParams params;
         params.blockCount = static_cast<uint16_t>(rows);
-        params.blockLen = 2; // top-8 pair = 8 * (value,index) = 64B = 2 blocks
+        params.blockLen = 2;
         params.srcStride = static_cast<uint16_t>((srcRowCols - VENDOR_KEEP_K) * 2 / 8);
         params.dstStride = static_cast<uint16_t>((dstRowCols - VENDOR_KEEP_K) * 2 / 8);
 
@@ -414,15 +425,18 @@ private:
     {
         if (experts_ <= 512) {
             if (experts_ > VENDOR_MERGE_UNIT) {
-                CopyTop8Prefixes(pairB, 0, VENDOR_MERGE_UNIT,
-                                 pairA, 0, experts_, experts_, batchRows_);
+                CopyTop8Prefixes(
+                    pairB, 0, VENDOR_MERGE_UNIT,
+                    pairA, 0, experts_, experts_, batchRows_);
                 MergeFourTop8(pairA, pairB, batchRows_ * 4);
-                CopyTop8Prefixes(pairB, 0, VENDOR_FINAL_VALUES,
-                                 pairA, 0, VENDOR_MERGE_UNIT,
-                                 VENDOR_MERGE_UNIT, batchRows_);
+                CopyTop8Prefixes(
+                    pairB, 0, VENDOR_FINAL_VALUES,
+                    pairA, 0, VENDOR_MERGE_UNIT,
+                    VENDOR_MERGE_UNIT, batchRows_);
             } else {
-                CopyTop8Prefixes(pairB, 0, VENDOR_FINAL_VALUES,
-                                 pairA, 0, experts_, experts_, batchRows_);
+                CopyTop8Prefixes(
+                    pairB, 0, VENDOR_FINAL_VALUES,
+                    pairA, 0, experts_, experts_, batchRows_);
             }
             MergeFourTop8(pairA, pairB, batchRows_);
             return true;
@@ -435,9 +449,9 @@ private:
         const uint32_t tailPackedBase =
             static_cast<uint32_t>(batchRows_ * VENDOR_MERGE_UNIT * 2);
 
-        // 先把 former 512 和 tail 都从 Sort32 结果压紧到 pairB，之后才覆盖 pairA。
-        CopyTop8Prefixes(pairB, 0, VENDOR_MERGE_UNIT,
-                         pairA, 0, experts_, formerCols, batchRows_);
+        CopyTop8Prefixes(
+            pairB, 0, VENDOR_MERGE_UNIT,
+            pairA, 0, experts_, formerCols, batchRows_);
         CopyTop8Prefixes(
             pairB,
             tailPackedBase,
@@ -448,17 +462,20 @@ private:
             tailCols,
             batchRows_);
 
-        // former 512: 16 个 top-8 queue -> 4 个 top-32 -> 4 个 top-8 -> 最终 top-32。
         MergeFourTop8(pairA, pairB, batchRows_ * 4);
-        CopyTop8Prefixes(pairB, 0, VENDOR_FINAL_VALUES,
-                         pairA, 0, VENDOR_MERGE_UNIT,
-                         VENDOR_MERGE_UNIT, batchRows_);
+        CopyTop8Prefixes(
+            pairB, 0, VENDOR_FINAL_VALUES,
+            pairA, 0, VENDOR_MERGE_UNIT,
+            VENDOR_MERGE_UNIT, batchRows_);
         MergeFourTop8(pairA, pairB, batchRows_);
 
         const uint32_t tailFinalBase =
             static_cast<uint32_t>(batchRows_ * VENDOR_FINAL_PAIR_FLOATS);
         if (tailCols > VENDOR_MERGE_UNIT) {
-            MergeFourTop8(pairA[tailFinalBase], pairB[tailPackedBase], batchRows_ * 4);
+            MergeFourTop8(
+                pairA[tailFinalBase],
+                pairB[tailPackedBase],
+                batchRows_ * 4);
             CopyTop8Prefixes(
                 pairB,
                 tailPackedBase,
@@ -469,9 +486,11 @@ private:
                 VENDOR_MERGE_UNIT,
                 batchRows_);
         }
-        MergeFourTop8(pairA[tailFinalBase], pairB[tailPackedBase], batchRows_);
+        MergeFourTop8(
+            pairA[tailFinalBase],
+            pairB[tailPackedBase],
+            batchRows_);
 
-        // k<=8：former/tail 各自只需前 8 个，再做 2-way merge 即可得到全局 top-k。
         MergeTwoFinal32(pairB, pairA, tailFinalBase, batchRows_);
         return false;
     }
@@ -553,6 +572,7 @@ private:
     int32_t blockNum_ = 0;
     int32_t batchRows_ = 0;
     int32_t groupCount_ = 0;
+    int32_t activeBlockNum_ = 0;
 };
 
 __global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom(
@@ -566,16 +586,12 @@ __global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom(
 {
     AscendC::InitSocState();
 
-    const int32_t vendorBatchRows = SelectVendorBatchRows(experts);
     const bool useVendorPerf =
         experts == inner &&
         experts % 32 == 0 &&
-        k >= 2 && k <= 8 &&
-        rows >= blockNum * vendorBatchRows;
+        k >= 2 && k <= 8;
 
     const int32_t chunkCount = inner / PREFIX_CHUNK;
-    // MergeRepeated 每轮只处理完整 4 路；20/24/28 在下一层会变成 5/6/7，
-    // 再次 floor(queueCount/4) 会丢尾队列，因此只保留已证明安全的递归形状。
     const bool useDenseRepeat =
         experts == inner &&
         (k == 4 || k == 8) &&
@@ -599,6 +615,4 @@ __global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom(
     AscendC::PipeBarrier<PIPE_ALL>();
 }
 
-// 让下面 run_kernel 中原有的 FP32 k<=8 launch 保持不动，只把被调用的
-// device kernel 替换为带 shape gate 的 dispatcher。
 #define sqrt_softplus_prefix_merge_top_k_custom sqrt_softplus_prefix_merge_top_k_dispatch_custom
