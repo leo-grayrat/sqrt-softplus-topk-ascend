@@ -13,6 +13,8 @@ required = [
     "VENDOR_KEEP_K = 8",
     "TQue<AscendC::TPosition::VECIN, 2>",
     "InitIndexBatch",
+    "RearrangeRows",
+    "inputBuffer_",
     "CopyTop8Prefixes",
     "MergeFourTop8",
     "MergeTwoFinal32",
@@ -28,7 +30,7 @@ required = [
 missing = [needle for needle in required if needle not in header]
 if missing:
     raise SystemExit(
-        "FAIL: missing padded vendor-perf pieces: "
+        "FAIL: missing staged vendor-perf pieces: "
         + ", ".join(repr(x) for x in missing)
     )
 
@@ -52,11 +54,24 @@ if "for (int32_t row = blockIdx" in body:
     raise SystemExit("FAIL: vendor-perf kernel must operate on row batches, not the old row-at-a-time loop")
 if "group + activeBlockNum_" not in body:
     raise SystemExit("FAIL: group stride still uses launched block count instead of active block count")
-if "slot * inner_" not in body:
-    raise SystemExit("FAIL: UB row stride is not padded inner_")
-if "batchRows_ * inner_ / VENDOR_SORT_UNIT" not in body:
-    raise SystemExit("FAIL: Sort32 repeat count is not based on padded inner_")
 if "SelectVendorBatchRows(rows_, blockNum_, inner_)" not in body:
     raise SystemExit("FAIL: batch capacity is not based on padded inner_")
 
-print("PASS: padded adaptive vendor-perf TopK production structure is present")
+copy_start = body.find("__aicore__ inline void CopyInGroup")
+copy_end = body.find("__aicore__ inline void RearrangeRows", copy_start)
+if copy_start < 0 or copy_end < 0:
+    raise SystemExit("FAIL: cannot isolate staged CopyInGroup/RearrangeRows")
+copy_body = body[copy_start:copy_end]
+if "for (int32_t slot = 0; slot < batchRows_; ++slot)" in copy_body:
+    raise SystemExit("FAIL: CopyInGroup still issues one DataCopyPad per row")
+if "blockCount = static_cast<uint16_t>(validRows)" not in copy_body:
+    raise SystemExit("FAIL: CopyInGroup does not issue one multi-row DataCopyPad")
+
+if "validRows * inner_ / VENDOR_SORT_UNIT" not in body:
+    raise SystemExit("FAIL: Sort32 still processes dummy rows in the tail batch")
+if "BuildFinalPairs(pairA, pairB, validRows)" not in body:
+    raise SystemExit("FAIL: merge tree still processes dummy rows in the tail batch")
+if "static_cast<uint8_t>(validRows)" not in body:
+    raise SystemExit("FAIL: GatherMask still processes dummy rows in the tail batch")
+
+print("PASS: staged adaptive vendor-perf TopK structure is present")
