@@ -8,6 +8,7 @@ constexpr int32_t VENDOR_SORT_UNIT = 32;
 constexpr int32_t VENDOR_MERGE_UNIT = 128;
 constexpr int32_t VENDOR_FINAL_VALUES = 32;
 constexpr int32_t VENDOR_FINAL_PAIR_FLOATS = VENDOR_FINAL_VALUES * 2;
+constexpr int32_t VENDOR_GATHER_REPEAT = 64;
 
 __aicore__ inline int32_t SelectVendorBatchCapacity(int32_t inner)
 {
@@ -28,6 +29,15 @@ __aicore__ inline int32_t SelectVendorBatchRows(
     const int32_t capacity = SelectVendorBatchCapacity(inner);
     const int32_t rowsPerCore = (rows + blockNum - 1) / blockNum;
     return rowsPerCore < capacity ? rowsPerCore : capacity;
+}
+
+__aicore__ inline uint32_t BuildVendorValueMask(int32_t k)
+{
+    uint32_t mask = 1u;
+    for (int32_t i = 1; i < k; ++i) {
+        mask = (mask << 2u) | 1u;
+    }
+    return mask;
 }
 
 class SqrtSoftplusVendorPerfTopKKernel {
@@ -63,19 +73,17 @@ public:
         const uint32_t batchInputBytes =
             static_cast<uint32_t>(batchRows_ * inner_) * sizeof(float);
         const uint32_t batchPairBytes = batchInputBytes * 2u;
-        const uint32_t batchGatherBytes =
-            static_cast<uint32_t>(batchRows_ * VENDOR_FINAL_VALUES) * sizeof(float);
         const uint32_t batchPackedBytes =
             static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(float);
 
         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
         pipe_.InitBuffer(inputBuffer_, batchInputBytes);
         pipe_.InitBuffer(outputQueue_, 1, batchPackedBytes);
-        pipe_.InitBuffer(gatherBuffer_, batchGatherBytes);
         pipe_.InitBuffer(indexBuffer_, batchInputBytes);
         pipe_.InitBuffer(pairABuffer_, batchPairBytes);
         pipe_.InitBuffer(pairBBuffer_, batchPairBytes);
         pipe_.InitBuffer(floatTmpBuffer_, batchPackedBytes);
+        pipe_.InitBuffer(patternBuffer_, ALIGN_BYTES);
     }
 
     __aicore__ inline void Process()
@@ -86,6 +94,7 @@ public:
         }
 
         InitIndexBatch();
+        InitValuePattern();
 
         int32_t group = blockIdx;
         CopyInGroup(group);
@@ -118,6 +127,17 @@ private:
             static_cast<int32_t>(0),
             static_cast<uint32_t>(batchRows_ * inner_));
         AscendC::PipeBarrier<PIPE_V>();
+    }
+
+    __aicore__ inline void InitValuePattern()
+    {
+        using namespace AscendC;
+        LocalTensor<uint32_t> pattern = patternBuffer_.Get<uint32_t>();
+        pattern.SetValue(0, BuildVendorValueMask(k_));
+        pattern.SetValue(1, 0u);
+        auto eventID = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
+        SetFlag<HardEvent::S_V>(eventID);
+        WaitFlag<HardEvent::S_V>(eventID);
     }
 
     __aicore__ inline void CopyInGroup(int32_t group)
@@ -337,19 +357,29 @@ private:
         return false;
     }
 
-    __aicore__ inline void PackTop8Values(
-        const AscendC::LocalTensor<float>& src,
+    __aicore__ inline void ExtractKValues(
         const AscendC::LocalTensor<float>& dst,
+        const AscendC::LocalTensor<float>& src,
         int32_t rows)
     {
-        AscendC::DataCopyParams params;
-        params.blockCount = static_cast<uint16_t>(rows);
-        params.blockLen = 1;
-        params.srcStride =
-            static_cast<uint16_t>((VENDOR_FINAL_VALUES - VENDOR_KEEP_K) / 8);
-        params.dstStride = 0;
-        AscendC::DataCopy(dst, src, params);
-        AscendC::PipeBarrier<PIPE_V>();
+        using namespace AscendC;
+        LocalTensor<uint32_t> pattern = patternBuffer_.Get<uint32_t>();
+        GatherMaskParams params;
+        uint64_t rsvdCnt = 0;
+        params.src0BlockStride = 1;
+        params.repeatTimes = static_cast<uint8_t>(rows);
+        params.src0RepeatStride =
+            static_cast<uint8_t>(VENDOR_FINAL_PAIR_FLOATS / 8);
+        params.src1RepeatStride = 0;
+        GatherMask(
+            dst.ReinterpretCast<int32_t>(),
+            src.ReinterpretCast<int32_t>(),
+            pattern,
+            true,
+            VENDOR_GATHER_REPEAT,
+            params,
+            rsvdCnt);
+        PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void ComputeGroup(int32_t group)
@@ -381,55 +411,32 @@ private:
         const AscendC::LocalTensor<float>& finalPairs =
             finalInA ? pairA : pairB;
 
-        AscendC::LocalTensor<float> gathered = gatherBuffer_.Get<float>();
-        uint64_t rsvdCnt = 0;
-        AscendC::GatherMask(
-            gathered,
-            finalPairs,
-            static_cast<uint8_t>(1),
-            false,
-            0,
-            {1, static_cast<uint8_t>(validRows), 8, 0},
-            rsvdCnt);
-        AscendC::PipeBarrier<PIPE_V>();
-
         AscendC::LocalTensor<float> out = outputQueue_.AllocTensor<float>();
-        PackTop8Values(gathered, out, validRows);
+        ExtractKValues(out, finalPairs, validRows);
 
         AscendC::LocalTensor<float> tmp = floatTmpBuffer_.Get<float>();
         TransformSelected(
             out,
             tmp,
             tmp,
-            static_cast<uint32_t>(validRows * VENDOR_KEEP_K));
+            static_cast<uint32_t>(validRows * k_));
 
         inputQueue_.FreeTensor(staging);
         outputQueue_.EnQue(out);
         out = outputQueue_.DeQue<float>();
 
-        const uint32_t outputBytes = static_cast<uint32_t>(k_) * sizeof(float);
-        if (k_ == VENDOR_KEEP_K) {
-            const uint32_t packedOutputBytes = static_cast<uint32_t>(
-                static_cast<uint64_t>(validRows) * VENDOR_KEEP_K * sizeof(float));
-            AscendC::DataCopyExtParams copyOutParams{
-                1,
-                packedOutputBytes,
-                0,
-                0,
-                0};
-            AscendC::DataCopyPad(
-                outputGm_[static_cast<int64_t>(firstRow) * k_],
-                out,
-                copyOutParams);
-        } else {
-            AscendC::DataCopyExtParams copyOutParams{1, outputBytes, 0, 0, 0};
-            for (int32_t row = 0; row < validRows; ++row) {
-                AscendC::DataCopyPad(
-                    outputGm_[static_cast<int64_t>(firstRow + row) * k_],
-                    out[static_cast<uint32_t>(row * VENDOR_KEEP_K)],
-                    copyOutParams);
-            }
-        }
+        const uint32_t packedOutputBytes = static_cast<uint32_t>(
+            static_cast<uint64_t>(validRows) * static_cast<uint64_t>(k_) * sizeof(float));
+        AscendC::DataCopyExtParams copyOutParams{
+            1,
+            packedOutputBytes,
+            0,
+            0,
+            0};
+        AscendC::DataCopyPad(
+            outputGm_[static_cast<int64_t>(firstRow) * k_],
+            out,
+            copyOutParams);
         outputQueue_.FreeTensor(out);
     }
 
@@ -438,11 +445,11 @@ private:
     AscendC::TQue<AscendC::TPosition::VECIN, 2> inputQueue_;
     AscendC::TQue<AscendC::TPosition::VECOUT, 1> outputQueue_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> inputBuffer_;
-    AscendC::TBuf<AscendC::TPosition::VECCALC> gatherBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> indexBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairABuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairBBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> floatTmpBuffer_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> patternBuffer_;
     AscendC::GlobalTensor<float> inputGm_;
     AscendC::GlobalTensor<float> outputGm_;
 
