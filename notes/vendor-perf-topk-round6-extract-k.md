@@ -80,4 +80,43 @@ final pairs
 - Bisheng/CANN CPU probe 成功编译；
 - `topk_prefix_production_probe`：全部 PASS。
 
-因此第六轮已经通过结构检查与本地 correctness 门槛。下一步直接运行完整 15-point Judge，不再插入 simulator 性能测试。
+因此第六轮已经通过结构检查与本地 correctness 门槛。
+
+## 真实 Judge
+
+15/15 Pass：
+
+```text
+case 1 :    2.33 us
+case 2 :    3.77 us
+case 3 :  139.80 us
+case 4 :    7.80 us
+case 5 :   16.63 us
+case 6 :   23.95 us
+case 7 :   17.73 us
+case 8 :   86.99 us
+case 9 :   27.71 us
+case 10:  244.10 us
+case 11:  252.30 us
+case 12:  650.44 us
+case 13:  176.97 us
+case 14:    2.13 ms
+case 15:    3.46 ms
+```
+
+与第五轮直接比较，最关键的 3/7/9/13 为：
+
+```text
+case 3 : 139.62 -> 139.80 us   +0.13%
+case 7 :  18.69 ->  17.73 us   -5.1%
+case 9 :  28.38 ->  27.71 us   -2.4%
+case 13: 172.63 -> 176.97 us   +2.5%
+```
+
+第六轮没有再次出现第五轮 30--40% 级的结构收益。结合此前 A/B，可以把机理进一步区分：
+
+- 把“每行一次很短的 `TransformSelected(8)`”合并成“每 batch 一次较长 transform”非常重要；
+- 在已经只发射一次 transform 后，把元素数从 `validRows*8` 降到 `validRows*k`，真实壁钟只出现小幅或噪声级变化；
+- 因此当前 transform 成本里，固定的向量指令/同步发射成本比少处理几个元素更值得关注。
+
+第六轮的 true-k extraction 可以保留为更贴近 vendor、布局也更干净的实现，但不再把“减少 transform 元素数”作为主要优化方向。下一步优先检查 `StableSoftplusSqrt` 自身的指令与 barrier 成本；如果无法进一步压缩，再回到 vendor selection 路径寻找剩余结构差距。
