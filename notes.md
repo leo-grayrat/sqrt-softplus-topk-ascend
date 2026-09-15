@@ -1,15 +1,16 @@
 # Notes
 
-## 已确认
+## 当前入口
+
+- 当前 canonical production baseline：`main`，基于已完成本地验证和真实 CANNJudge 15/15 Pass 的 Round 6 vendor-perf 实现。
+- 当前状态与测试点映射：`notes/current-status-2026-09-15.md`。
+- 下一阶段优化计划：`notes/optimization-plan-2026-09-15.md`。
+- FP32 small-k vendor-perf 详细进展：`notes/vendor-perf-topk-progress-2026-09-14.md`。
+- 早期逐行/双行/通用 TopK 实验：`notes/perf-experiments.md`。
+
+## 已确认原则
 
 - `sqrt(softplus(x))` 对 logits 单调递增，因此可以先取 logits Top-K，再只计算选中的分数。
-- 题面 PyTorch 示例对 FP16 输入实际返回 FP32，但表格又要求输出 dtype 与输入一致；已在 reference 中分开表达这两层含义。
-- 已拿到本题 CANNJudge starter project；模板默认目标架构为 `dav-2201`。
-- 当前实现已在 CANNJudge 通过全部正确性 case，首个性能基线得分 22.80，排名 63；详细时间见 `notes/perf-experiments.md`。
-- 本地环境已确认可使用 CANN 9.0 / Bisheng 编译当前工程。
-
-## 调试与实验约定
-
-- 发现明确问题先建 GitHub issue；修复后必须等本地或 CANNJudge 复验通过再关闭。
-- CANN / Bisheng 语法与编译坑记录在 `notes/syntax-errors.md`。
-- 性能实验记录在 `notes/perf-experiments.md`；没有真实 NPU/Judge 数据时，不写“性能提升”。
+- 真实性能结论以 CANNJudge / 真实 NPU 为准；simulator 主要用于解释指令与流水成本。
+- `main` 表示当前可信生产基线。实验分支完成后必须回到 main 或明确归档，不再让不断递增的 round 分支代替主线。
+- 发现明确 CANN/Bisheng/API 问题时保留可复现实验和记录；已经结束的方向不继续保留为“待处理主线”。
