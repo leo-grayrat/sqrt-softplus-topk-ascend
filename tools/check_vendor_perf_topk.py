@@ -46,10 +46,6 @@ for forbidden in [
     "experts == inner &&",
     "PackTop8Values",
     "gatherBuffer_",
-    "if (inner <= 256)",
-    "return 16;",
-    "return 8;",
-    "return 4;",
 ]:
     if forbidden in header:
         raise SystemExit(f"FAIL: stale vendor-perf path remains: {forbidden!r}")
@@ -63,6 +59,9 @@ if "VENDOR_BATCH_ELEMENT_BUDGET / inner" not in capacity_body:
     raise SystemExit("FAIL: round8 capacity is not derived from a fixed element budget")
 if "capacity > 255" not in capacity_body:
     raise SystemExit("FAIL: round8 capacity does not guard uint8 GatherMask repeat range")
+for stale in ["if (inner <= 256)", "return 16;", "return 8;", "return 4;"]:
+    if stale in capacity_body:
+        raise SystemExit(f"FAIL: stale fixed round6 batch capacity remains: {stale!r}")
 
 # Round 8 uses at most 5120 padded input elements per batch. With the current
 # buffers, worst-case UB usage is bounded by 32 * batchElements + 64 * rows + 32.
