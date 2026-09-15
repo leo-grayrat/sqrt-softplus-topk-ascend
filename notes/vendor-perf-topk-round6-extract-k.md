@@ -72,4 +72,12 @@ final pairs
 - correctness 通过后直接完整 15-point Judge；
 - 不增加 simulator 性能准入。
 
-当前只完成代码、checker 与静态 diff 复核；尚未声称 Bisheng 编译或 CPU production probe 已通过。
+## 本地验证
+
+2026-09-15 本地验证已完成：
+
+- `python3 tools/check_vendor_perf_topk.py`：PASS；
+- Bisheng/CANN CPU probe 成功编译；
+- `topk_prefix_production_probe`：全部 PASS。
+
+因此第六轮已经通过结构检查与本地 correctness 门槛。下一步直接运行完整 15-point Judge，不再插入 simulator 性能测试。
