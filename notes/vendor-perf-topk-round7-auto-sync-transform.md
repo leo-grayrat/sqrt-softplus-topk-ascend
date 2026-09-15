@@ -78,8 +78,8 @@ VendorStableSoftplusSqrtAutoSync(...)
 
 1. `python3 tools/check_vendor_perf_topk.py`；
 2. Bisheng/CANN production CPU probe；
-3. 建议额外用 `--cce-auto-sync-log=<file>` 编译一次 device 目标，确认编译器实际插入 vector 同步；
-4. 本地 correctness 通过后直接完整 15-point Judge，不做 simulator 性能门槛。
+3. 用 `-g --cce-auto-sync --cce-auto-sync-log=<file>` 编译一次 device 目标，确认编译器实际插入 vector 同步；
+4. 根据 auto-sync 日志决定是否值得进入 Judge。
 
 ### auto-sync 日志参数注意事项
 
@@ -104,3 +104,36 @@ cmake --build /tmp/topk-round7-device -j1
 ```
 
 该参数修正只影响调试日志生成，不改变第七轮 kernel 实现。
+
+## 实际结果
+
+结构 checker 通过，production CPU probe 共 224 个 case 全部 PASS，覆盖 `k={2,3,4,5,7,8}`、多种对齐/非对齐 E、尾 batch 与多核场景。
+
+auto-sync 日志则直接给出了否定结论。`VendorStableSoftplusSqrtAutoSync` 中 54--61 行依次对应：
+
+```text
+Abs
+Muls
+Exp
+Adds
+Ln
+Maxs
+Add
+Sqrt
+```
+
+BiSheng 在这八行前全部记录了自动插入：
+
+```text
+PipeBarrier<PIPE_V>()
+```
+
+因此删除手写中间 barrier 后，编译器没有利用 `Ln(tmp)` 与 `Maxs(values)` 等表面上的独立数据流来形成明显重叠，而是采取了保守的逐向量算子同步。再加上函数末尾保留的显式 barrier，这个版本最终的同步结构与第六轮基本等价；`Abs` 前还存在额外的自动同步记录。
+
+### 结论
+
+第七轮不进入真实 Judge。
+
+原因不是 correctness 风险，而是编译器日志已经证明该 A/B 在最终生成同步结构上没有实质性变化。继续 Judge 只能重复验证一个已经由 codegen 诊断回答的问题。
+
+这进一步说明第五轮 batched transform 的大收益不能解释成“去掉了 transform 内部 barrier”；更可信的解释仍是减少了短向量 API 序列的重复发射次数。下一步停止 transform barrier 微调，回到 Huawei vendor Perf selection/merge 执行组织，检查当前实现是否还存在逐 chunk/逐段调用，而 vendor 原版能够通过 repeat/block 参数一次批量完成的地方。
