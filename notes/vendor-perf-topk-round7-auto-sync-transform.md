@@ -80,3 +80,27 @@ VendorStableSoftplusSqrtAutoSync(...)
 2. Bisheng/CANN production CPU probe；
 3. 建议额外用 `--cce-auto-sync-log=<file>` 编译一次 device 目标，确认编译器实际插入 vector 同步；
 4. 本地 correctness 通过后直接完整 15-point Judge，不做 simulator 性能门槛。
+
+### auto-sync 日志参数注意事项
+
+实际编译确认：`--cce-auto-sync-log=<file>` 只能在 debug 编译下使用，必须同时传入 `-g`。若只传 `--cce-auto-sync-log`，BiSheng 会在参数检查阶段报：
+
+```text
+invalid argument '-cce-auto-sync-log' only allowed with '-g'
+```
+
+日志专用 device build 应使用：
+
+```bash
+rm -rf /tmp/topk-round7-device /tmp/topk-round7-auto-sync.log
+
+cmake \
+  -S submission \
+  -B /tmp/topk-round7-device \
+  -DNPU_ARCH=dav-2201 \
+  -DCMAKE_ASC_FLAGS="-g --cce-auto-sync --cce-auto-sync-log=/tmp/topk-round7-auto-sync.log"
+
+cmake --build /tmp/topk-round7-device -j1
+```
+
+该参数修正只影响调试日志生成，不改变第七轮 kernel 实现。
