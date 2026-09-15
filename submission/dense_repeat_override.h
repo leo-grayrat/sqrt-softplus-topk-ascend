@@ -10,19 +10,19 @@ constexpr int32_t VENDOR_FINAL_VALUES = 32;
 constexpr int32_t VENDOR_FINAL_PAIR_FLOATS = VENDOR_FINAL_VALUES * 2;
 constexpr int32_t VENDOR_GATHER_REPEAT = 64;
 constexpr int32_t VENDOR_BATCH_ELEMENT_BUDGET = 5120;
+constexpr int32_t VENDOR_MAX_BATCH_ROWS = 32;
 
 __aicore__ inline int32_t SelectVendorBatchCapacity(int32_t inner)
 {
-    // Keep the whole vendor batch within a fixed input-element budget instead
-    // of the previous coarse 16/8/4 cap. For the current buffers this keeps
-    // worst-case UB usage below the 192 KB A2/A3 UB while Sort32 repeats stay
-    // at or below 5120 / 32 = 160 (< 255).
+    // Keep Round 8's 5120-element UB/repeat budget, but avoid extreme row
+    // batching for small inner. This isolates small-inner over-batching while
+    // preserving Round 8's capacities for medium/large inner.
     int32_t capacity = VENDOR_BATCH_ELEMENT_BUDGET / inner;
     if (capacity < 1) {
         capacity = 1;
     }
-    if (capacity > 255) {
-        capacity = 255;
+    if (capacity > VENDOR_MAX_BATCH_ROWS) {
+        capacity = VENDOR_MAX_BATCH_ROWS;
     }
     return capacity;
 }
