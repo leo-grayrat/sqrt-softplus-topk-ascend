@@ -55,25 +55,26 @@ capacity_end = header.find("__aicore__ inline int32_t SelectVendorBatchRows", ca
 if capacity_start < 0 or capacity_end < 0:
     raise SystemExit("FAIL: cannot isolate SelectVendorBatchCapacity")
 capacity_body = header[capacity_start:capacity_end]
+if "if (inner <= 256)" not in capacity_body or "return 16;" not in capacity_body:
+    raise SystemExit("FAIL: round10 does not restore the <=256 tier to 16 rows")
 if "VENDOR_BATCH_ELEMENT_BUDGET / inner" not in capacity_body:
-    raise SystemExit("FAIL: round8 capacity is not derived from a fixed element budget")
+    raise SystemExit("FAIL: round10 does not retain the 5120-element policy above 256")
 if "capacity > 255" not in capacity_body:
-    raise SystemExit("FAIL: round8 capacity does not guard uint8 GatherMask repeat range")
-for stale in ["if (inner <= 256)", "return 16;", "return 8;", "return 4;"]:
+    raise SystemExit("FAIL: round10 capacity does not guard uint8 GatherMask repeat range")
+for stale in ["return 8;", "return 4;", "VENDOR_MAX_BATCH_ROWS"]:
     if stale in capacity_body:
-        raise SystemExit(f"FAIL: stale fixed round6 batch capacity remains: {stale!r}")
+        raise SystemExit(f"FAIL: stale global/fixed batch rule remains: {stale!r}")
 
-# Round 8 uses at most 5120 padded input elements per batch. With the current
-# buffers, worst-case UB usage is bounded by 32 * batchElements + 64 * rows + 32.
-# E>=64 => inner>=64 => rows<=80, so the maximum is 168992 B, leaving margin
-# below the 192 KiB UB on A2/A3. Sort32 repeats are <=5120/32=160 < 255.
+# Round 10 restores <=256 to at most 16 rows. Above 256, the smallest padded
+# inner is 288, so the 5120-element rule gives at most 17 rows. Thus the global
+# worst case is batchElements<=5120 and rows<=17.
 BUDGET = 5120
-MAX_ROWS = BUDGET // 64
+MAX_ROWS = 17
 MAX_UB_BYTES = 32 * BUDGET + 64 * MAX_ROWS + 32
 if MAX_UB_BYTES >= 192 * 1024:
-    raise SystemExit(f"FAIL: round8 UB budget too large: {MAX_UB_BYTES} bytes")
+    raise SystemExit(f"FAIL: round10 UB budget too large: {MAX_UB_BYTES} bytes")
 if BUDGET // 32 > 255:
-    raise SystemExit("FAIL: round8 Sort32 repeat budget exceeds 255")
+    raise SystemExit("FAIL: round10 Sort32 repeat budget exceeds 255")
 
 start = header.find("class SqrtSoftplusVendorPerfTopKKernel")
 end = header.find("__global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom", start)
@@ -109,9 +110,6 @@ if "validRows * inner_ / VENDOR_SORT_UNIT" not in body:
 if "BuildFinalPairs(pairA, pairB, validRows)" not in body:
     raise SystemExit("FAIL: merge tree still processes dummy rows in the tail batch")
 
-# Round 6 follows Huawei ExtractKFP32Perf: build an alternating value mask for
-# the true runtime k, GatherMask directly into a compact [validRows, k] output,
-# then transform and copy that packed buffer once.
 if "pattern.SetValue(0, BuildVendorValueMask(k_))" not in body:
     raise SystemExit("FAIL: value pattern is not initialized from runtime k")
 if "params.repeatTimes = static_cast<uint8_t>(rows)" not in body:
@@ -133,4 +131,4 @@ if "static_cast<uint64_t>(validRows) * static_cast<uint64_t>(k_) * sizeof(float)
 if "packedOutputBytes" not in compute:
     raise SystemExit("FAIL: packed copyout byte count is not normalized to uint32_t")
 
-print("PASS: round8 vendor-perf uses UB-bounded larger row batches with true-k extraction")
+print("PASS: round10 restores the <=256 tier to 16 rows and keeps larger-inner batching")
