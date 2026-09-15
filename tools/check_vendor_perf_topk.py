@@ -16,6 +16,7 @@ required = [
     "activeBlockNum_",
     "VENDOR_KEEP_K = 8",
     "VENDOR_GATHER_REPEAT = 64",
+    "VENDOR_BATCH_ELEMENT_BUDGET = 5120",
     "TQue<AscendC::TPosition::VECIN, 2>",
     "InitIndexBatch",
     "RearrangeRows",
@@ -45,9 +46,35 @@ for forbidden in [
     "experts == inner &&",
     "PackTop8Values",
     "gatherBuffer_",
+    "if (inner <= 256)",
+    "return 16;",
+    "return 8;",
+    "return 4;",
 ]:
     if forbidden in header:
         raise SystemExit(f"FAIL: stale vendor-perf path remains: {forbidden!r}")
+
+capacity_start = header.find("__aicore__ inline int32_t SelectVendorBatchCapacity")
+capacity_end = header.find("__aicore__ inline int32_t SelectVendorBatchRows", capacity_start)
+if capacity_start < 0 or capacity_end < 0:
+    raise SystemExit("FAIL: cannot isolate SelectVendorBatchCapacity")
+capacity_body = header[capacity_start:capacity_end]
+if "VENDOR_BATCH_ELEMENT_BUDGET / inner" not in capacity_body:
+    raise SystemExit("FAIL: round8 capacity is not derived from a fixed element budget")
+if "capacity > 255" not in capacity_body:
+    raise SystemExit("FAIL: round8 capacity does not guard uint8 GatherMask repeat range")
+
+# Round 8 uses at most 5120 padded input elements per batch. With the current
+# buffers, worst-case UB usage is bounded by 32 * batchElements + 64 * rows + 32.
+# E>=64 => inner>=64 => rows<=80, so the maximum is 168992 B, leaving margin
+# below the 192 KiB UB on A2/A3. Sort32 repeats are <=5120/32=160 < 255.
+BUDGET = 5120
+MAX_ROWS = BUDGET // 64
+MAX_UB_BYTES = 32 * BUDGET + 64 * MAX_ROWS + 32
+if MAX_UB_BYTES >= 192 * 1024:
+    raise SystemExit(f"FAIL: round8 UB budget too large: {MAX_UB_BYTES} bytes")
+if BUDGET // 32 > 255:
+    raise SystemExit("FAIL: round8 Sort32 repeat budget exceeds 255")
 
 start = header.find("class SqrtSoftplusVendorPerfTopKKernel")
 end = header.find("__global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom", start)
@@ -107,4 +134,4 @@ if "static_cast<uint64_t>(validRows) * static_cast<uint64_t>(k_) * sizeof(float)
 if "packedOutputBytes" not in compute:
     raise SystemExit("FAIL: packed copyout byte count is not normalized to uint32_t")
 
-print("PASS: vendor-perf TopK uses direct true-k GatherMask extraction and batched transform")
+print("PASS: round8 vendor-perf uses UB-bounded larger row batches with true-k extraction")
