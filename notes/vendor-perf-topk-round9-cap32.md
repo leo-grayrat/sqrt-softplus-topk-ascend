@@ -100,10 +100,21 @@ rows=41 E=128 k=5 cores=1   # 32 + 9
 
 中大 inner 的 Round 8 probe 继续验证未受影响的 20/10/5-row capacity。
 
-## 预期解释
+## 真实 Judge 结果
 
-如果 case 7 恢复接近 Round 6，而 case 3/9/13 保持 Round 8 水平，则可以基本确认：Round 8 的主要负面来自 small-inner over-batching，32-row cap 是更合理的折中。
+15/15 Pass，0% 输出错误。关键点：
 
-如果 case 3 同时明显回退，说明 case 3 自身也属于 small-inner，并且它受益于超过 32 的 batch；下一步需要在 16--40 区间继续找折中，而不是按 inner 粗分。
+| case | Round 8 | Round 9 | 变化 |
+|---|---:|---:|---:|
+| 3 | 132.97 us | 132.89 us | -0.06% |
+| 7 | 20.65 us | 20.50 us | -0.73% |
+| 9 | 27.43 us | 27.30 us | -0.47% |
+| 13 | 172.43 us | 172.59 us | +0.09% |
 
-如果 case 7 仍然慢，则说明它的退化并不来自 `batchRows > 32`，需要转而检查 batch 增大后的 active block / group 调度或具体 merge 长度。
+15 点绝对时间总和 Round 8 约 7263.56 us，Round 9 约 7263.08 us，差异约 -0.007%，可视为完全持平。
+
+## 结论
+
+32-row cap 对隐藏 Judge 基本没有影响，因此 case 7 的 Round 8 退化不能归因于 `batchRows > 32`。更准确地说，相关 case 的实际 batch 可能本来就在 17--32 行区间，或者落在 `inner>=160`、本轮没有改变的档位。
+
+下一轮不再继续改全局 row cap，而是做档位隔离：只把 `inner<=256` 恢复到 Round 6 的 16 行，`inner>256` 保持 Round 8 的 `5120/inner`。这样可以直接判断 case 7 是否来自第一档，同时保留中大 inner 的 Round 8 行为。
