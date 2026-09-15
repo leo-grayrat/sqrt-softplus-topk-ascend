@@ -40,6 +40,28 @@ __aicore__ inline uint32_t BuildVendorValueMask(int32_t k)
     return mask;
 }
 
+// Round 7 A/B: the CANN/BiSheng kernel-direct build enables vector auto-sync by
+// default. Keep the exact stable softplus expression and operation order, but
+// remove the seven hand-written PIPE_V barriers between dependent vector ops.
+// BiSheng should reinsert only the synchronization required by LocalTensor data
+// dependencies. Keep one explicit final barrier at the transform boundary so the
+// experiment does not change the hand-off from vector compute to output enqueue.
+__aicore__ inline void VendorStableSoftplusSqrtAutoSync(
+    const AscendC::LocalTensor<float>& values,
+    const AscendC::LocalTensor<float>& tmp,
+    uint32_t count)
+{
+    AscendC::Abs(tmp, values, count);
+    AscendC::Muls(tmp, tmp, -1.0f, count);
+    AscendC::Exp(tmp, tmp, count);
+    AscendC::Adds(tmp, tmp, 1.0f, count);
+    AscendC::Ln(tmp, tmp, count);
+    AscendC::Maxs(values, values, 0.0f, count);
+    AscendC::Add(values, values, tmp, count);
+    AscendC::Sqrt(values, values, count);
+    AscendC::PipeBarrier<PIPE_V>();
+}
+
 class SqrtSoftplusVendorPerfTopKKernel {
 public:
     __aicore__ inline void Init(
@@ -415,9 +437,8 @@ private:
         ExtractKValues(out, finalPairs, validRows);
 
         AscendC::LocalTensor<float> tmp = floatTmpBuffer_.Get<float>();
-        TransformSelected(
+        VendorStableSoftplusSqrtAutoSync(
             out,
-            tmp,
             tmp,
             static_cast<uint32_t>(validRows * k_));
 
