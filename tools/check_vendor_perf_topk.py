@@ -12,6 +12,7 @@ required = [
     "BuildVendorValueMask",
     "InitValuePattern",
     "ExtractKValues",
+    "VendorStableSoftplusSqrtAutoSync",
     "patternBuffer_",
     "activeBlockNum_",
     "VENDOR_KEEP_K = 8",
@@ -49,6 +50,31 @@ for forbidden in [
     if forbidden in header:
         raise SystemExit(f"FAIL: stale vendor-perf path remains: {forbidden!r}")
 
+transform_start = header.find("__aicore__ inline void VendorStableSoftplusSqrtAutoSync")
+transform_end = header.find("class SqrtSoftplusVendorPerfTopKKernel", transform_start)
+if transform_start < 0 or transform_end < 0:
+    raise SystemExit("FAIL: cannot isolate round7 vendor transform")
+transform_body = header[transform_start:transform_end]
+
+for op in [
+    "AscendC::Abs(",
+    "AscendC::Muls(",
+    "AscendC::Exp(",
+    "AscendC::Adds(",
+    "AscendC::Ln(",
+    "AscendC::Maxs(",
+    "AscendC::Add(",
+    "AscendC::Sqrt(",
+]:
+    if op not in transform_body:
+        raise SystemExit(f"FAIL: round7 transform lost required operation: {op!r}")
+
+if transform_body.count("PipeBarrier<PIPE_V>();") != 1:
+    raise SystemExit(
+        "FAIL: round7 transform must keep exactly one explicit final PIPE_V barrier; "
+        "intermediate dependencies should be left to BiSheng auto-sync"
+    )
+
 start = header.find("class SqrtSoftplusVendorPerfTopKKernel")
 end = header.find("__global__ __vector__ void sqrt_softplus_prefix_merge_top_k_dispatch_custom", start)
 if start < 0 or end < 0:
@@ -83,9 +109,7 @@ if "validRows * inner_ / VENDOR_SORT_UNIT" not in body:
 if "BuildFinalPairs(pairA, pairB, validRows)" not in body:
     raise SystemExit("FAIL: merge tree still processes dummy rows in the tail batch")
 
-# Round 6 follows Huawei ExtractKFP32Perf: build an alternating value mask for
-# the true runtime k, GatherMask directly into a compact [validRows, k] output,
-# then transform and copy that packed buffer once.
+# Round 6 true-k extraction remains unchanged.
 if "pattern.SetValue(0, BuildVendorValueMask(k_))" not in body:
     raise SystemExit("FAIL: value pattern is not initialized from runtime k")
 if "params.repeatTimes = static_cast<uint8_t>(rows)" not in body:
@@ -98,6 +122,10 @@ if "static_cast<uint32_t>(validRows * k_)" not in body:
     raise SystemExit("FAIL: transform still processes padded top-8 instead of validRows*k")
 
 compute = body[body.find("__aicore__ inline void ComputeGroup"):]
+if "VendorStableSoftplusSqrtAutoSync(" not in compute:
+    raise SystemExit("FAIL: vendor path does not call round7 auto-synced transform")
+if "TransformSelected(" in compute:
+    raise SystemExit("FAIL: vendor path still calls the globally barriered TransformSelected")
 if "if (k_ == VENDOR_KEEP_K)" in compute:
     raise SystemExit("FAIL: stale k=8-only contiguous copyout split remains")
 if "for (int32_t row = 0; row < validRows; ++row)" in compute:
@@ -107,4 +135,4 @@ if "static_cast<uint64_t>(validRows) * static_cast<uint64_t>(k_) * sizeof(float)
 if "packedOutputBytes" not in compute:
     raise SystemExit("FAIL: packed copyout byte count is not normalized to uint32_t")
 
-print("PASS: vendor-perf TopK uses direct true-k GatherMask extraction and batched transform")
+print("PASS: round7 vendor transform relies on BiSheng PIPE_V auto-sync with one final explicit barrier")
