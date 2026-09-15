@@ -13,10 +13,11 @@ constexpr int32_t VENDOR_BATCH_ELEMENT_BUDGET = 5120;
 
 __aicore__ inline int32_t SelectVendorBatchCapacity(int32_t inner)
 {
-    // Keep the whole vendor batch within a fixed input-element budget instead
-    // of the previous coarse 16/8/4 cap. For the current buffers this keeps
-    // worst-case UB usage below the 192 KB A2/A3 UB while Sort32 repeats stay
-    // at or below 5120 / 32 = 160 (< 255).
+    // Isolate the small-inner tier: restore Round 6's 16-row cap for
+    // inner<=256, while keeping Round 8's 5120-element policy above it.
+    if (inner <= 256) {
+        return 16;
+    }
     int32_t capacity = VENDOR_BATCH_ELEMENT_BUDGET / inner;
     if (capacity < 1) {
         capacity = 1;
