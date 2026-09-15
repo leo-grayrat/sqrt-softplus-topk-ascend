@@ -2,11 +2,27 @@
 
 2026 CANN 挑战赛初赛 `SqrtSoftplusTopK` 算子的实验仓库。
 
-目前只完成 **PyTorch 正确性参考与仓库骨架**，尚未接入比赛的 CANNJudge starter project，也没有声称任何 Ascend C 实现已经编译、运行、AC 或获得性能提升。
+仓库已经接入真实 CANNJudge starter project，并在 CANN 9.0 / dav-2201 上完成多轮 Ascend C 实现、CPU twin-debug、Bisheng 编译和真实 Judge 性能实验。
+
+## 当前主线
+
+`main` 只保存**已经完成本地验证并通过真实 Judge 的可信生产基线**。截至 2026-09-15，主线采用 `vendor-perf-topk-round6-extract-k` 的实现：
+
+- FP32、`2 <= k <= 8` 使用参考 Huawei A2/A3 `MoeGatingTopKSoftmaxPerf` 执行结构的多行批处理路径；
+- 非 32 对齐 `E` 在 UB 中补齐后进入同一 Sort32 / MrgSort 路径；
+- Top-K 后按真实 `k` 批量抽取 values，再统一计算 `sqrt(softplus(x))`；
+- 其余 dtype / k 范围继续走已验证的安全回退路径；
+- 该基线真实 CANNJudge 15/15 Pass。
+
+最新实验状态、已知测试点形状和后续方向见：
+
+- [`notes/current-status-2026-09-15.md`](notes/current-status-2026-09-15.md)
+- [`notes/optimization-plan-2026-09-15.md`](notes/optimization-plan-2026-09-15.md)
+- [`notes/vendor-perf-topk-progress-2026-09-14.md`](notes/vendor-perf-topk-progress-2026-09-14.md)
 
 ## 题目
 
-输入 `router_logits`，形状为 `(T, E)`，对每个元素计算：
+输入 `router_logits`，形状为 `(T, E)`，逐元素计算：
 
 ```text
 sqrt(softplus(x))
@@ -14,9 +30,7 @@ sqrt(softplus(x))
 
 然后逐 token 取最大的 `k` 个分数。题目范围包括 FP16/FP32、`E=64..1024`、`k=1..64`。
 
-## 一个直接可用的化简
-
-`sqrt(softplus(x))` 单调递增，因此 Top-K 的专家不会因为这个变换改变：
+`sqrt(softplus(x))` 严格单调递增，因此可以先在原始 logits 上完成 Top-K，再只对选中的 `T*k` 个值做变换：
 
 ```text
 TopK(sqrt(softplus(x)))
@@ -24,32 +38,28 @@ TopK(sqrt(softplus(x)))
 sqrt(softplus(TopK(x)))
 ```
 
-所以候选实现可以先在原始 logits 上取 Top-K，再只对选中的 `T*k` 个值做 FP32 softplus 和 sqrt。
+这是当前所有实现的基本数学化简。
 
-`reference/reference.py` 中同时保留：
+## 仓库结构
 
-- `official`：照题面 PyTorch 示例的计算过程；
-- `topk_first`：先 Top-K 再变换的等价写法；
-- `expected_output`：按题面“输出 dtype 与输入一致”的要求转回 dtype。
+- `submission/`：比赛提交工程与当前生产实现；
+- `debug/`：CPU twin-debug / probe；
+- `tools/`：结构 checker、profiling 等辅助脚本；
+- `reference/`、`tests/`：PyTorch 参考实现与基础正确性测试；
+- `notes/`：性能实验、负结果、源码调研与阶段总结。
 
-## 题面中的 dtype 矛盾
+## 分支约定
 
-题面表格要求输出 dtype 与输入一致，但给出的 PyTorch 示例先执行 `router_logits.float()`，随后直接返回，因此 FP16 输入在示例代码中实际得到 FP32 输出。
+后续把 `main` 视为唯一 canonical baseline。新性能假设可以开短期实验分支，但实验结束后必须明确归类：
 
-仓库不偷偷忽略这个矛盾：`official` 保留示例行为，`expected_output` 单独表达题面声明的输出类型要求。真正 Ascend C 工程接入后，以 starter project / Judge 的实际 contract 再确认。
+- 若形成新的可信生产基线，整理后回到 `main`；
+- 若为负结果或单纯 A/B，只保留 commit / notes 作为历史证据，不继续把该分支当开发主线；
+- 不再用不断递增的 `roundN` 分支替代主线集成。
 
-## 测试
+现有历史实验分支暂时保留，避免在整理阶段破坏可追溯性。
 
-```bash
-python -m pytest tests/test_reference.py -q
-```
+## 验证原则
 
-当前测试覆盖 FP16/FP32、`k=1/6/64`、2 的幂与非 2 的幂 `E`、20 附近、极值、`-inf`、重复值和固定随机输入。
+真实性能结论以 CANNJudge / 真实 NPU 结果为准。Simulator 主要用于解释指令和流水成本，不把 simulator 的绝对时长直接当作 Judge 性能。
 
-## 下一步
-
-1. 从 CANNJudge 下载本题真实 starter project，放入 `submission/`；
-2. 确认比赛实际 CANN 版本与 NPU/SoC；
-3. 在真实工程中先做 correctness baseline；
-4. 若环境支持官方 `TopK` API，优先测试“Top-K logits → FP32 softplus/sqrt”；
-5. baseline AC 后再根据真实 NPU/Judge 数据决定是否需要更底层优化。
+README 只描述当前仓库状态；早期逐行 TopK、双行 TopK 等历史记录仍保留在 `notes/perf-experiments.md`。
