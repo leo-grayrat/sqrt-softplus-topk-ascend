@@ -13,3 +13,5 @@
 - 另含多个 padding / k 边界组合。
 
 机械字符串 checker 已删除。本实验只把能实际执行 selection/layout 的 CPU probe、Bisheng/device 编译和后续真实 Judge 作为有效验证。
+
+下一步：CPU probe 通过后，将同一 keep-16 归并结构接入 `dense_repeat_override.h` 的 Judge-active half dispatch；`main.asc` 不改。
