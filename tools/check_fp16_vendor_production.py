@@ -3,7 +3,8 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-HEADER = ROOT / "submission" / "fp16_vendor_override.h"
+HEADER = ROOT / "submission" / "dense_repeat_override.h"
+KERNEL = ROOT / "submission" / "kernel.asc"
 MAIN = ROOT / "submission" / "main.asc"
 
 
@@ -18,35 +19,31 @@ def forbid(text: str, needle: str, label: str) -> None:
 
 
 def main() -> int:
-    if not HEADER.exists():
-        raise AssertionError(f"missing production header: {HEADER.relative_to(ROOT)}")
-
     header = HEADER.read_text(encoding="utf-8")
+    kernel = KERNEL.read_text(encoding="utf-8")
     main_src = MAIN.read_text(encoding="utf-8")
 
-    require(header, "class SqrtSoftplusVendorPerfTopKHalfKernel", "FP16 vendor kernel")
+    require(header, "class SqrtSoftplusVendorPerfTopKHalfKernel", "FP16 vendor kernel in Judge-active header")
     require(header, "GlobalTensor<half>", "half GM tensors")
-    require(header, "floatInput,\n                staging", "batched half-to-float conversion")
     require(header, "Sort32<float>", "FP32 Sort32 selection")
-    require(header, "ExtractKValues", "true-k value extraction")
     require(header, "StableSoftplusSqrt", "batched FP32 transform")
-    require(header, "halfOut,\n            floatOut", "batched float-to-half conversion")
     require(header, "rawHalfOutputBytes", "raw half output byte count")
     require(
         header,
-        "(rawHalfOutputBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES",
-        "device-side 32B half output queue alignment",
+        "#define sqrt_softplus_top_k_custom sqrt_softplus_top_k_dispatch_custom",
+        "generic TopK launch override visible to kernel.asc run_kernel",
     )
+    require(header, "k >= 2 && k <= 8", "FP16 small-k device gate")
     forbid(header, "AlignUpBytes(", "host-only AlignUpBytes call from aicore header")
-    require(header, "dtype == 1 && k32 >= 2 && k32 <= 8", "FP16 small-k gate")
-    require(header, "run_kernel_base", "fallback to canonical dispatch")
 
-    require(main_src, "#define run_kernel run_kernel_base", "canonical run_kernel rename")
-    require(main_src, "#include \"kernel.asc\"", "canonical kernel include")
-    require(main_src, "#undef run_kernel", "run_kernel rename cleanup")
-    require(main_src, "#include \"fp16_vendor_override.h\"", "FP16 production override include")
+    require(kernel, '#include "dense_repeat_override.h"', "Judge-active override include")
+    require(kernel, "sqrt_softplus_top_k_custom<half>", "canonical FP16 launch site")
 
-    print("PASS: fp16 k<=8 production override uses batched half->FP32 vendor selection")
+    require(main_src, '#include "kernel.asc"', "local main uses the same Judge-active kernel")
+    forbid(main_src, "run_kernel_base", "local-only run_kernel interception")
+    forbid(main_src, "fp16_vendor_override.h", "local-only FP16 override include")
+
+    print("PASS: fp16 k<=8 vendor path is wired through kernel.asc Judge hot path")
     return 0
 
 
