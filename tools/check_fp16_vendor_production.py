@@ -4,7 +4,6 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 HEADER = ROOT / "submission" / "dense_repeat_override.h"
-KERNEL = ROOT / "submission" / "kernel.asc"
 
 
 def require(text: str, needle: str, label: str) -> None:
@@ -14,7 +13,6 @@ def require(text: str, needle: str, label: str) -> None:
 
 def main() -> int:
     header = HEADER.read_text(encoding="utf-8")
-    kernel = KERNEL.read_text(encoding="utf-8")
 
     require(header, "class SqrtSoftplusVendorPerfTopKHalfKernel", "FP16 vendor kernel")
     require(header, "GlobalTensor<half>", "half GM tensors")
@@ -23,10 +21,13 @@ def main() -> int:
     require(header, "ExtractKValues", "true-k value extraction")
     require(header, "StableSoftplusSqrt", "batched FP32 transform")
     require(header, "Cast(halfOut", "batched float-to-half conversion")
-    require(header, "sqrt_softplus_vendor_fp16_top_k_custom", "FP16 vendor global kernel")
-
-    require(kernel, "dtype == 1 && k32 <= 8", "FP16 small-k dispatch")
-    require(kernel, "sqrt_softplus_vendor_fp16_top_k_custom", "FP16 vendor launch")
+    require(header, "sqrt_softplus_top_k_dispatch_custom", "template production dispatch")
+    require(header, "IsSameType<T, half>::value && k >= 2 && k <= 8", "FP16 small-k gate")
+    require(
+        header,
+        "#define sqrt_softplus_top_k_custom sqrt_softplus_top_k_dispatch_custom",
+        "run_kernel template launch override",
+    )
 
     print("PASS: fp16 k<=8 production dispatch uses batched half->FP32 vendor selection")
     return 0
