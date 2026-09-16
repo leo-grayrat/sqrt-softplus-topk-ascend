@@ -40,8 +40,8 @@ public:
         const uint32_t batchPairBytes = batchInputBytes * 2u;
         const uint32_t batchFloatOutputBytes =
             static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(float);
-        const uint32_t batchHalfOutputBytes =
-            static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(half);
+        const uint32_t batchHalfOutputBytes = AlignUpBytes(
+            static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(half));
 
         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
         pipe_.InitBuffer(floatInputBuffer_, batchInputBytes);
