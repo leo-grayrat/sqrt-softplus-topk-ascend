@@ -40,8 +40,10 @@ public:
         const uint32_t batchPairBytes = batchInputBytes * 2u;
         const uint32_t batchFloatOutputBytes =
             static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(float);
-        const uint32_t batchHalfOutputBytes = AlignUpBytes(
-            static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(half));
+        const uint32_t rawHalfOutputBytes =
+            static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(half);
+        const uint32_t batchHalfOutputBytes =
+            (rawHalfOutputBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES;
 
         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
         pipe_.InitBuffer(floatInputBuffer_, batchInputBytes);
@@ -457,30 +459,14 @@ __global__ __vector__ void sqrt_softplus_vendor_fp16_top_k_custom(
 {
     AscendC::InitSocState();
     SqrtSoftplusVendorPerfTopKHalfKernel op;
-    op.Init(
-        routerLogits,
-        topkScores,
-        rows,
-        experts,
-        inner,
-        k,
-        blockNum);
+    op.Init(routerLogits, topkScores, rows, experts, inner, k, blockNum);
     op.Process();
     AscendC::PipeBarrier<PIPE_ALL>();
 }
 
 }  // namespace
 
-extern "C" void run_kernel_base(
-    GM_ADDR router_logits,
-    const TensorGroupInfo& info_router_logits,
-    GM_ADDR topk_scores,
-    const TensorGroupInfo& info_topk_scores,
-    int64_t availableCoreNum,
-    aclrtStream stream,
-    int64_t k);
-
-extern "C" void run_kernel(
+inline void run_kernel(
     GM_ADDR router_logits,
     const TensorGroupInfo& info_router_logits,
     GM_ADDR topk_scores,
