@@ -12,6 +12,11 @@ def require(text: str, needle: str, label: str) -> None:
         raise AssertionError(f"missing {label}: {needle}")
 
 
+def forbid(text: str, needle: str, label: str) -> None:
+    if needle in text:
+        raise AssertionError(f"forbidden {label}: {needle}")
+
+
 def main() -> int:
     if not HEADER.exists():
         raise AssertionError(f"missing production header: {HEADER.relative_to(ROOT)}")
@@ -26,7 +31,13 @@ def main() -> int:
     require(header, "ExtractKValues", "true-k value extraction")
     require(header, "StableSoftplusSqrt", "batched FP32 transform")
     require(header, "halfOut,\n            floatOut", "batched float-to-half conversion")
-    require(header, "AlignUpBytes(\n            static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(half))", "32B half output queue alignment")
+    require(header, "rawHalfOutputBytes", "raw half output byte count")
+    require(
+        header,
+        "(rawHalfOutputBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES",
+        "device-side 32B half output queue alignment",
+    )
+    forbid(header, "AlignUpBytes(", "host-only AlignUpBytes call from aicore header")
     require(header, "dtype == 1 && k32 >= 2 && k32 <= 8", "FP16 small-k gate")
     require(header, "run_kernel_base", "fallback to canonical dispatch")
 
