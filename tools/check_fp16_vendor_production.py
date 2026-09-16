@@ -3,7 +3,8 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-HEADER = ROOT / "submission" / "dense_repeat_override.h"
+HEADER = ROOT / "submission" / "fp16_vendor_override.h"
+MAIN = ROOT / "submission" / "main.asc"
 
 
 def require(text: str, needle: str, label: str) -> None:
@@ -12,7 +13,11 @@ def require(text: str, needle: str, label: str) -> None:
 
 
 def main() -> int:
+    if not HEADER.exists():
+        raise AssertionError(f"missing production header: {HEADER.relative_to(ROOT)}")
+
     header = HEADER.read_text(encoding="utf-8")
+    main_src = MAIN.read_text(encoding="utf-8")
 
     require(header, "class SqrtSoftplusVendorPerfTopKHalfKernel", "FP16 vendor kernel")
     require(header, "GlobalTensor<half>", "half GM tensors")
@@ -21,15 +26,15 @@ def main() -> int:
     require(header, "ExtractKValues", "true-k value extraction")
     require(header, "StableSoftplusSqrt", "batched FP32 transform")
     require(header, "Cast(halfOut", "batched float-to-half conversion")
-    require(header, "sqrt_softplus_top_k_dispatch_custom", "template production dispatch")
-    require(header, "IsSameType<T, half>::value && k >= 2 && k <= 8", "FP16 small-k gate")
-    require(
-        header,
-        "#define sqrt_softplus_top_k_custom sqrt_softplus_top_k_dispatch_custom",
-        "run_kernel template launch override",
-    )
+    require(header, "dtype == 1 && k32 >= 2 && k32 <= 8", "FP16 small-k gate")
+    require(header, "run_kernel_base", "fallback to canonical dispatch")
 
-    print("PASS: fp16 k<=8 production dispatch uses batched half->FP32 vendor selection")
+    require(main_src, "#define run_kernel run_kernel_base", "canonical run_kernel rename")
+    require(main_src, "#include \"kernel.asc\"", "canonical kernel include")
+    require(main_src, "#undef run_kernel", "run_kernel rename cleanup")
+    require(main_src, "#include \"fp16_vendor_override.h\"", "FP16 production override include")
+
+    print("PASS: fp16 k<=8 production override uses batched half->FP32 vendor selection")
     return 0
 
 
