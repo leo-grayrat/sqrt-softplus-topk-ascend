@@ -21,11 +21,12 @@ def main() -> int:
 
     require(header, "class SqrtSoftplusVendorPerfTopKHalfKernel", "FP16 vendor kernel")
     require(header, "GlobalTensor<half>", "half GM tensors")
-    require(header, "Cast(floatInput", "batched half-to-float conversion")
+    require(header, "floatInput,\n                staging", "batched half-to-float conversion")
     require(header, "Sort32<float>", "FP32 Sort32 selection")
     require(header, "ExtractKValues", "true-k value extraction")
     require(header, "StableSoftplusSqrt", "batched FP32 transform")
-    require(header, "Cast(halfOut", "batched float-to-half conversion")
+    require(header, "halfOut,\n            floatOut", "batched float-to-half conversion")
+    require(header, "AlignUpBytes(\n            static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(half))", "32B half output queue alignment")
     require(header, "dtype == 1 && k32 >= 2 && k32 <= 8", "FP16 small-k gate")
     require(header, "run_kernel_base", "fallback to canonical dispatch")
 
