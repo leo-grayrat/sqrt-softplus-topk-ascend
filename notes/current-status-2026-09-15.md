@@ -92,7 +92,9 @@ case 13  172.59 us
 
 ## 高可信测试点 shape 信息
 
-以下数据来自参赛者泄露并经过交叉验证，可信度很高，但并非赛事官方公开资料，因此仓库中按“高可信外部信息”记录，不当作正式 contract。
+完整单独归档：`notes/judge-case-shapes-2026-09-15.md`。
+
+当前按“高可信外部信息”使用，不当作赛事正式 contract。
 
 | case | T | E | k | dtype |
 | ---: | ---: | ---: | ---: | --- |
@@ -116,13 +118,11 @@ case 13  172.59 us
 
 ## 当前路径覆盖
 
-Round 6 vendor-perf 主路径只覆盖 FP32 `2<=k<=8`，因此对应公开 shape 后的 case 为：
+Round 6 vendor-perf 主路径只覆盖 FP32 `2<=k<=8`，对应 case：
 
 ```text
 1, 3, 7, 9, 13
 ```
-
-其中 case 1 只有 8 行，启动成本占主导；真正决定该路径收益的主要是 3/7/9/13。
 
 其余 10 个点仍主要依赖旧路径，可按以下三组看：
 
@@ -132,12 +132,20 @@ Round 6 vendor-perf 主路径只覆盖 FP32 `2<=k<=8`，因此对应公开 shape
 
 这意味着当前最大的结构性空间已经不在继续微调 FP32 small-k 的几个百分点，而在**把已证明有效的执行组织扩到新的 dtype / k 区间**。
 
-## 分支与 issue 约定
+## FP16 small-k 当前进展
 
-从本次整理开始：
+Huawei `MoeGatingTopKSoftmaxPerf<T>` 对非 FP32 输入的实际结构已经确认：先在 UB 中 Cast 到 FP32，再统一进入 FP32 selection，最后 Cast 回原 dtype。本仓库的独立 `E=256,k=3` CPU twin-debug probe 已由用户本地验证 PASS。
+
+当前实验分支 `exp/fp16-vendor-smallk-probe` 已进入 production 集成阶段，目标是覆盖 FP16 `2<=k<=8`，重点看 case 12。主线在真实 Judge 结果出来前保持 Round 6 不变。
+
+## 榜单参考
+
+2026-09-16 官方清理部分 hack 后的 TBest 与头部快照已归档到 `notes/leaderboard-2026-09-16.md`。该快照进一步确认 case 12 / 14 / 15 是最大的结构性差距点。
+
+## 分支与 issue 约定
 
 - `main` = 当前可信生产基线；
 - 实验分支只服务于一个明确假设；
-- 成功结果整理后回 `main`，失败结果归档到 notes，不再让 `roundN` 分支持续承担主线职责；
-- 现有历史分支暂时保留以避免破坏追溯，后续无需继续从它们分叉开发；
-- #43 在本次整理中作为 vendor-perf FP32 small-k 阶段的收尾 issue，新的优化阶段另行规划。
+- 成功结果整理后回 `main`，失败结果归档到 notes；
+- 现有历史 round 分支不再承担主线职责；
+- #44 跟踪 FP16 small-k，从 feasibility probe 到 production Judge 结论。
