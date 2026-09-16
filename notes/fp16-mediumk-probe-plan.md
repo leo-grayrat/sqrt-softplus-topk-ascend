@@ -12,4 +12,4 @@
 - E=512,k=10：case 14 的核心结构；
 - 另含多个 padding / k 边界组合。
 
-注意：机械字符串 checker 已删除；本实验只保留能实际执行 selection/layout 的 probe、Bisheng 编译和后续 Judge 作为有效验证。
+机械字符串 checker 已删除。本实验只把能实际执行 selection/layout 的 CPU probe、Bisheng/device 编译和后续真实 Judge 作为有效验证。
