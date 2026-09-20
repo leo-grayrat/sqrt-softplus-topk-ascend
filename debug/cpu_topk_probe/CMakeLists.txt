@@ -41,6 +41,10 @@ add_executable(topk_fp16_vendor_medium_probe
     topk_fp16_vendor_medium_probe.asc
 )
 
+add_executable(topk_fp32_vendor_large_probe
+    topk_fp32_vendor_large_probe.asc
+)
+
 foreach(probe_target IN ITEMS
         topk_hierarchical_probe
         topk_prefix_merge_probe
@@ -49,7 +53,8 @@ foreach(probe_target IN ITEMS
         topk_dense_repeat_probe
         topk_fp16_vendor_probe
         topk_fp16_vendor_production_probe
-        topk_fp16_vendor_medium_probe)
+        topk_fp16_vendor_medium_probe
+        topk_fp32_vendor_large_probe)
     target_link_libraries(${probe_target} PRIVATE
         tiling_api
         register
