@@ -39,7 +39,15 @@ __aicore__ inline int32_t SelectVendorHalfScratchBatchRows(
     int32_t blockNum,
     int32_t inner)
 {
-    const int32_t capacity = inner <= 256 ? 32 : (inner <= 512 ? 16 : 4);
+    int32_t capacity = inner <= 256 ? 32 : (inner <= 512 ? 16 : 4);
+
+    // Sort32 repeatTimes is limited to [0, 255]. Each row consumes inner/32 repeats.
+    const int32_t sortRepeatsPerRow = inner / VENDOR_SORT_UNIT;
+    const int32_t sortSafeRows = 255 / sortRepeatsPerRow;
+    if (capacity > sortSafeRows) {
+        capacity = sortSafeRows;
+    }
+
     const int32_t rowsPerCore = (rows + blockNum - 1) / blockNum;
     return rowsPerCore < capacity ? rowsPerCore : capacity;
 }
