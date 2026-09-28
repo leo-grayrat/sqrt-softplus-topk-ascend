@@ -19,56 +19,15 @@ jobs:
           ref: exp/vendor-fp16-throughput-c12-c14
           fetch-depth: 0
 
-      - name: Cap FP16 batch rows by Sort32 repeat limit
+      - name: Apply repeat cap patch
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          path = Path('submission/dense_repeat_override.h')
-          text = path.read_text(encoding='utf-8')
-          old = '''__aicore__ inline int32_t SelectVendorHalfScratchBatchRows(
-    int32_t rows,
-    int32_t blockNum,
-    int32_t inner)
-{
-    const int32_t capacity = inner <= 256 ? 32 : (inner <= 512 ? 16 : 4);
-    const int32_t rowsPerCore = (rows + blockNum - 1) / blockNum;
-    return rowsPerCore < capacity ? rowsPerCore : capacity;
-}
-'''
-          new = '''__aicore__ inline int32_t SelectVendorHalfScratchBatchRows(
-    int32_t rows,
-    int32_t blockNum,
-    int32_t inner)
-{
-    int32_t capacity = inner <= 256 ? 32 : (inner <= 512 ? 16 : 4);
-
-    // Sort32 accepts at most 255 repeats; each row consumes inner/32 repeats.
-    // The previous 32x256 and 16x512 batches both requested 256 repeats,
-    // which CPU debug tolerated but real device execution produced all-wrong output.
-    const int32_t sortRepeatsPerRow = inner / VENDOR_SORT_UNIT;
-    const int32_t sortSafeRows = 255 / sortRepeatsPerRow;
-    if (capacity > sortSafeRows) {
-        capacity = sortSafeRows;
-    }
-
-    const int32_t rowsPerCore = (rows + blockNum - 1) / blockNum;
-    return rowsPerCore < capacity ? rowsPerCore : capacity;
-}
-'''
-          if old not in text:
-              raise RuntimeError('batch selector anchor missing')
-          path.write_text(text.replace(old, new, 1), encoding='utf-8')
-          PY
-
+          python3 tools/fp16_sort32_repeat_cap_fix.py
           git diff --check
-          git diff -- submission/dense_repeat_override.h
 
-      - name: Commit fix and remove one-shot workflow
+      - name: Commit fix
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm .github/workflows/fp16-sort32-repeat-cap-fix.yml
           git add submission/dense_repeat_override.h
           git commit -m "fix: cap FP16 vendor batches at Sort32 repeat limit"
           git push origin HEAD:exp/vendor-fp16-throughput-c12-c14
