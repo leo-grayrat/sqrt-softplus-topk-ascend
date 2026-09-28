@@ -27,35 +27,37 @@ jobs:
           start = text.index('namespace {\\n\\n__global__')
           end_marker = '}\\n\\nbool CheckAcl'
           end = text.index(end_marker, start) + len('}\\n\\n')
-          wrapper = '''namespace {
-
-__global__ __vector__ void topk_fp32_vendor_production_probe_kernel(
-    GM_ADDR routerLogits,
-    GM_ADDR topkScores,
-    int32_t rows,
-    int32_t experts,
-    int32_t inner,
-    int32_t k,
-    int32_t blockNum)
-{
-    AscendC::InitSocState();
-    AscendC::tiling::TopkTiling dummyTiling{};
-    RunVendorTopKDispatch(
-        VendorDispatchTag<float>{},
-        routerLogits,
-        topkScores,
-        rows,
-        experts,
-        inner,
-        k,
-        blockNum,
-        1,
-        0,
-        dummyTiling);
-    AscendC::PipeBarrier<PIPE_ALL>();
-}
-
-'''
+          lines = [
+              'namespace {',
+              '',
+              '__global__ __vector__ void topk_fp32_vendor_production_probe_kernel(',
+              '    GM_ADDR routerLogits,',
+              '    GM_ADDR topkScores,',
+              '    int32_t rows,',
+              '    int32_t experts,',
+              '    int32_t inner,',
+              '    int32_t k,',
+              '    int32_t blockNum)',
+              '{',
+              '    AscendC::InitSocState();',
+              '    AscendC::tiling::TopkTiling dummyTiling{};',
+              '    RunVendorTopKDispatch(',
+              '        VendorDispatchTag<float>{},',
+              '        routerLogits,',
+              '        topkScores,',
+              '        rows,',
+              '        experts,',
+              '        inner,',
+              '        k,',
+              '        blockNum,',
+              '        1,',
+              '        0,',
+              '        dummyTiling);',
+              '    AscendC::PipeBarrier<PIPE_ALL>();',
+              '}',
+              '',
+          ]
+          wrapper = '\n'.join(lines) + '\n'
           text = text[:start] + wrapper + text[end:]
           path.write_text(text, encoding='utf-8')
           PY
