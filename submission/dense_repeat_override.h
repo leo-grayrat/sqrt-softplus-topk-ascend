@@ -31,6 +31,19 @@ __aicore__ inline int32_t SelectVendorBatchRows(
     return rowsPerCore < capacity ? rowsPerCore : capacity;
 }
 
+// FP16 small/medium throughput spike: pairB temporarily holds the casted FP32
+// input and zero payload indices before Sort32, then becomes merge scratch.
+// Removing two full-row UB buffers lets these paths batch twice as many rows.
+__aicore__ inline int32_t SelectVendorHalfScratchBatchRows(
+    int32_t rows,
+    int32_t blockNum,
+    int32_t inner)
+{
+    const int32_t capacity = inner <= 256 ? 32 : (inner <= 512 ? 16 : 4);
+    const int32_t rowsPerCore = (rows + blockNum - 1) / blockNum;
+    return rowsPerCore < capacity ? rowsPerCore : capacity;
+}
+
 __aicore__ inline uint32_t BuildVendorValueMask(int32_t k)
 {
     uint32_t mask = 1u;
@@ -515,7 +528,7 @@ public:
         inner_ = inner;
         k_ = k;
         blockNum_ = blockNum;
-        batchRows_ = SelectVendorBatchRows(rows_, blockNum_, inner_);
+        batchRows_ = SelectVendorHalfScratchBatchRows(rows_, blockNum_, inner_);
         groupCount_ = (rows_ + batchRows_ - 1) / batchRows_;
         activeBlockNum_ = groupCount_ < blockNum_ ? groupCount_ : blockNum_;
 
@@ -540,8 +553,6 @@ public:
             (rawHalfOutputBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES;
 
         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
-        pipe_.InitBuffer(floatInputBuffer_, batchInputBytes);
-        pipe_.InitBuffer(indexBuffer_, batchInputBytes);
         pipe_.InitBuffer(pairABuffer_, batchPairBytes);
         pipe_.InitBuffer(pairBBuffer_, batchPairBytes);
         pipe_.InitBuffer(floatOutputBuffer_, batchFloatOutputBytes);
@@ -557,7 +568,6 @@ public:
             return;
         }
 
-        InitIndexBatch();
         InitValuePattern();
 
         int32_t group = blockIdx;
@@ -581,16 +591,6 @@ private:
             validRows = batchRows_;
         }
         return validRows;
-    }
-
-    __aicore__ inline void InitIndexBatch()
-    {
-        AscendC::LocalTensor<int32_t> index = indexBuffer_.Get<int32_t>();
-        AscendC::Duplicate(
-            index,
-            static_cast<int32_t>(0),
-            static_cast<uint32_t>(batchRows_ * inner_));
-        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void InitValuePattern()
@@ -772,14 +772,20 @@ private:
         const int32_t validRows = GroupValidRows(group);
 
         AscendC::LocalTensor<half> staging = inputQueue_.DeQue<half>();
-        AscendC::LocalTensor<float> floatInput = floatInputBuffer_.Get<float>();
-        ConvertRows(floatInput, staging, validRows);
-
-        AscendC::LocalTensor<int32_t> signedIndex = indexBuffer_.Get<int32_t>();
-        AscendC::LocalTensor<uint32_t> index =
-            signedIndex.ReinterpretCast<uint32_t>();
         AscendC::LocalTensor<float> pairA = pairABuffer_.Get<float>();
         AscendC::LocalTensor<float> pairB = pairBBuffer_.Get<float>();
+
+        // pairB is source/index scratch before Sort32, then merge scratch.
+        AscendC::LocalTensor<float> floatInput = pairB;
+        AscendC::LocalTensor<uint32_t> index =
+            pairB[static_cast<uint32_t>(batchRows_ * inner_)]
+                .ReinterpretCast<uint32_t>();
+        ConvertRows(floatInput, staging, validRows);
+        AscendC::Duplicate(
+            index,
+            static_cast<uint32_t>(0),
+            static_cast<uint32_t>(validRows * inner_));
+        AscendC::PipeBarrier<PIPE_V>();
 
         AscendC::Sort32<float>(
             pairA,
@@ -830,8 +836,6 @@ private:
     AscendC::TPipe pipe_;
     AscendC::TQue<AscendC::TPosition::VECIN, 2> inputQueue_;
     AscendC::TQue<AscendC::TPosition::VECOUT, 1> outputQueue_;
-    AscendC::TBuf<AscendC::TPosition::VECCALC> floatInputBuffer_;
-    AscendC::TBuf<AscendC::TPosition::VECCALC> indexBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairABuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairBBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> floatOutputBuffer_;
@@ -874,7 +878,7 @@ public:
         inner_ = inner;
         k_ = k;
         blockNum_ = blockNum;
-        batchRows_ = SelectVendorBatchRows(rows_, blockNum_, inner_);
+        batchRows_ = SelectVendorHalfScratchBatchRows(rows_, blockNum_, inner_);
         groupCount_ = (rows_ + batchRows_ - 1) / batchRows_;
         activeBlockNum_ = groupCount_ < blockNum_ ? groupCount_ : blockNum_;
 
@@ -904,8 +908,6 @@ public:
             (rawHalfOutputBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES;
 
         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
-        pipe_.InitBuffer(floatInputBuffer_, batchInputBytes);
-        pipe_.InitBuffer(indexBuffer_, batchInputBytes);
         pipe_.InitBuffer(pairABuffer_, batchPairBytes);
         pipe_.InitBuffer(pairBBuffer_, batchPairBytes);
         pipe_.InitBuffer(floatOutputBuffer_, batchFloatOutputBytes);
@@ -921,7 +923,6 @@ public:
             return;
         }
 
-        InitIndexBatch();
         InitValuePattern();
 
         int32_t group = blockIdx;
@@ -945,16 +946,6 @@ private:
             validRows = batchRows_;
         }
         return validRows;
-    }
-
-    __aicore__ inline void InitIndexBatch()
-    {
-        AscendC::LocalTensor<int32_t> index = indexBuffer_.Get<int32_t>();
-        AscendC::Duplicate(
-            index,
-            static_cast<int32_t>(0),
-            static_cast<uint32_t>(batchRows_ * inner_));
-        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void InitValuePattern()
@@ -1162,14 +1153,20 @@ private:
         const int32_t validRows = GroupValidRows(group);
 
         AscendC::LocalTensor<half> staging = inputQueue_.DeQue<half>();
-        AscendC::LocalTensor<float> floatInput = floatInputBuffer_.Get<float>();
-        ConvertRows(floatInput, staging, validRows);
-
-        AscendC::LocalTensor<int32_t> signedIndex = indexBuffer_.Get<int32_t>();
-        AscendC::LocalTensor<uint32_t> index =
-            signedIndex.ReinterpretCast<uint32_t>();
         AscendC::LocalTensor<float> pairA = pairABuffer_.Get<float>();
         AscendC::LocalTensor<float> pairB = pairBBuffer_.Get<float>();
+
+        // pairB is source/index scratch before Sort32, then merge scratch.
+        AscendC::LocalTensor<float> floatInput = pairB;
+        AscendC::LocalTensor<uint32_t> index =
+            pairB[static_cast<uint32_t>(batchRows_ * inner_)]
+                .ReinterpretCast<uint32_t>();
+        ConvertRows(floatInput, staging, validRows);
+        AscendC::Duplicate(
+            index,
+            static_cast<uint32_t>(0),
+            static_cast<uint32_t>(validRows * inner_));
+        AscendC::PipeBarrier<PIPE_V>();
 
         AscendC::Sort32<float>(
             pairA,
@@ -1220,8 +1217,6 @@ private:
     AscendC::TPipe pipe_;
     AscendC::TQue<AscendC::TPosition::VECIN, 2> inputQueue_;
     AscendC::TQue<AscendC::TPosition::VECOUT, 1> outputQueue_;
-    AscendC::TBuf<AscendC::TPosition::VECCALC> floatInputBuffer_;
-    AscendC::TBuf<AscendC::TPosition::VECCALC> indexBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairABuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> pairBBuffer_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> floatOutputBuffer_;
