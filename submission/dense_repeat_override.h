@@ -796,30 +796,30 @@ private:
         AscendC::PipeBarrier<PIPE_V>();
     }
 
-    __aicore__ inline void MergeTwoTop4(
+    __aicore__ inline void MergeFinalTop4Batch(
         const AscendC::LocalTensor<float>& dst,
         const AscendC::LocalTensor<float>& src,
         int32_t rows)
     {
         AscendC::MrgSort4Info params;
-        params.elementLengths[0] = VENDOR_TINY_KEEP_K;
-        params.elementLengths[1] = VENDOR_TINY_KEEP_K;
-        params.elementLengths[2] = 0;
-        params.elementLengths[3] = 0;
+        // [A0 A1 A2 A3 B0 B1 B2 B3] already contains four sorted
+        // length-2 lists. Split each sorted top-4 without dropping any value.
+        // Equal contiguous lists enable repeatTimes across all packed rows.
+        constexpr int32_t splitLength = VENDOR_TINY_KEEP_K / 2;
+        params.elementLengths[0] = splitLength;
+        params.elementLengths[1] = splitLength;
+        params.elementLengths[2] = splitLength;
+        params.elementLengths[3] = splitLength;
         params.ifExhaustedSuspension = false;
-        params.validBit = 3;
-        params.repeatTimes = 1;
+        params.validBit = 15;
+        params.repeatTimes = static_cast<uint16_t>(rows);
 
-        for (int32_t row = 0; row < rows; ++row) {
-            const uint32_t rowBase =
-                static_cast<uint32_t>(row * VENDOR_TINY_FINAL_PAIR_FLOATS);
-            AscendC::MrgSortSrcList<float> srcList;
-            srcList.src1 = src[rowBase];
-            srcList.src2 = src[rowBase + VENDOR_TINY_KEEP_K * 2];
-            srcList.src3 = src[rowBase];
-            srcList.src4 = src[rowBase];
-            AscendC::MrgSort<float>(dst[rowBase], srcList, params);
-        }
+        AscendC::MrgSortSrcList<float> srcList;
+        srcList.src1 = src[0];
+        srcList.src2 = src[splitLength * 2];
+        srcList.src3 = src[splitLength * 4];
+        srcList.src4 = src[splitLength * 6];
+        AscendC::MrgSort<float>(dst, srcList, params);
         AscendC::PipeBarrier<PIPE_V>();
     }
 
@@ -831,7 +831,7 @@ private:
         CopyTop4FromSort32(pairB, pairA, rows);
         MergeFourTop4(pairA, pairB, rows * 2);
         CopyTop4FromMerged16(pairB, pairA, rows);
-        MergeTwoTop4(pairA, pairB, rows);
+        MergeFinalTop4Batch(pairA, pairB, rows);
     }
 
     __aicore__ inline void ExtractKValuesKeep4(

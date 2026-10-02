@@ -2,6 +2,8 @@
 
 ## 当前入口
 
+- 2026-10-02 flat-copy Judge 15/15，case 12/14 为 129.17/537.77 us；下一轮 keep-4 最终合并批量化见 `notes/keep4-batch-merge-2026-10-02.md`（跟踪 #47）。
+
 - 2026-10-02 keep-12 Judge 15/15，case 14 为 558.73 us；下一轮合并候选拷贝命令的实验见 `notes/flat-prefix-copy-2026-10-02.md`（跟踪 #47）。
 
 - 2026-10-02 FP16 keep-4 Judge 15/15 结果与 case 14 keep-12 待测候选：`notes/keep12-c14-2026-10-02.md`。keep-12 已通过本地 CPU/设备编译，等待真实 Judge，跟踪 #47。
