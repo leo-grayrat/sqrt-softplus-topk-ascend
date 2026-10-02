@@ -743,19 +743,15 @@ private:
         int32_t rows)
     {
         AscendC::DataCopyParams params;
-        params.blockCount = static_cast<uint16_t>(rows);
+        params.blockCount = static_cast<uint16_t>(rows * VENDOR_TINY_SORT_RUNS);
         params.blockLen = 1;
         params.srcStride = static_cast<uint16_t>(
-            (inner_ - VENDOR_TINY_KEEP_K) * 2 / 8);
-        params.dstStride = static_cast<uint16_t>(
-            (VENDOR_TINY_PACKED_VALUES - VENDOR_TINY_KEEP_K) * 2 / 8);
+            (VENDOR_SORT_UNIT - VENDOR_TINY_KEEP_K) * 2 / 8);
+        params.dstStride = 0;
 
-        for (int32_t chunk = 0; chunk < VENDOR_TINY_SORT_RUNS; ++chunk) {
-            AscendC::DataCopy(
-                dst[static_cast<uint32_t>(chunk * VENDOR_TINY_KEEP_K * 2)],
-                src[static_cast<uint32_t>(chunk * VENDOR_SORT_UNIT * 2)],
-                params);
-        }
+        // Rows contain exactly eight contiguous Sort32 chunks. Flatten both
+        // dimensions to gather every top-4 prefix with one strided copy.
+        AscendC::DataCopy(dst, src, params);
         AscendC::PipeBarrier<PIPE_V>();
     }
 
@@ -787,22 +783,16 @@ private:
         const AscendC::LocalTensor<float>& src,
         int32_t rows)
     {
-        constexpr int32_t srcRowFloats = VENDOR_TINY_PACKED_VALUES * 2;
-        constexpr int32_t dstRowFloats = VENDOR_TINY_FINAL_PAIR_FLOATS;
         constexpr int32_t copyFloats = VENDOR_TINY_KEEP_K * 2;
 
         AscendC::DataCopyParams params;
-        params.blockCount = static_cast<uint16_t>(rows);
+        params.blockCount = static_cast<uint16_t>(rows * 2);
         params.blockLen = 1;
-        params.srcStride = static_cast<uint16_t>((srcRowFloats - copyFloats) / 8);
-        params.dstStride = static_cast<uint16_t>((dstRowFloats - copyFloats) / 8);
+        params.srcStride = static_cast<uint16_t>(
+            (VENDOR_TINY_MERGED_VALUES * 2 - copyFloats) / 8);
+        params.dstStride = 0;
 
-        for (int32_t group = 0; group < 2; ++group) {
-            AscendC::DataCopy(
-                dst[static_cast<uint32_t>(group * copyFloats)],
-                src[static_cast<uint32_t>(group * VENDOR_TINY_MERGED_VALUES * 2)],
-                params);
-        }
+        AscendC::DataCopy(dst, src, params);
         AscendC::PipeBarrier<PIPE_V>();
     }
 
@@ -1136,22 +1126,19 @@ private:
         // All 16 chunks are present (including Sort32's -inf padded values
         // for E=481..511), so these copies fully initialize the packed rows.
         AscendC::DataCopyParams copy;
-        copy.blockCount = static_cast<uint16_t>(rows);
+        copy.blockCount = static_cast<uint16_t>(rows * 16);
         copy.blockLen = 3;
-        copy.srcStride = (512 - 12) * 2 / 8;
-        copy.dstStride = (192 - 12) * 2 / 8;
-        for (int32_t chunk = 0; chunk < 16; ++chunk) {
-            AscendC::DataCopy(pairB[chunk * 24], pairA[chunk * 64], copy);
-        }
+        copy.srcStride = (32 - 12) * 2 / 8;
+        copy.dstStride = 0;
+        AscendC::DataCopy(pairB, pairA, copy);
         AscendC::PipeBarrier<PIPE_V>();
         MergeFourTop12(pairA, pairB, rows * 4);
 
         // Each row now contains four groups of 48 pairs; retain 12 per group.
-        copy.srcStride = (192 - 12) * 2 / 8;
-        copy.dstStride = (48 - 12) * 2 / 8;
-        for (int32_t group = 0; group < 4; ++group) {
-            AscendC::DataCopy(pairB[group * 24], pairA[group * 96], copy);
-        }
+        copy.blockCount = static_cast<uint16_t>(rows * 4);
+        copy.srcStride = (48 - 12) * 2 / 8;
+        copy.dstStride = 0;
+        AscendC::DataCopy(pairB, pairA, copy);
         AscendC::PipeBarrier<PIPE_V>();
         MergeFourTop12(pairA, pairB, rows);
     }
