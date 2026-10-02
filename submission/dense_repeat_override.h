@@ -1097,6 +1097,65 @@ public:
     }
 
 private:
+    __aicore__ inline bool UseKeep12() const
+    {
+        return inner_ == 512 && k_ <= 12;
+    }
+
+    // Sixteen Sort32 chunks -> four sorted lists of 48 -> final 48 pairs.
+    // 12 pairs occupy 96 bytes, so all prefix copies remain 32B aligned.
+    // Each four-list merge has equal, contiguous lists and validBit=15,
+    // allowing MrgSort repeatTimes to advance by the combined list length.
+    __aicore__ inline void MergeFourTop12(
+        const AscendC::LocalTensor<float>& dst,
+        const AscendC::LocalTensor<float>& src,
+        int32_t repeats)
+    {
+        AscendC::MrgSort4Info params;
+        params.elementLengths[0] = 12;
+        params.elementLengths[1] = 12;
+        params.elementLengths[2] = 12;
+        params.elementLengths[3] = 12;
+        params.ifExhaustedSuspension = false;
+        params.validBit = 15;
+        params.repeatTimes = static_cast<uint16_t>(repeats);
+        AscendC::MrgSortSrcList<float> srcList;
+        srcList.src1 = src[0];
+        srcList.src2 = src[24];
+        srcList.src3 = src[48];
+        srcList.src4 = src[72];
+        AscendC::MrgSort<float>(dst, srcList, params);
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
+    __aicore__ inline void BuildKeep12Pairs(
+        const AscendC::LocalTensor<float>& pairA,
+        const AscendC::LocalTensor<float>& pairB,
+        int32_t rows)
+    {
+        // All 16 chunks are present (including Sort32's -inf padded values
+        // for E=481..511), so these copies fully initialize the packed rows.
+        AscendC::DataCopyParams copy;
+        copy.blockCount = static_cast<uint16_t>(rows);
+        copy.blockLen = 3;
+        copy.srcStride = (512 - 12) * 2 / 8;
+        copy.dstStride = (192 - 12) * 2 / 8;
+        for (int32_t chunk = 0; chunk < 16; ++chunk) {
+            AscendC::DataCopy(pairB[chunk * 24], pairA[chunk * 64], copy);
+        }
+        AscendC::PipeBarrier<PIPE_V>();
+        MergeFourTop12(pairA, pairB, rows * 4);
+
+        // Each row now contains four groups of 48 pairs; retain 12 per group.
+        copy.srcStride = (192 - 12) * 2 / 8;
+        copy.dstStride = (48 - 12) * 2 / 8;
+        for (int32_t group = 0; group < 4; ++group) {
+            AscendC::DataCopy(pairB[group * 24], pairA[group * 96], copy);
+        }
+        AscendC::PipeBarrier<PIPE_V>();
+        MergeFourTop12(pairA, pairB, rows);
+    }
+
     __aicore__ inline int32_t GroupValidRows(int32_t group) const
     {
         const int32_t firstRow = group * batchRows_;
@@ -1261,6 +1320,10 @@ private:
         const AscendC::LocalTensor<float>& pairB,
         int32_t rows)
     {
+        if (UseKeep12()) {
+            BuildKeep12Pairs(pairA, pairB, rows);
+            return;
+        }
         if (inner_ > 128) {
             CopyTop16FromSort32(
                 pairB,
@@ -1293,7 +1356,7 @@ private:
         params.src0BlockStride = 1;
         params.repeatTimes = static_cast<uint8_t>(rows);
         params.src0RepeatStride =
-            static_cast<uint8_t>(VENDOR_MEDIUM_FINAL_PAIR_FLOATS / 8);
+            static_cast<uint8_t>((UseKeep12() ? 48 * 2 : VENDOR_MEDIUM_FINAL_PAIR_FLOATS) / 8);
         params.src1RepeatStride = 0;
         GatherMask(
             dst.ReinterpretCast<int32_t>(),

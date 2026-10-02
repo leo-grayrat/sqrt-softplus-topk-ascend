@@ -2,6 +2,8 @@
 
 ## 当前入口
 
+- 2026-10-02 FP16 keep-4 Judge 15/15 结果与 case 14 keep-12 待测候选：`notes/keep12-c14-2026-10-02.md`。keep-12 已通过本地 CPU/设备编译，等待真实 Judge，跟踪 #47。
+
 - 当前 canonical production baseline：`main`，基于已完成本地验证和真实 CANNJudge 15/15 Pass 的 Round 6 vendor-perf 实现。
 - 当前状态与测试点映射：`notes/current-status-2026-09-15.md`。
 - 下一阶段优化计划：`notes/optimization-plan-2026-09-15.md`。
