@@ -53,7 +53,10 @@ add_executable(topk_fp16_vendor_large_probe
     topk_fp16_vendor_large_probe.asc
 )
 
+add_executable(topk_fp32_large_production_probe topk_fp32_large_production_probe.asc)
+
 foreach(probe_target IN ITEMS
+        topk_fp32_large_production_probe
         topk_hierarchical_probe
         topk_prefix_merge_probe
         topk_prefix_merge_padding_probe

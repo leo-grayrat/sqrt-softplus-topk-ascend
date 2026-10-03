@@ -1685,34 +1685,17 @@ private:
         AscendC::PipeBarrier<PIPE_V>();
     }
 
-    __aicore__ inline void MergeTwo64(
-    const AscendC::LocalTensor<float>& dst,
-    const AscendC::LocalTensor<float>& src,
-    int32_t rows)
-{
-    AscendC::MrgSort4Info params;
-    params.elementLengths[0] = VENDOR_LARGE_KEEP_K;
-    params.elementLengths[1] = VENDOR_LARGE_KEEP_K;
-    params.elementLengths[2] = 0;
-    params.elementLengths[3] = 0;
-    params.ifExhaustedSuspension = false;
-    params.validBit = 3;
-    params.repeatTimes = 1;
-
-    constexpr int32_t rowFloats = 2 * VENDOR_LARGE_PAIR_FLOATS_64;
-    for (int32_t row = 0; row < rows; ++row) {
-        const uint32_t rowBase = static_cast<uint32_t>(row * rowFloats);
-        AscendC::MrgSortSrcList<float> srcList;
-        srcList.src1 = src[rowBase];
-        srcList.src2 = src[rowBase + VENDOR_LARGE_PAIR_FLOATS_64];
-        srcList.src3 = src[rowBase];
-        srcList.src4 = src[rowBase];
-        AscendC::MrgSort<float>(dst[rowBase], srcList, params);
+    __aicore__ inline void MergeFinal64Batch(
+        const AscendC::LocalTensor<float>& dst,
+        const AscendC::LocalTensor<float>& src,
+        int32_t rows)
+    {
+        // Two sorted top-64 lists contain four contiguous sorted length-32
+        // sublists. Merge all 128 candidates with one repeat-enabled call.
+        MergeFour32(dst, src, rows);
     }
-    AscendC::PipeBarrier<PIPE_V>();
-}
 
-__aicore__ inline void CopyPrefixPairs(
+    __aicore__ inline void CopyPrefixPairs(
         const AscendC::LocalTensor<float>& dst,
         int32_t dstRowFloats,
         uint32_t dstBase,
@@ -1739,20 +1722,14 @@ __aicore__ inline void CopyPrefixPairs(
         const AscendC::LocalTensor<float>& src,
         int32_t rows)
     {
-        constexpr int32_t srcRowFloats = 1024 * 2;
-        constexpr int32_t dstRowFloats = 8 * VENDOR_LARGE_PAIR_FLOATS_64;
-        constexpr int32_t srcListStrideFloats = 128 * 2;
-        for (int32_t list = 0; list < 8; ++list) {
-            CopyPrefixPairs(
-                dst,
-                dstRowFloats,
-                static_cast<uint32_t>(list * VENDOR_LARGE_PAIR_FLOATS_64),
-                src,
-                srcRowFloats,
-                static_cast<uint32_t>(list * srcListStrideFloats),
-                VENDOR_LARGE_KEEP_K,
-                rows);
-        }
+        // Flatten rows and sorted lists; copy the same top-64 prefixes.
+        AscendC::DataCopyParams params;
+        params.blockCount = static_cast<uint16_t>(rows * 8);
+        params.blockLen = VENDOR_LARGE_PAIR_FLOATS_64 / 8;
+        params.srcStride = (128 - VENDOR_LARGE_KEEP_K) * 2 / 8;
+        params.dstStride = 0;
+        AscendC::DataCopy(dst, src, params);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void PackTop64From256Lists(
@@ -1760,20 +1737,14 @@ __aicore__ inline void CopyPrefixPairs(
         const AscendC::LocalTensor<float>& src,
         int32_t rows)
     {
-        constexpr int32_t srcRowFloats = 2 * 256 * 2;
-        constexpr int32_t dstRowFloats = 2 * VENDOR_LARGE_PAIR_FLOATS_64;
-        constexpr int32_t srcListStrideFloats = 256 * 2;
-        for (int32_t list = 0; list < 2; ++list) {
-            CopyPrefixPairs(
-                dst,
-                dstRowFloats,
-                static_cast<uint32_t>(list * VENDOR_LARGE_PAIR_FLOATS_64),
-                src,
-                srcRowFloats,
-                static_cast<uint32_t>(list * srcListStrideFloats),
-                VENDOR_LARGE_KEEP_K,
-                rows);
-        }
+        // Flatten rows and sorted lists; copy the same top-64 prefixes.
+        AscendC::DataCopyParams params;
+        params.blockCount = static_cast<uint16_t>(rows * 2);
+        params.blockLen = VENDOR_LARGE_PAIR_FLOATS_64 / 8;
+        params.srcStride = (256 - VENDOR_LARGE_KEEP_K) * 2 / 8;
+        params.dstStride = 0;
+        AscendC::DataCopy(dst, src, params);
+        AscendC::PipeBarrier<PIPE_V>();
     }
 
     __aicore__ inline void BuildK32Pairs(
@@ -1804,7 +1775,7 @@ __aicore__ inline void CopyPrefixPairs(
         MergeFour64(pairB, pairA, rows * 2);
         PackTop64From256Lists(pairA, pairB, rows);
 
-        MergeTwo64(pairB, pairA, rows);
+        MergeFinal64Batch(pairB, pairA, rows);
         CopyPrefixPairs(
             pairA,
             VENDOR_LARGE_PAIR_FLOATS_64,
