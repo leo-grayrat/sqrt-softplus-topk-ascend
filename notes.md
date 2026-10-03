@@ -2,6 +2,8 @@
 
 ## 当前入口
 
+- 2026-10-03 最新 Judge 15/15，case 12/14 为 124.97/537.98 us；已采集两条路径的仿真时间线，原生 FP16 排序的小范围候选见 `notes/native-half-profile-2026-10-03.md`（跟踪 #47，等待 Judge）。
+
 - 2026-10-02 flat-copy Judge 15/15，case 12/14 为 129.17/537.77 us；下一轮 keep-4 最终合并批量化见 `notes/keep4-batch-merge-2026-10-02.md`（跟踪 #47）。
 
 - 2026-10-02 keep-12 Judge 15/15，case 14 为 558.73 us；下一轮合并候选拷贝命令的实验见 `notes/flat-prefix-copy-2026-10-02.md`（跟踪 #47）。

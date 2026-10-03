@@ -601,6 +601,11 @@ public:
     }
 
 private:
+    __aicore__ inline bool UseNativeHalf() const
+    {
+        return experts_ == 256 && k_ <= 4;
+    }
+
     __aicore__ inline int32_t GroupValidRows(int32_t group) const
     {
         const int32_t firstRow = group * batchRows_;
@@ -615,7 +620,12 @@ private:
     {
         using namespace AscendC;
         LocalTensor<uint32_t> pattern = patternBuffer_.Get<uint32_t>();
-        pattern.SetValue(0, BuildVendorValueMask(k_));
+        uint32_t mask = BuildVendorValueMask(k_);
+        if (UseNativeHalf()) {
+            mask = 0;
+            for (int32_t i = 0; i < k_; ++i) { mask |= 1u << (4 * i); }
+        }
+        pattern.SetValue(0, mask);
         pattern.SetValue(1, 0u);
         auto eventID = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
         SetFlag<HardEvent::S_V>(eventID);
@@ -774,7 +784,16 @@ private:
         srcList.src2 = src[VENDOR_TINY_KEEP_K * 2];
         srcList.src3 = src[VENDOR_TINY_KEEP_K * 4];
         srcList.src4 = src[VENDOR_TINY_KEEP_K * 6];
-        AscendC::MrgSort<float>(dst, srcList, params);
+        if (UseNativeHalf()) {
+            AscendC::MrgSortSrcList<half> halfList;
+            halfList.src1 = srcList.src1.ReinterpretCast<half>();
+            halfList.src2 = srcList.src2.ReinterpretCast<half>();
+            halfList.src3 = srcList.src3.ReinterpretCast<half>();
+            halfList.src4 = srcList.src4.ReinterpretCast<half>();
+            AscendC::MrgSort<half>(dst.ReinterpretCast<half>(), halfList, params);
+        } else {
+            AscendC::MrgSort<float>(dst, srcList, params);
+        }
         AscendC::PipeBarrier<PIPE_V>();
     }
 
@@ -819,7 +838,16 @@ private:
         srcList.src2 = src[splitLength * 2];
         srcList.src3 = src[splitLength * 4];
         srcList.src4 = src[splitLength * 6];
-        AscendC::MrgSort<float>(dst, srcList, params);
+        if (UseNativeHalf()) {
+            AscendC::MrgSortSrcList<half> halfList;
+            halfList.src1 = srcList.src1.ReinterpretCast<half>();
+            halfList.src2 = srcList.src2.ReinterpretCast<half>();
+            halfList.src3 = srcList.src3.ReinterpretCast<half>();
+            halfList.src4 = srcList.src4.ReinterpretCast<half>();
+            AscendC::MrgSort<half>(dst.ReinterpretCast<half>(), halfList, params);
+        } else {
+            AscendC::MrgSort<float>(dst, srcList, params);
+        }
         AscendC::PipeBarrier<PIPE_V>();
     }
 
@@ -848,6 +876,15 @@ private:
         params.src0RepeatStride =
             static_cast<uint8_t>(VENDOR_TINY_FINAL_PAIR_FLOATS / 8);
         params.src1RepeatStride = 0;
+        if (UseNativeHalf()) {
+            LocalTensor<half> selected = floatTmpBuffer_.Get<half>();
+            GatherMask(selected, src.ReinterpretCast<half>(),
+                       pattern.ReinterpretCast<uint16_t>(), true, 32, params, rsvdCnt);
+            PipeBarrier<PIPE_V>();
+            Cast(dst, selected, RoundMode::CAST_NONE, static_cast<uint32_t>(rows * k_));
+            PipeBarrier<PIPE_V>();
+            return;
+        }
         GatherMask(
             dst.ReinterpretCast<int32_t>(),
             src.ReinterpretCast<int32_t>(),
@@ -920,18 +957,23 @@ private:
         AscendC::LocalTensor<uint32_t> index =
             pairB[static_cast<uint32_t>(batchRows_ * inner_)]
                 .ReinterpretCast<uint32_t>();
-        ConvertRows(floatInput, staging, validRows);
+        if (!UseNativeHalf()) { ConvertRows(floatInput, staging, validRows); }
         AscendC::Duplicate(
             index,
             static_cast<uint32_t>(0),
             static_cast<uint32_t>(validRows * inner_));
         AscendC::PipeBarrier<PIPE_V>();
 
+        if (UseNativeHalf()) {
+            AscendC::Sort32<half>(pairA.ReinterpretCast<half>(), staging, index,
+                                 validRows * inner_ / VENDOR_SORT_UNIT);
+        } else {
         AscendC::Sort32<float>(
             pairA,
             floatInput,
             index,
             validRows * inner_ / VENDOR_SORT_UNIT);
+        }
         AscendC::PipeBarrier<PIPE_V>();
 
         const bool useKeep4 = k_ <= VENDOR_TINY_KEEP_K && inner_ == 256;
