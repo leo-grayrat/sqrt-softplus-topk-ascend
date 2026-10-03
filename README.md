@@ -6,6 +6,8 @@
 
 ## 当前主线
 
+2026-10-03 实验分支阶段结果见 [FP16 优化总归档](notes/fp16-optimization-archive-2026-10-03.md)：五轮改动均经用户 CANNJudge 验证 15/15 Pass，最新 case 12/14 为 122.41/538.04 us。实验分支尚未合并 main；下文 main 的说明是原有基线。
+
 `main` 只保存**已经完成本地验证并通过真实 Judge 的可信生产基线**。截至 2026-09-15，主线采用 `vendor-perf-topk-round6-extract-k` 的实现：
 
 - FP32、`2 <= k <= 8` 使用参考 Huawei A2/A3 `MoeGatingTopKSoftmaxPerf` 执行结构的多行批处理路径；

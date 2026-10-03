@@ -1,5 +1,8 @@
 # Batch the final keep-4 merge
 
+Final Judge status: 15/15 Pass. Case 12/14: 124.97/537.98 us.
+See the [stage archive](fp16-optimization-archive-2026-10-03.md); pending wording below is historical.
+
 Tracking: https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/47
 
 ## Confirmed preceding flat-copy Judge baseline

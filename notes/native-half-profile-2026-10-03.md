@@ -1,5 +1,11 @@
 # FP16 native selection probe after instruction profiling
 
+Final Judge update (2026-10-03): user confirmed 15/15 Pass, all errors 0.00%.
+Case 12: 124.97 -> 122.41 us; case 4: 3.78 -> 3.80 us; case 14:
+537.98 -> 538.04 us. Retain provisionally; the approximately 2.05%
+case-12 benefit is a single-run observation. The pending language below
+records the pre-Judge decision. Full results: [stage archive](fp16-optimization-archive-2026-10-03.md).
+
 Tracking: https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/47
 
 ## Confirmed preceding Judge baseline

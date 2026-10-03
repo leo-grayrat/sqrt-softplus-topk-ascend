@@ -1,5 +1,8 @@
 # Flatten FP16 prefix copies across rows and chunks
 
+Final Judge status: 15/15 Pass. Case 12/14: 129.17/537.77 us.
+See the [stage archive](fp16-optimization-archive-2026-10-03.md); pending wording below is historical.
+
 Tracking: https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/47
 
 ## Confirmed preceding keep-12 Judge result
