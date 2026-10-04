@@ -1,0 +1,342 @@
+{
+  "VECTOR BAR": [
+    84,
+    194546,
+    105.20000199999997
+  ],
+  "VECTOR VBS32": [
+    4,
+    16392,
+    8.86
+  ],
+  "VECTOR MOVEMASK": [
+    74,
+    35184,
+    18.970000000000013
+  ],
+  "VECTOR VMS4V2": [
+    8,
+    18648,
+    10.08
+  ],
+  "MTE2 MOV_SRC_TO_DST_ALIGN": [
+    4,
+    2051,
+    1.1099999999999999
+  ],
+  "MTE2 SET_FLAG": [
+    4,
+    1939,
+    1.05
+  ],
+  "MTE3 MOV_SRC_TO_DST_ALIGN": [
+    4,
+    937,
+    0.51
+  ],
+  "MTE3 SET_FLAG": [
+    4,
+    916,
+    0.5
+  ],
+  "VECTOR VCONV": [
+    8,
+    640,
+    0.35
+  ],
+  "VECTOR MOVEV": [
+    4,
+    540,
+    0.29
+  ],
+  "SCALAR STP_XI_XJ_XN": [
+    21,
+    4690,
+    2.54
+  ],
+  "SCALAR STI_XN_IMM": [
+    61,
+    6846,
+    3.7399999999999984
+  ],
+  "MTE3 WAIT_FLAG": [
+    4,
+    472,
+    0.26
+  ],
+  "SCALAR LDP_XI_XJ_XN": [
+    7,
+    1106,
+    0.6100000000000001
+  ],
+  "SCALAR LD_XD_XN_IMM": [
+    324,
+    2724,
+    1.4200000000000008
+  ],
+  "SCALAR ST_XD_XN_IMM": [
+    145,
+    6432,
+    3.4899999999999993
+  ],
+  "VECTOR VREDUCEV2": [
+    4,
+    212,
+    0.11
+  ],
+  "VECTOR VLN": [
+    4,
+    160,
+    0.09
+  ],
+  "VECTOR VSQRT": [
+    4,
+    156,
+    0.08
+  ],
+  "SCALAR SET_FLAG": [
+    2,
+    157,
+    0.08
+  ],
+  "VECTOR VEXP": [
+    4,
+    152,
+    0.08
+  ],
+  "SCALAR STI_XN_XM": [
+    8,
+    296,
+    0.16
+  ],
+  "VECTOR VADD": [
+    4,
+    132,
+    0.07
+  ],
+  "VECTOR VMULS": [
+    4,
+    124,
+    0.07
+  ],
+  "VECTOR VADDS": [
+    4,
+    120,
+    0.06
+  ],
+  "VECTOR VMAXS": [
+    4,
+    112,
+    0.06
+  ],
+  "VECTOR VABS": [
+    4,
+    112,
+    0.06
+  ],
+  "MTE2 WAIT_FLAG": [
+    4,
+    69,
+    0.04
+  ],
+  "VECTOR MOV_UB_TO_UB": [
+    8,
+    128,
+    0.06
+  ],
+  "SCALAR LD_XD_XN": [
+    8,
+    40,
+    0.02
+  ],
+  "SCALAR DIV": [
+    3,
+    60,
+    0.03
+  ],
+  "MTE2 MOV_SPR_XN": [
+    4,
+    16,
+    0.01
+  ],
+  "SCALAR ADD_IMM": [
+    65,
+    65,
+    0.0
+  ],
+  "SCALAR SHL": [
+    94,
+    94,
+    0.0
+  ],
+  "SCALAR SIGNEXT": [
+    137,
+    137,
+    0.0
+  ],
+  "SCALAR INSERT_XD": [
+    51,
+    51,
+    0.0
+  ],
+  "SCALAR MUL": [
+    38,
+    76,
+    0.0
+  ],
+  "SCALAR CMP_IMM": [
+    47,
+    47,
+    0.0
+  ],
+  "SCALAR ZEROEXT": [
+    70,
+    70,
+    0.0
+  ],
+  "FLOWCTRL DCCI": [
+    1,
+    5,
+    0.0
+  ],
+  "SCALAR MOV_XD_XN": [
+    44,
+    44,
+    0.0
+  ],
+  "SCALAR SFF": [
+    17,
+    17,
+    0.0
+  ],
+  "SCALAR ADD": [
+    67,
+    67,
+    0.0
+  ],
+  "SCALAR MOV_XD_SPR": [
+    47,
+    47,
+    0.0
+  ],
+  "SCALAR MOV_XD_IMM": [
+    142,
+    142,
+    0.0
+  ],
+  "SCALAR CMP": [
+    27,
+    27,
+    0.0
+  ],
+  "SCALAR AND": [
+    70,
+    70,
+    0.0
+  ],
+  "SCALAR SEL": [
+    26,
+    26,
+    0.0
+  ],
+  "SCALAR SBITSET": [
+    29,
+    29,
+    0.0
+  ],
+  "SCALAR SUB_IMM": [
+    56,
+    56,
+    0.0
+  ],
+  "SCALAR MIN": [
+    11,
+    11,
+    0.0
+  ],
+  "SCALAR SUB": [
+    12,
+    12,
+    0.0
+  ],
+  "SCALAR MOVK": [
+    117,
+    117,
+    0.0
+  ],
+  "SCALAR OR": [
+    40,
+    40,
+    0.0
+  ],
+  "SCALAR SHR": [
+    14,
+    14,
+    0.0
+  ],
+  "SCALAR MADD": [
+    2,
+    6,
+    0.0
+  ],
+  "SCALAR NEG": [
+    6,
+    6,
+    0.0
+  ],
+  "SCALAR INSERT_XD_XN": [
+    2,
+    2,
+    0.0
+  ],
+  "SCALAR MOVX8_XD_IMM": [
+    1,
+    1,
+    0.0
+  ],
+  "FLOWCTRL JUMP": [
+    32,
+    0,
+    0.0
+  ],
+  "FLOWCTRL NOP": [
+    8,
+    0,
+    0.0
+  ],
+  "ALL BAR": [
+    2,
+    0,
+    0.0
+  ],
+  "SCALAR MOV_SPR_XN": [
+    36,
+    0,
+    0.0
+  ],
+  "FLOWCTRL JUMPC": [
+    48,
+    0,
+    0.0
+  ],
+  "VECTOR WAIT_FLAG": [
+    10,
+    0,
+    0.0
+  ],
+  "FLOWCTRL END": [
+    1,
+    0,
+    0.0
+  ],
+  "FLOWCTRL JUMPCMP": [
+    46,
+    0,
+    0.0
+  ],
+  "VECTOR SET_FLAG": [
+    8,
+    0,
+    0.0
+  ]
+}

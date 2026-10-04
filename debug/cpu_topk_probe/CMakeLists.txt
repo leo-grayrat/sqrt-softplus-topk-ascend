@@ -29,12 +29,57 @@ add_executable(topk_dense_repeat_probe
     topk_dense_repeat_probe.asc
 )
 
+add_executable(topk_fp16_vendor_probe
+    topk_fp16_vendor_probe.asc
+)
+
+add_executable(topk_fp16_vendor_production_probe
+    topk_fp16_vendor_production_probe.asc
+)
+
+add_executable(topk_fp32_vendor_production_probe
+    topk_fp32_vendor_production_probe.asc
+)
+
+add_executable(topk_fp16_vendor_medium_probe
+    topk_fp16_vendor_medium_probe.asc
+)
+
+add_executable(topk_fp32_vendor_large_probe
+    topk_fp32_vendor_large_probe.asc
+)
+
+add_executable(topk_fp16_vendor_large_probe
+    topk_fp16_vendor_large_probe.asc
+)
+
+add_executable(topk_fp32_large_production_probe topk_fp32_large_production_probe.asc)
+
+add_executable(topk_threshold_compact_probe topk_threshold_compact_probe.asc)
+
+add_executable(topk_threshold_full_probe topk_threshold_full_probe.asc)
+add_executable(topk_threshold_baseline_probe topk_threshold_full_probe.asc)
+target_compile_definitions(topk_threshold_baseline_probe PRIVATE THRESHOLD_BASELINE=1)
+
+add_executable(topk_fp32_medium_production_probe topk_fp32_medium_production_probe.asc)
+
 foreach(probe_target IN ITEMS
+        topk_fp32_medium_production_probe
+        topk_threshold_full_probe
+        topk_threshold_baseline_probe
+        topk_threshold_compact_probe
+        topk_fp32_large_production_probe
         topk_hierarchical_probe
         topk_prefix_merge_probe
         topk_prefix_merge_padding_probe
         topk_prefix_production_probe
-        topk_dense_repeat_probe)
+        topk_dense_repeat_probe
+        topk_fp16_vendor_probe
+        topk_fp16_vendor_production_probe
+        topk_fp32_vendor_production_probe
+        topk_fp16_vendor_medium_probe
+        topk_fp32_vendor_large_probe
+        topk_fp16_vendor_large_probe)
     target_link_libraries(${probe_target} PRIVATE
         tiling_api
         register

@@ -1,0 +1,102 @@
+{
+  "platform": "CANN 9.0.0 Ascend910B1 simulator",
+  "candidate_cpu_pass": 31,
+  "baseline_cpu": "checker rejected unused empty srcIndexLocal; not passed",
+  "candidate_device_compile": true,
+  "judge": {
+    "status": "user-reported 15/15 Pass",
+    "date": "2026-10-04",
+    "error_percent": 0,
+    "times_us": [
+      2.45,
+      2.9,
+      139.69,
+      3.72,
+      7.5,
+      10.19,
+      17.63,
+      33.46,
+      27.52,
+      42.3,
+      51.94,
+      122.17,
+      176.78,
+      537.48,
+      1650
+    ],
+    "case15_display": "1.65 ms",
+    "case6_previous_us": 23.84
+  },
+  "simulator": [
+    {
+      "variant": "baseline",
+      "rows": 32,
+      "experts": 130,
+      "k": 15,
+      "cores": 1,
+      "duration_us": 21.67,
+      "running_us": 20.77,
+      "reference_pass": true
+    },
+    {
+      "variant": "baseline",
+      "rows": 64,
+      "experts": 130,
+      "k": 15,
+      "cores": 1,
+      "duration_us": 41.03,
+      "running_us": 39.84,
+      "reference_pass": true
+    },
+    {
+      "variant": "candidate",
+      "rows": 32,
+      "experts": 130,
+      "k": 15,
+      "cores": 1,
+      "duration_us": 11.26,
+      "running_us": 10.75,
+      "reference_pass": true
+    },
+    {
+      "variant": "candidate",
+      "rows": 64,
+      "experts": 130,
+      "k": 15,
+      "cores": 1,
+      "duration_us": 20.11,
+      "running_us": 19.73,
+      "reference_pass": true
+    },
+    {
+      "variant": "candidate-boundary",
+      "rows": 3,
+      "experts": 128,
+      "k": 15,
+      "cores": 1,
+      "duration_us": 4.78,
+      "running_us": 3.46,
+      "reference_pass": true
+    },
+    {
+      "variant": "candidate-boundary",
+      "rows": 3,
+      "experts": 130,
+      "k": 17,
+      "cores": 1,
+      "duration_us": 4.94,
+      "running_us": 3.83,
+      "reference_pass": true
+    },
+    {
+      "variant": "candidate-boundary",
+      "rows": 3,
+      "experts": 161,
+      "k": 15,
+      "cores": 1,
+      "duration_us": 5.2,
+      "running_us": 3.98,
+      "reference_pass": true
+    }
+  ]
+}
