@@ -1,0 +1,78 @@
+{
+  "platform": "CANN 9.0.0 / dav-2201 / Ascend910B1 simulator",
+  "cores": 1,
+  "scope": "Research prototype only; no new Judge result",
+  "cpu": {
+    "run": "PASS: 3 whole-row compaction cases",
+    "cpu-full": "PASS: 9 threshold full-path cases",
+    "cpu-full-random": "PASS: 9 threshold full-path cases",
+    "cpu-baseline": "PASS: 9 threshold full-path cases",
+    "cpu-baseline-random": "PASS: 9 threshold full-path cases"
+  },
+  "sim": [
+    {
+      "input": "normal",
+      "rows": 4,
+      "variant": "baseline",
+      "duration_us": 6.86,
+      "running_us": 6.69,
+      "reference_pass": true
+    },
+    {
+      "input": "normal",
+      "rows": 4,
+      "variant": "full",
+      "duration_us": 6.65,
+      "running_us": 6.09,
+      "reference_pass": true
+    },
+    {
+      "input": "normal",
+      "rows": 16,
+      "variant": "baseline",
+      "duration_us": 23.08,
+      "running_us": 22.98,
+      "reference_pass": true
+    },
+    {
+      "input": "normal",
+      "rows": 16,
+      "variant": "full",
+      "duration_us": 21.05,
+      "running_us": 20.37,
+      "reference_pass": true
+    },
+    {
+      "input": "normal",
+      "rows": 64,
+      "variant": "baseline",
+      "duration_us": 87.77,
+      "running_us": 87.65,
+      "reference_pass": true
+    },
+    {
+      "input": "normal",
+      "rows": 64,
+      "variant": "full",
+      "duration_us": 77.84,
+      "running_us": 76.74,
+      "reference_pass": true
+    },
+    {
+      "input": "adversarial",
+      "rows": 16,
+      "variant": "baseline",
+      "duration_us": 23.08,
+      "running_us": 22.98,
+      "reference_pass": true
+    },
+    {
+      "input": "adversarial",
+      "rows": 16,
+      "variant": "full",
+      "duration_us": 28.96,
+      "running_us": 28.26,
+      "reference_pass": true
+    }
+  ]
+}

@@ -109,3 +109,8 @@ Failed to check validBit value in MrgSort, its valid value is 3 / 7 / 15
 当前实例：prefix-merge tree 某层队列数为 `4n+1` 时，最后一组只有 1 条输入；原逻辑按 `(1<<active)-1` 得到 `validBit=1`。`E=129` padding 到 `inner=160` 后有 5 个 Sort32 块，第一层正好稳定触发。
 
 处理：单条剩余队列不调用 `MrgSort`，直接把其前 `k` 个 pair 按 32B 对齐透传到下一层槽位；只有 `active=2/3/4` 时才调用 `MrgSort`，对应 validBit 3/7/15。见 issue #25，等待用户本地重新运行 padding probe 验证。
+## 8. AICore 标量 unsigned integer 不能直接转换为 float
+
+2026-10-04，#48 整行压缩 probe 编译中，`static_cast<float>(count)`（count 为 uint64_t）被 Bisheng 拒绝：`cast between floating and unsigned integer variable is not allowed in aicore function`。
+
+该计数在实验中严格限定为 0..1024，先转换为 int32_t，再转换为 float 以写入诊断输出即可编译，CPU 检查通过。这个修复依赖已知范围，不能推广到任意 uint64_t 值。生产提交没有此转换。
