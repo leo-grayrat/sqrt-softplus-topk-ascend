@@ -6,21 +6,14 @@
 
 ## 当前主线
 
-2026-10-03 实验分支阶段结果见 [FP16 优化总归档](notes/fp16-optimization-archive-2026-10-03.md)：五轮改动均经用户 CANNJudge 验证 15/15 Pass，最新 case 12/14 为 122.41/538.04 us。实验分支尚未合并 main；下文 main 的说明是原有基线。
+`main` 是唯一生产基线。2026-10-04 阶段合并汇集了已通过 CANNJudge **15/15 Pass** 的 FP16 small/medium-k、FP32/FP16 large-k，以及 FP32 medium-k 批处理路径。最新整套 Judge 中，case 6 为 **10.19 us**，case 12/14 为 **122.17/537.48 us**，case 15 为 **1.65 ms**。
 
-`main` 只保存**已经完成本地验证并通过真实 Judge 的可信生产基线**。截至 2026-09-15，主线采用 `vendor-perf-topk-round6-extract-k` 的实现：
+当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
-- FP32、`2 <= k <= 8` 使用参考 Huawei A2/A3 `MoeGatingTopKSoftmaxPerf` 执行结构的多行批处理路径；
-- 非 32 对齐 `E` 在 UB 中补齐后进入同一 Sort32 / MrgSort 路径；
-- Top-K 后按真实 `k` 批量抽取 values，再统一计算 `sqrt(softplus(x))`；
-- 其余 dtype / k 范围继续走已验证的安全回退路径；
-- 该基线真实 CANNJudge 15/15 Pass。
-
-最新实验状态、已知测试点形状和后续方向见：
-
-- [`notes/current-status-2026-09-15.md`](notes/current-status-2026-09-15.md)
-- [`notes/optimization-plan-2026-09-15.md`](notes/optimization-plan-2026-09-15.md)
-- [`notes/vendor-perf-topk-progress-2026-09-14.md`](notes/vendor-perf-topk-progress-2026-09-14.md)
+- [当前状态、完整 15 点和阶段集成范围](notes/current-status-2026-10-04.md)
+- [下一阶段计划](notes/optimization-plan-2026-10-04.md)
+- [FP16 阶段归档](notes/fp16-optimization-archive-2026-10-03.md)
+- [FP32 medium-k 实测](notes/fp32-medium-k-2026-10-04.md)
 
 ## 题目
 
@@ -58,7 +51,9 @@ sqrt(softplus(TopK(x)))
 - 若为负结果或单纯 A/B，只保留 commit / notes 作为历史证据，不继续把该分支当开发主线；
 - 不再用不断递增的 `roundN` 分支替代主线集成。
 
-现有历史实验分支暂时保留，避免在整理阶段破坏可追溯性。
+每个大阶段只维护一个活动实验分支，从最新 main 创建。阶段完成后，经本地验证、用户完整 Judge 和 PR 合入 main，再开始下一阶段；不从上一条实验分支继续串接新的长期开发。
+
+现有历史实验分支保留以维持旧链接可追溯性；本阶段六条 exp 分支已由阶段 PR 收拢，不再追加开发。具体清单见当前状态文档。
 
 ## 验证原则
 

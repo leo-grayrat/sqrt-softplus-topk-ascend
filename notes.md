@@ -2,6 +2,10 @@
 
 ## 当前入口
 
+- **2026-10-04 阶段集成**：以 [main 当前状态](notes/current-status-2026-10-04.md) 和 [下一阶段计划](notes/optimization-plan-2026-10-04.md) 为准。以下为历史实验时间线，其中“待测”“尚未合并”等仅描述当时状态。
+
+## 历史实验时间线
+
 - **2026-10-04 FP32 medium-k Judge 通过**：[跨行 keep-16 候选](notes/fp32-medium-k-2026-10-04.md)。新生产路径 CPU 31/31，设备编译通过；32/64 行同输入仿真耗时减少 48%/51%。Judge 15/15，case 6 从 23.84 降至 10.19 us（减少 57.3%）；分支 `exp/fp32-medium-k-c6`，#49 已验证。
 
 - **2026-10-04 阈值完整原型停止**：[设备原型与同输入 A/B](notes/threshold-device-probe-2026-10-04.md)。CPU 正确性通过，64 行正常输入仿真改善 11.3%，未达到预设 20% 门槛；保留代码和复现脚本，不接入 submission。跟踪 #48。
@@ -20,9 +24,9 @@
 
 - 2026-10-02 FP16 keep-4 Judge 15/15 结果与 case 14 keep-12 待测候选：`notes/keep12-c14-2026-10-02.md`。keep-12 已通过本地 CPU/设备编译，等待真实 Judge，跟踪 #47。
 
-- 当前 canonical production baseline：`main`，基于已完成本地验证和真实 CANNJudge 15/15 Pass 的 Round 6 vendor-perf 实现。
+- Round 6 是历史基线，当前生产基线与完整 Judge 结果见 `notes/current-status-2026-10-04.md`。
 - 当前状态与测试点映射：`notes/current-status-2026-09-15.md`。
-- 下一阶段优化计划：`notes/optimization-plan-2026-09-15.md`。
+- 2026-09-15 历史计划：`notes/optimization-plan-2026-09-15.md`；当前计划见顶部入口。
 - FP32 small-k vendor-perf 详细进展：`notes/vendor-perf-topk-progress-2026-09-14.md`。
 - 早期逐行/双行/通用 TopK 实验：`notes/perf-experiments.md`。
 
