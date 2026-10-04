@@ -1,0 +1,142 @@
+{
+  "seed": 20261004,
+  "kind": "host correctness and candidate counts only",
+  "configs": {
+    "256": {
+      "normal": {
+        "rows": 1000,
+        "fallbacks": 488,
+        "candidate_sum": 256065,
+        "candidate_max": 352
+      },
+      "uniform": {
+        "rows": 1000,
+        "fallbacks": 471,
+        "candidate_sum": 255351,
+        "candidate_max": 342
+      },
+      "ties": {
+        "rows": 1000,
+        "fallbacks": 814,
+        "candidate_sum": 318340,
+        "candidate_max": 427
+      },
+      "all-equal": {
+        "rows": 1,
+        "fallbacks": 1,
+        "candidate_sum": 1024,
+        "candidate_max": 1024
+      },
+      "ascending": {
+        "rows": 1,
+        "fallbacks": 0,
+        "candidate_sum": 256,
+        "candidate_max": 256
+      },
+      "descending": {
+        "rows": 1,
+        "fallbacks": 0,
+        "candidate_sum": 253,
+        "candidate_max": 253
+      },
+      "infinities": {
+        "rows": 1,
+        "fallbacks": 1,
+        "candidate_sum": 1024,
+        "candidate_max": 1024
+      },
+      "negative-infinity": {
+        "rows": 1,
+        "fallbacks": 1,
+        "candidate_sum": 1024,
+        "candidate_max": 1024
+      },
+      "concentrated": {
+        "rows": 16,
+        "fallbacks": 16,
+        "candidate_sum": 16384,
+        "candidate_max": 1024
+      },
+      "sample-low": {
+        "rows": 2,
+        "fallbacks": 2,
+        "candidate_sum": 2048,
+        "candidate_max": 1024
+      },
+      "sample-high": {
+        "rows": 2,
+        "fallbacks": 0,
+        "candidate_sum": 192,
+        "candidate_max": 128
+      }
+    },
+    "512": {
+      "normal": {
+        "rows": 1000,
+        "fallbacks": 0,
+        "candidate_sum": 127870,
+        "candidate_max": 179
+      },
+      "uniform": {
+        "rows": 1000,
+        "fallbacks": 0,
+        "candidate_sum": 128217,
+        "candidate_max": 164
+      },
+      "ties": {
+        "rows": 1000,
+        "fallbacks": 138,
+        "candidate_sum": 188807,
+        "candidate_max": 286
+      },
+      "all-equal": {
+        "rows": 1,
+        "fallbacks": 1,
+        "candidate_sum": 1024,
+        "candidate_max": 1024
+      },
+      "ascending": {
+        "rows": 1,
+        "fallbacks": 0,
+        "candidate_sum": 128,
+        "candidate_max": 128
+      },
+      "descending": {
+        "rows": 1,
+        "fallbacks": 0,
+        "candidate_sum": 127,
+        "candidate_max": 127
+      },
+      "infinities": {
+        "rows": 1,
+        "fallbacks": 1,
+        "candidate_sum": 1024,
+        "candidate_max": 1024
+      },
+      "negative-infinity": {
+        "rows": 1,
+        "fallbacks": 1,
+        "candidate_sum": 1024,
+        "candidate_max": 1024
+      },
+      "concentrated": {
+        "rows": 16,
+        "fallbacks": 16,
+        "candidate_sum": 16384,
+        "candidate_max": 1024
+      },
+      "sample-low": {
+        "rows": 2,
+        "fallbacks": 1,
+        "candidate_sum": 1215,
+        "candidate_max": 1024
+      },
+      "sample-high": {
+        "rows": 2,
+        "fallbacks": 0,
+        "candidate_sum": 128,
+        "candidate_max": 64
+      }
+    }
+  }
+}
