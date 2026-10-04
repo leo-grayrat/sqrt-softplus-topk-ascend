@@ -16,24 +16,25 @@ case 4    T=64     E=256  k=4   fp16     7.80 us
 case 12   T=32768  E=256  k=3   fp16   650.44 us
 ```
 
-case 12 是目前最显眼的“已有成熟算法结构却没有覆盖”的点：`E=256,k=3` 完全属于 small-k，只因 dtype=fp16 仍走旧通用路径。
+case 12 是目前最显眼的“已有成熟算法结构却没有覆盖”的点：`E=256,k=3` 完全属于 small-k，只因 dtype=fp16 仍走旧通用 TopK。
 
-### 第一阶段不直接大改 production
+### Feasibility 已完成
 
-先回答一个 API / layout 问题：Huawei `MoeGatingTopKSoftmaxPerf` 本身是 `template <typename T>`，但我们当前移植版把输入、Sort32 pair、GatherMask 和输出布局都固定成 float。需要确认 dav-2201 下 half 的：
+源码复核确认 Huawei `MoeGatingTopKSoftmaxPerf<T>` 对 half 的真实结构是：
 
-- Sort32 pair 实际布局；
-- MrgSort 输入输出 stride；
-- GatherMask value pattern；
-- 是否可以保持 half selection，最后一次性 Cast 到 FP32 做 batched transform。
+```text
+GM half -> UB half -> Cast FP32 -> FP32 Sort32/MrgSort/GatherMask -> Cast half
+```
 
-先做最小 half vendor probe，固定接近 case 12 的 `E=256,k=3`。如果 half 原生路径接口成立，再把 `SqrtSoftplusVendorPerfTopKKernel` 模板化；如果 half pair 路径不合适，第二选择才是“GM half -> UB cast float -> 复用 FP32 vendor selection”。
+独立 `E=256,k=3` CPU twin-debug probe 已由用户本地验证 checker / CANN 9.0 编译 / 运行 PASS。
+
+因此当前阶段已经进入 production 集成：FP16 `2<=k<=8` 使用批量 half->FP32 selection，最终 transform 后一次 Cast 回 half；FP32 既有路径保持不动。production integration probe 通过后直接上真实 Judge，重点看 case 12。
 
 ### 成功标准
 
-优先看 case 12 是否出现结构性下降。case 2/4 太小，只用于确认没有明显回退，不拿它们决定方向。
+case 12 必须出现结构性下降。2026-09-16 官方清理部分 hack 后，TBest case12 为约 30.56 us、当时榜一约 37.16 us，这说明当前 650 us 级别存在非常大的真实优化空间。
 
-如果 case 12 仍只是个位数百分比改善，则停止继续精修 FP16 small-k；如果出现接近当前 FP32 vendor 路径曾经得到的倍数级收益，则立即合回 main。
+若 production 路径只带来个位数百分比改善，需要立即检查执行组织是否仍残留逐行 Cast / transform / merge 固定开销，而不是继续小修小补。
 
 ## 优先级 2：固定 keep=16 的 vendor-style medium-k 路径
 
@@ -96,7 +97,7 @@ case 13  inner=224, k=8: batch 16 -> 22 小幅改善
 
 这说明 `inner` 不是 batch 最优点的唯一变量。后续若仍值得压榨这几个点，应把 `k`、每核 rows、group 数、Sort32 repeat 长度一起纳入模型，而不是继续全局扫一个 row cap。
 
-这个方向最多是几个百分点，因此放在 FP16 small-k 和 medium-k 覆盖之后。除非新的 Judge 评分证明 case 7 的权重异常高，否则不优先。
+这个方向最多是几个百分点，因此放在 FP16 small-k 和 medium-k 覆盖之后。
 
 ## 低优先级 / 暂停方向
 
@@ -110,10 +111,10 @@ case 13  inner=224, k=8: batch 16 -> 22 小幅改善
 
 ## 建议执行顺序
 
-1. 先做 **FP16 vendor-perf API/layout probe**，只回答 half 能否复用当前 vendor 结构；
-2. 若成立，production 化 FP16 `k<=8`，直接 Judge，重点看 case 12；
-3. 再做 **keep=16** 的最小 FP32/FP16 probe，决定 medium-k 是否沿用同一架构；
+1. 完成当前 FP16 `k<=8` production integration probe；
+2. 直接 Judge，重点看 case 12，并决定是否合 main；
+3. 再做 keep=16 的最小 FP32/FP16 probe，决定 medium-k 是否沿用同一架构；
 4. 根据 medium-k 结果决定 large-k 是继续 prefix merge，还是只优化 generic TopK 的批处理组织；
 5. 最后再回来做 3/7/9/13 的 shape-aware batch tuning。
 
-每个阶段都要求：一个明确假设、一个短期分支、一个可复现 probe、一次真实 Judge 结论；实验结束后立即决定“合 main / 归档”，不再形成新的长期 round 链。
+每个阶段都要求：一个明确假设、一个短期分支、一个可复现 probe、一次真实 Judge 结论；实验结束后立即决定“合 main / 归档”。

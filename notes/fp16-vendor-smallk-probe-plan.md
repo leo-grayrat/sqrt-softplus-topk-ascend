@@ -1,22 +1,21 @@
 # FP16 vendor-perf small-k probe
 
-## 已确认的 vendor 行为
+本实验回答：dav-2201 / CANN 9.0 下，FP16 输入能否沿用 Huawei vendor-perf 的 small-k selection 结构。
 
-对 Huawei `MoeGatingTopKSoftmaxPerf<T>` 的源码复核显示：`T != float` 时并不是让 half/bfloat16 原生进入 `Sort32/MrgSort`，而是先在 UB 中 Cast 到 FP32，再调用 `TopKFP32PerfPhase1`，最终按输出 dtype Cast 回去。
+源码复核后确认，Huawei `MoeGatingTopKSoftmaxPerf<T>` 对非 FP32 输入并不是直接做 half `Sort32`，而是先在 UB 中 `Cast` 到 FP32，随后统一进入 FP32 `Sort32 -> prefix MrgSort -> GatherMask`，最后再 Cast 回原 dtype。因此本仓库采用同样路线。
 
-因此本实验不再验证“half pair 原生布局”，而直接验证与 vendor 一致的路径：
+首个 probe 固定为接近 Judge case 12 的 `E=256,k=3`：
 
-```text
-GM half -> UB half -> Cast FP32 -> Sort32<float>
--> top-8 prefix -> MrgSort<float> -> GatherMask values
--> Cast half -> GM half
-```
+1. GM/UB half 输入；
+2. 批量 Cast 到 FP32；
+3. FP32 Sort32；
+4. 每个 32 元素块保留 top-8 prefix；
+5. MrgSort 得到最终前缀；
+6. GatherMask 抽真实 k 个 value；
+7. Cast 回 half，与 host golden 比较。
 
-首个目标 shape 固定为 Judge case 12 的 `E=256,k=3`。probe 不修改 production dispatch，不追求性能，只检查：
+## 结果
 
-1. half -> FP32 Cast 后进入现有 FP32 pair layout 是否正确；
-2. 每个 32 元素块截取 top-8 prefix 后，MrgSort 能否得到全局 top-k；
-3. GatherMask value pattern 能否抽出真实 k 个 FP32 value；
-4. Cast 回 half 后与 host golden top-k score 一致。
+用户本地 CANN 9.0 / dav-2201 CPU twin-debug 已完成 checker、编译和运行，probe PASS。
 
-如果 probe 通过，下一阶段再把 production vendor path 扩到 FP16 small-k；若失败，按实际 CANN checker / Bisheng 报错定位具体 API/layout 约束，不绕开错误直接改 production。
+因此 feasibility 阶段结束：half 输入可以通过 `half -> FP32 vendor selection -> half` 结构正确完成 small-k selection。下一阶段进入 production 集成，并保持 FP32 既有路径不动。
