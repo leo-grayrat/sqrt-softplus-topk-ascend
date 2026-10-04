@@ -1488,6 +1488,357 @@ private:
 };
 
 
+// FP32 medium-k batched specialization: inner=160, 9<=k<=16.
+class SqrtSoftplusVendorPerfTopKFloatMediumKernel {
+public:
+    __aicore__ inline void Init(
+        GM_ADDR routerLogits,
+        GM_ADDR topkScores,
+        int32_t rows,
+        int32_t experts,
+        int32_t inner,
+        int32_t k,
+        int32_t blockNum)
+    {
+        rows_ = rows;
+        experts_ = experts;
+        inner_ = inner;
+        k_ = k;
+        blockNum_ = blockNum;
+        batchRows_ = SelectVendorHalfScratchBatchRows(rows_, blockNum_, inner_);
+        groupCount_ = (rows_ + batchRows_ - 1) / batchRows_;
+        activeBlockNum_ = groupCount_ < blockNum_ ? groupCount_ : blockNum_;
+
+        const uint32_t rawBytes = static_cast<uint32_t>(experts_) * sizeof(float);
+        const uint32_t copyAlignedBytes =
+            (rawBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES;
+        copyAlignedElems_ = static_cast<int32_t>(copyAlignedBytes / sizeof(float));
+
+        inputGm_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(routerLogits));
+        outputGm_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(topkScores));
+
+        const uint32_t batchStageBytes =
+            static_cast<uint32_t>(batchRows_ * copyAlignedElems_) * sizeof(float);
+        const uint32_t batchInputBytes =
+            static_cast<uint32_t>(batchRows_ * inner_) * sizeof(float);
+        const int32_t pairCols =
+            inner_ > 128 && inner_ < VENDOR_MEDIUM_FIRST_STAGE_COLS
+                ? VENDOR_MEDIUM_FIRST_STAGE_COLS
+                : inner_;
+        const uint32_t batchPairBytes =
+            static_cast<uint32_t>(batchRows_ * pairCols * 2) * sizeof(float);
+        const uint32_t batchFloatOutputBytes =
+            static_cast<uint32_t>(batchRows_ * VENDOR_MEDIUM_KEEP_K) * sizeof(float);
+        const uint32_t rawOutputBytes =
+            static_cast<uint32_t>(batchRows_ * VENDOR_MEDIUM_KEEP_K) * sizeof(float);
+        const uint32_t batchOutputBytes =
+            (rawOutputBytes + ALIGN_BYTES - 1u) / ALIGN_BYTES * ALIGN_BYTES;
+
+        pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
+        pipe_.InitBuffer(pairABuffer_, batchPairBytes);
+        pipe_.InitBuffer(pairBBuffer_, batchPairBytes);
+        pipe_.InitBuffer(floatTmpBuffer_, batchFloatOutputBytes);
+        pipe_.InitBuffer(patternBuffer_, ALIGN_BYTES);
+        pipe_.InitBuffer(outputQueue_, 1, batchOutputBytes);
+    }
+
+    __aicore__ inline void Process()
+    {
+        const int32_t blockIdx = static_cast<int32_t>(AscendC::GetBlockIdx());
+        if (blockIdx >= activeBlockNum_) {
+            return;
+        }
+
+        InitValuePattern();
+
+        int32_t group = blockIdx;
+        CopyInGroup(group);
+        while (group < groupCount_) {
+            const int32_t nextGroup = group + activeBlockNum_;
+            if (nextGroup < groupCount_) {
+                CopyInGroup(nextGroup);
+            }
+            ComputeGroup(group);
+            group = nextGroup;
+        }
+    }
+
+private:
+    __aicore__ inline int32_t GroupValidRows(int32_t group) const
+    {
+        const int32_t firstRow = group * batchRows_;
+        int32_t validRows = rows_ - firstRow;
+        if (validRows > batchRows_) {
+            validRows = batchRows_;
+        }
+        return validRows;
+    }
+
+    __aicore__ inline void InitValuePattern()
+    {
+        using namespace AscendC;
+        LocalTensor<uint32_t> pattern = patternBuffer_.Get<uint32_t>();
+        pattern.SetValue(0, BuildVendorValueMask(k_));
+        pattern.SetValue(1, 0u);
+        auto eventID = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
+        SetFlag<HardEvent::S_V>(eventID);
+        WaitFlag<HardEvent::S_V>(eventID);
+    }
+
+    __aicore__ inline void CopyInGroup(int32_t group)
+    {
+        AscendC::LocalTensor<float> staging = inputQueue_.AllocTensor<float>();
+        const int32_t firstRow = group * batchRows_;
+        const int32_t validRows = GroupValidRows(group);
+        const uint32_t rowBytes = static_cast<uint32_t>(experts_) * sizeof(float);
+        const uint8_t rightPadding = static_cast<uint8_t>(copyAlignedElems_ - experts_);
+
+        AscendC::DataCopyExtParams copyParams;
+        copyParams.blockCount = static_cast<uint16_t>(validRows);
+        copyParams.blockLen = rowBytes;
+        copyParams.srcStride = 0;
+        copyParams.dstStride = 0;
+        copyParams.rsv = 0;
+        AscendC::DataCopyPadExtParams<float> padParams{
+            true, 0, rightPadding, static_cast<float>(-INFINITY)};
+
+        AscendC::DataCopyPad(
+            staging,
+            inputGm_[static_cast<int64_t>(firstRow) * experts_],
+            copyParams,
+            padParams);
+        inputQueue_.EnQue(staging);
+    }
+
+    __aicore__ inline void ConvertRows(
+        const AscendC::LocalTensor<float>& floatInput,
+        const AscendC::LocalTensor<float>& staging,
+        int32_t validRows)
+    {
+        AscendC::Duplicate(floatInput, -INFINITY, validRows * inner_);
+        AscendC::PipeBarrier<PIPE_V>();
+        AscendC::DataCopyParams params;
+        params.blockCount = static_cast<uint16_t>(validRows);
+        params.blockLen = static_cast<uint16_t>(copyAlignedElems_ / 8);
+        params.srcStride = 0;
+        params.dstStride = static_cast<uint16_t>((inner_ - copyAlignedElems_) / 8);
+        AscendC::DataCopy(floatInput, staging, params);
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
+    __aicore__ inline void CopyTop16FromSort32(
+        const AscendC::LocalTensor<float>& dst,
+        int32_t dstRowCols,
+        const AscendC::LocalTensor<float>& src,
+        int32_t srcRowCols,
+        int32_t rows)
+    {
+        AscendC::Duplicate(
+            dst,
+            -INFINITY,
+            static_cast<uint32_t>(rows * dstRowCols * 2));
+        AscendC::PipeBarrier<PIPE_V>();
+
+        AscendC::DataCopyParams params;
+        params.blockCount = static_cast<uint16_t>(rows);
+        params.blockLen = 4;
+        params.srcStride =
+            static_cast<uint16_t>((srcRowCols - VENDOR_MEDIUM_KEEP_K) * 2 / 8);
+        params.dstStride =
+            static_cast<uint16_t>((dstRowCols - VENDOR_MEDIUM_KEEP_K) * 2 / 8);
+
+        const int32_t chunkCount = inner_ / VENDOR_SORT_UNIT;
+        for (int32_t chunk = 0; chunk < chunkCount; ++chunk) {
+            AscendC::DataCopy(
+                dst[static_cast<uint32_t>(chunk * VENDOR_MEDIUM_KEEP_K * 2)],
+                src[static_cast<uint32_t>(chunk * VENDOR_SORT_UNIT * 2)],
+                params);
+        }
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
+    __aicore__ inline void CopyTop16FromMerged64(
+        const AscendC::LocalTensor<float>& dst,
+        const AscendC::LocalTensor<float>& src,
+        int32_t rows)
+    {
+        AscendC::Duplicate(
+            dst,
+            -INFINITY,
+            static_cast<uint32_t>(rows * VENDOR_MEDIUM_FINAL_VALUES * 2));
+        AscendC::PipeBarrier<PIPE_V>();
+
+        AscendC::DataCopyParams params;
+        params.blockCount = static_cast<uint16_t>(rows);
+        params.blockLen = 4;
+        params.srcStride = static_cast<uint16_t>(
+            (VENDOR_MEDIUM_FIRST_STAGE_COLS - VENDOR_MEDIUM_KEEP_K) * 2 / 8);
+        params.dstStride = static_cast<uint16_t>(
+            (VENDOR_MEDIUM_FINAL_VALUES - VENDOR_MEDIUM_KEEP_K) * 2 / 8);
+
+        for (int32_t group = 0; group < 4; ++group) {
+            AscendC::DataCopy(
+                dst[static_cast<uint32_t>(group * VENDOR_MEDIUM_KEEP_K * 2)],
+                src[static_cast<uint32_t>(group * VENDOR_MEDIUM_MERGED_GROUP_COLS * 2)],
+                params);
+        }
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
+    __aicore__ inline void MergeFourTop16(
+        const AscendC::LocalTensor<float>& dst,
+        const AscendC::LocalTensor<float>& src,
+        int32_t repeatTimes)
+    {
+        AscendC::MrgSort4Info params;
+        params.elementLengths[0] = VENDOR_MEDIUM_KEEP_K;
+        params.elementLengths[1] = VENDOR_MEDIUM_KEEP_K;
+        params.elementLengths[2] = VENDOR_MEDIUM_KEEP_K;
+        params.elementLengths[3] = VENDOR_MEDIUM_KEEP_K;
+        params.ifExhaustedSuspension = false;
+        params.validBit = 15;
+        params.repeatTimes = static_cast<uint16_t>(repeatTimes);
+
+        AscendC::MrgSortSrcList<float> srcList;
+        srcList.src1 = src[0];
+        srcList.src2 = src[VENDOR_MEDIUM_KEEP_K * 2];
+        srcList.src3 = src[VENDOR_MEDIUM_KEEP_K * 4];
+        srcList.src4 = src[VENDOR_MEDIUM_KEEP_K * 6];
+        AscendC::MrgSort<float>(dst, srcList, params);
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
+    __aicore__ inline void BuildFinalPairs(
+        const AscendC::LocalTensor<float>& pairA,
+        const AscendC::LocalTensor<float>& pairB,
+        int32_t rows)
+    {
+        if (inner_ > 128) {
+            CopyTop16FromSort32(
+                pairB,
+                VENDOR_MEDIUM_FIRST_STAGE_COLS,
+                pairA,
+                inner_,
+                rows);
+            MergeFourTop16(pairA, pairB, rows * 4);
+            CopyTop16FromMerged64(pairB, pairA, rows);
+        } else {
+            CopyTop16FromSort32(
+                pairB,
+                VENDOR_MEDIUM_FINAL_VALUES,
+                pairA,
+                inner_,
+                rows);
+        }
+        MergeFourTop16(pairA, pairB, rows);
+    }
+
+    __aicore__ inline void ExtractKValues(
+        const AscendC::LocalTensor<float>& dst,
+        const AscendC::LocalTensor<float>& src,
+        int32_t rows)
+    {
+        using namespace AscendC;
+        LocalTensor<uint32_t> pattern = patternBuffer_.Get<uint32_t>();
+        GatherMaskParams params;
+        uint64_t rsvdCnt = 0;
+        params.src0BlockStride = 1;
+        params.repeatTimes = static_cast<uint8_t>(rows);
+        params.src0RepeatStride =
+            static_cast<uint8_t>(VENDOR_MEDIUM_FINAL_PAIR_FLOATS / 8);
+        params.src1RepeatStride = 0;
+        GatherMask(
+            dst.ReinterpretCast<int32_t>(),
+            src.ReinterpretCast<int32_t>(),
+            pattern,
+            true,
+            VENDOR_GATHER_REPEAT,
+            params,
+            rsvdCnt);
+        PipeBarrier<PIPE_V>();
+    }
+
+    __aicore__ inline void ComputeGroup(int32_t group)
+    {
+        const int32_t firstRow = group * batchRows_;
+        const int32_t validRows = GroupValidRows(group);
+
+        AscendC::LocalTensor<float> staging = inputQueue_.DeQue<float>();
+        AscendC::LocalTensor<float> pairA = pairABuffer_.Get<float>();
+        AscendC::LocalTensor<float> pairB = pairBBuffer_.Get<float>();
+
+        // pairB is source/index scratch before Sort32, then merge scratch.
+        AscendC::LocalTensor<float> floatInput = pairB;
+        AscendC::LocalTensor<uint32_t> index =
+            pairB[static_cast<uint32_t>(batchRows_ * inner_)]
+                .ReinterpretCast<uint32_t>();
+        ConvertRows(floatInput, staging, validRows);
+        AscendC::Duplicate(
+            index,
+            static_cast<uint32_t>(0),
+            static_cast<uint32_t>(validRows * inner_));
+        AscendC::PipeBarrier<PIPE_V>();
+
+        AscendC::Sort32<float>(
+            pairA,
+            floatInput,
+            index,
+            validRows * inner_ / VENDOR_SORT_UNIT);
+        AscendC::PipeBarrier<PIPE_V>();
+
+        BuildFinalPairs(pairA, pairB, validRows);
+
+        AscendC::LocalTensor<float> floatOut = outputQueue_.AllocTensor<float>();
+        ExtractKValues(floatOut, pairA, validRows);
+
+        AscendC::LocalTensor<float> tmp = floatTmpBuffer_.Get<float>();
+        StableSoftplusSqrt(
+            floatOut,
+            tmp,
+            static_cast<uint32_t>(validRows * k_));
+
+        inputQueue_.FreeTensor(staging);
+        outputQueue_.EnQue(floatOut);
+        floatOut = outputQueue_.DeQue<float>();
+
+        const uint32_t packedOutputBytes = static_cast<uint32_t>(
+            static_cast<uint64_t>(validRows) * static_cast<uint64_t>(k_) * sizeof(float));
+        AscendC::DataCopyExtParams copyOutParams{
+            1,
+            packedOutputBytes,
+            0,
+            0,
+            0};
+        AscendC::DataCopyPad(
+            outputGm_[static_cast<int64_t>(firstRow) * k_],
+            floatOut,
+            copyOutParams);
+        outputQueue_.FreeTensor(floatOut);
+    }
+
+private:
+    AscendC::TPipe pipe_;
+    AscendC::TQue<AscendC::TPosition::VECIN, 2> inputQueue_;
+    AscendC::TQue<AscendC::TPosition::VECOUT, 1> outputQueue_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> pairABuffer_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> pairBBuffer_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> floatTmpBuffer_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> patternBuffer_;
+    AscendC::GlobalTensor<float> inputGm_;
+    AscendC::GlobalTensor<float> outputGm_;
+
+    int32_t rows_ = 0;
+    int32_t experts_ = 0;
+    int32_t inner_ = 0;
+    int32_t k_ = 0;
+    int32_t blockNum_ = 0;
+    int32_t batchRows_ = 0;
+    int32_t groupCount_ = 0;
+    int32_t activeBlockNum_ = 0;
+    int32_t copyAlignedElems_ = 0;
+};
+
+
 // Large-k vendor selection: Sort32 keeps all 32 values; later merge stages retain top-64.
 constexpr int32_t VENDOR_LARGE_SORT_K = 32;
 constexpr int32_t VENDOR_LARGE_KEEP_K = 64;
@@ -2318,6 +2669,13 @@ __aicore__ inline void RunVendorTopKDispatch(
     uint32_t topkTmpBytes,
     const AscendC::tiling::TopkTiling& topkTiling)
 {
+    if (inner == 160 && k >= 9 && k <= 16) {
+        SqrtSoftplusVendorPerfTopKFloatMediumKernel op;
+        op.Init(routerLogits, topkScores, rows, experts, inner, k, blockNum);
+        op.Process();
+        return;
+    }
+
     const bool useLarge32 = k == 32 && inner == 128;
     const bool useLarge64 = k == 64 && inner == 1024;
     if (useLarge32 || useLarge64) {
