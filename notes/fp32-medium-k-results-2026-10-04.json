@@ -3,7 +3,30 @@
   "candidate_cpu_pass": 31,
   "baseline_cpu": "checker rejected unused empty srcIndexLocal; not passed",
   "candidate_device_compile": true,
-  "judge": "pending",
+  "judge": {
+    "status": "user-reported 15/15 Pass",
+    "date": "2026-10-04",
+    "error_percent": 0,
+    "times_us": [
+      2.45,
+      2.9,
+      139.69,
+      3.72,
+      7.5,
+      10.19,
+      17.63,
+      33.46,
+      27.52,
+      42.3,
+      51.94,
+      122.17,
+      176.78,
+      537.48,
+      1650
+    ],
+    "case15_display": "1.65 ms",
+    "case6_previous_us": 23.84
+  },
   "simulator": [
     {
       "variant": "baseline",
