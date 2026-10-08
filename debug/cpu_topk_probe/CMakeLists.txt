@@ -63,7 +63,17 @@ target_compile_definitions(topk_threshold_baseline_probe PRIVATE THRESHOLD_BASEL
 
 add_executable(topk_fp32_medium_production_probe topk_fp32_medium_production_probe.asc)
 
+add_executable(topk_values_only_probe topk_values_only_probe.asc)
+add_executable(topk_values_only_baseline_probe topk_values_only_probe.asc)
+target_compile_definitions(topk_values_only_baseline_probe PRIVATE VALUES_ONLY_BASELINE=1)
+
+add_executable(topk_values_only_raw_probe topk_values_only_probe.asc)
+target_compile_definitions(topk_values_only_raw_probe PRIVATE VALUES_ONLY_RAW=1)
+
 foreach(probe_target IN ITEMS
+        topk_values_only_raw_probe
+        topk_values_only_probe
+        topk_values_only_baseline_probe
         topk_fp32_medium_production_probe
         topk_threshold_full_probe
         topk_threshold_baseline_probe
