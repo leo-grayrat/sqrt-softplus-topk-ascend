@@ -1,0 +1,15 @@
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/leo/cann-work/values-only-20261008/cpu
+Consolidate compiler generated dependencies of target topk_values_only_probe
+[ 50%] Building ASC object CMakeFiles/topk_values_only_probe.dir/topk_values_only_probe.asc.o
+[100%] Linking ASC executable topk_values_only_probe
+[100%] Built target topk_values_only_probe
+Consolidate compiler generated dependencies of target topk_values_only_baseline_probe
+[ 50%] Building ASC object CMakeFiles/topk_values_only_baseline_probe.dir/topk_values_only_probe.asc.o
+[100%] Linking ASC executable topk_values_only_baseline_probe
+[100%] Built target topk_values_only_baseline_probe
+Consolidate compiler generated dependencies of target topk_values_only_raw_probe
+[ 50%] Building ASC object CMakeFiles/topk_values_only_raw_probe.dir/topk_values_only_probe.asc.o
+[100%] Linking ASC executable topk_values_only_raw_probe
+[100%] Built target topk_values_only_raw_probe
