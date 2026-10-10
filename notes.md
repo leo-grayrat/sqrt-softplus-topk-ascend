@@ -2,6 +2,8 @@
 
 ## 当前入口
 
+- **2026-10-10 FP32 scratch 复用已实现测量**：[完整记录](notes/fp32-scratch-reuse-2026-10-10.md)。基线/候选 CPU 各 38/38，候选完整设备编译通过；E210 改善 2.3–3.1%、E888 约 10%，未达 20% 门槛。保留可复现研究补丁，生产代码恢复 main；无需新 Judge。跟踪 #55。本次是报告第一项，未实施第二项 merge tree 或 #52。
+
 - **2026-10-10 用户研究报告归档**：[完整原文](notes/structural-optimization-research-2026-10-10.md) / [意思重述与来源说明](notes/structural-optimization-research-reading-2026-10-10.md)。按用户要求停止推进原下一阶段计划，本次只存档和重述，尚未实施报告中的 FP32 scratch 复用等建议。
 
 - **2026-10-08 values-only 阶段结束**：[实现与负结果](notes/values-only-c12-2026-10-08.md)。三组 CPU 各 33/33、设备构建通过；62/124 行完整模型分别 24.96/44.25 us，main 为 10.51/18.62 us。停止该网络，生产目录不变，无需新 Judge。[下一阶段计划](notes/optimization-plan-2026-10-08.md)。跟踪 #51；极大输入变换边界另见 #52。

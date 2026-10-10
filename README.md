@@ -12,6 +12,7 @@
 
 - [当前状态、完整 15 点和阶段集成范围](notes/current-status-2026-10-04.md)
 - [用户提供的结构性优化深度研究报告](notes/structural-optimization-research-2026-10-10.md)
+- [FP32 scratch 复用实测：改善 2–10%，未达准入门槛](notes/fp32-scratch-reuse-2026-10-10.md)
 - [报告重述与归档说明](notes/structural-optimization-research-reading-2026-10-10.md)
 - [原下一阶段计划（已停止推进，保留历史）](notes/optimization-plan-2026-10-08.md)
 - [values-only 网络研究：正确性通过，完整模型约慢 2.38 倍，停止](notes/values-only-c12-2026-10-08.md)
