@@ -2,6 +2,8 @@
 
 ## 当前入口
 
+- **2026-10-10 用户研究报告归档**：[完整原文](notes/structural-optimization-research-2026-10-10.md) / [意思重述与来源说明](notes/structural-optimization-research-reading-2026-10-10.md)。按用户要求停止推进原下一阶段计划，本次只存档和重述，尚未实施报告中的 FP32 scratch 复用等建议。
+
 - **2026-10-08 values-only 阶段结束**：[实现与负结果](notes/values-only-c12-2026-10-08.md)。三组 CPU 各 33/33、设备构建通过；62/124 行完整模型分别 24.96/44.25 us，main 为 10.51/18.62 us。停止该网络，生产目录不变，无需新 Judge。[下一阶段计划](notes/optimization-plan-2026-10-08.md)。跟踪 #51；极大输入变换边界另见 #52。
 
 - **2026-10-04 阶段集成**：以 [main 当前状态](notes/current-status-2026-10-04.md) 和 [下一阶段计划](notes/optimization-plan-2026-10-04.md) 为准。以下为历史实验时间线，其中“待测”“尚未合并”等仅描述当时状态。
