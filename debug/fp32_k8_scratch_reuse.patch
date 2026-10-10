@@ -1,0 +1,72 @@
+diff --git a/submission/dense_repeat_override.h b/submission/dense_repeat_override.h
+index 5a3deb8..135a540 100644
+--- a/submission/dense_repeat_override.h
++++ b/submission/dense_repeat_override.h
+@@ -77,7 +77,14 @@ public:
+         inner_ = inner;
+         k_ = k;
+         blockNum_ = blockNum;
++        reuseScratch_ = k_ == 8 && (inner_ == 224 || inner_ == 896);
+         batchRows_ = SelectVendorBatchRows(rows_, blockNum_, inner_);
++        if (reuseScratch_) {
++            // Both capacities require at most 224 Sort32 repeats (<256).
++            const int32_t capacity = inner_ == 224 ? 32 : 8;
++            const int32_t rowsPerCore = (rows_ + blockNum_ - 1) / blockNum_;
++            batchRows_ = rowsPerCore < capacity ? rowsPerCore : capacity;
++        }
+         groupCount_ = (rows_ + batchRows_ - 1) / batchRows_;
+         activeBlockNum_ = groupCount_ < blockNum_ ? groupCount_ : blockNum_;
+ 
+@@ -98,9 +105,11 @@ public:
+             static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(float);
+ 
+         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
+-        pipe_.InitBuffer(inputBuffer_, batchInputBytes);
++        if (!reuseScratch_) {
++            pipe_.InitBuffer(inputBuffer_, batchInputBytes);
++            pipe_.InitBuffer(indexBuffer_, batchInputBytes);
++        }
+         pipe_.InitBuffer(outputQueue_, 1, batchPackedBytes);
+-        pipe_.InitBuffer(indexBuffer_, batchInputBytes);
+         pipe_.InitBuffer(pairABuffer_, batchPairBytes);
+         pipe_.InitBuffer(pairBBuffer_, batchPairBytes);
+         pipe_.InitBuffer(floatTmpBuffer_, batchPackedBytes);
+@@ -114,7 +123,7 @@ public:
+             return;
+         }
+ 
+-        InitIndexBatch();
++        if (!reuseScratch_) InitIndexBatch();
+         InitValuePattern();
+ 
+         int32_t group = blockIdx;
+@@ -411,11 +420,19 @@ private:
+         AscendC::LocalTensor<float> staging = inputQueue_.DeQue<float>();
+         AscendC::LocalTensor<float> input = staging;
+         if (copyAlignedElems_ < inner_) {
+-            input = inputBuffer_.Get<float>();
++            input = reuseScratch_ ? pairBBuffer_.Get<float>() : inputBuffer_.Get<float>();
+             RearrangeRows(input, staging, validRows);
+         }
+ 
+-        AscendC::LocalTensor<int32_t> signedIndex = indexBuffer_.Get<int32_t>();
++        // pairB is dead until merging. Its first half holds padded input;
++        // its second half holds payload indices, refreshed after every merge.
++        AscendC::LocalTensor<int32_t> signedIndex = reuseScratch_
++            ? pairBBuffer_.Get<int32_t>()[batchRows_ * inner_]
++            : indexBuffer_.Get<int32_t>();
++        if (reuseScratch_) {
++            AscendC::Duplicate(signedIndex, int32_t(0), validRows * inner_);
++            AscendC::PipeBarrier<PIPE_V>();
++        }
+         AscendC::LocalTensor<uint32_t> index =
+             signedIndex.ReinterpretCast<uint32_t>();
+         AscendC::LocalTensor<float> pairA = pairABuffer_.Get<float>();
+@@ -474,6 +491,7 @@ private:
+     AscendC::GlobalTensor<float> inputGm_;
+     AscendC::GlobalTensor<float> outputGm_;
+ 
++    bool reuseScratch_ = false;
+     int32_t rows_ = 0;
+     int32_t experts_ = 0;
+     int32_t inner_ = 0;

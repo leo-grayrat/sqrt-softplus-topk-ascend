@@ -70,7 +70,10 @@ target_compile_definitions(topk_values_only_baseline_probe PRIVATE VALUES_ONLY_B
 add_executable(topk_values_only_raw_probe topk_values_only_probe.asc)
 target_compile_definitions(topk_values_only_raw_probe PRIVATE VALUES_ONLY_RAW=1)
 
+add_executable(topk_fp32_scratch_production_probe topk_fp32_scratch_production_probe.asc)
+
 foreach(probe_target IN ITEMS
+        topk_fp32_scratch_production_probe
         topk_values_only_raw_probe
         topk_values_only_probe
         topk_values_only_baseline_probe
