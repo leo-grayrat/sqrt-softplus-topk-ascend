@@ -11,7 +11,9 @@
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
 - [当前状态、完整 15 点和阶段集成范围](notes/current-status-2026-10-04.md)
-- [下一阶段计划](notes/optimization-plan-2026-10-08.md)
+- [用户提供的结构性优化深度研究报告](notes/structural-optimization-research-2026-10-10.md)
+- [报告重述与归档说明](notes/structural-optimization-research-reading-2026-10-10.md)
+- [原下一阶段计划（已停止推进，保留历史）](notes/optimization-plan-2026-10-08.md)
 - [values-only 网络研究：正确性通过，完整模型约慢 2.38 倍，停止](notes/values-only-c12-2026-10-08.md)
 - [FP16 阶段归档](notes/fp16-optimization-archive-2026-10-03.md)
 - [FP32 medium-k 实测](notes/fp32-medium-k-2026-10-04.md)
