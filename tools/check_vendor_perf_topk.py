@@ -76,7 +76,13 @@ if "blockCount = static_cast<uint16_t>(validRows)" not in copy_body:
 
 if "AscendC::LocalTensor<float> input = staging;" not in body:
     raise SystemExit("FAIL: aligned rows do not sort directly from staging")
-if "input = inputBuffer_.Get<float>();" not in body:
+legacy_input = "input = inputBuffer_.Get<float>();" in body
+aliased_input = (
+    "reuseScratch_ = k_ == 8 && inner_ == 224;" in body
+    and "input = reuseScratch_ ? pairBBuffer_.Get<float>() : inputBuffer_.Get<float>();" in body
+    and "pairBBuffer_.Get<int32_t>()[batchRows_ * inner_]" in body
+)
+if not (legacy_input or aliased_input):
     raise SystemExit("FAIL: nonaligned rows do not switch to rearranged input buffer")
 if "validRows * inner_ / VENDOR_SORT_UNIT" not in body:
     raise SystemExit("FAIL: Sort32 still processes dummy rows in the tail batch")
@@ -90,7 +96,12 @@ if "pattern.SetValue(0, BuildVendorValueMask(k_))" not in body:
     raise SystemExit("FAIL: value pattern is not initialized from runtime k")
 if "params.repeatTimes = static_cast<uint8_t>(rows)" not in body:
     raise SystemExit("FAIL: true-k GatherMask does not repeat across valid rows")
-if "params.src0RepeatStride" not in body or "VENDOR_FINAL_PAIR_FLOATS / 8" not in body:
+legacy_stride = "VENDOR_FINAL_PAIR_FLOATS / 8" in body
+compact_stride = (
+    "(reuseScratch_ ? 32 : VENDOR_FINAL_PAIR_FLOATS) / 8" in body
+    and "BuildCompact224Pairs(pairA, pairB, rows)" in body
+)
+if "params.src0RepeatStride" not in body or not (legacy_stride or compact_stride):
     raise SystemExit("FAIL: true-k GatherMask does not advance by one final-pair row")
 if "ExtractKValues(out, finalPairs, validRows)" not in body:
     raise SystemExit("FAIL: ComputeGroup does not use direct true-k extraction")
