@@ -6,11 +6,9 @@
 
 ## 当前主线
 
-`main` 是唯一生产基线。FP16 case5七叶子紧凑keep16阶段通过用户完整CANNJudge **15/15 Pass、错误占比均0.00%**，经[PR #65](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/65)合入main。case5 **7.76→6.58 us，减少15.21%**，低于模型的31%–33%。[实现与全部证据](notes/fp16-compact-c5-2026-10-11.md)。
+`main` 以用户Judge验证的PR #70为当前阶段基线：15/15 Pass、全部错误占比0.00%，case6 **10.29→8.50 us，减少17.40%**。[完整同次15点结果](notes/current-status-2026-10-12-c6.md)。
 
-最新同次完整Judge：case7/9为 **16.47/24.39 us**，case3/13为 **115.13/132.17 us**，case6为 **10.29 us**，case12/14为 **122.26/536.85 us**，case15为 **1.65 ms**。case4增加0.09 us（2.32%）等变化全部保留，不据单次跨轮回报认定因果。[完整状态](notes/current-status-2026-10-11-c5.md)。case15 scratch仅约1.3%模型收益，已撤回并[归档](notes/fp32-large-scratch-2026-10-11.md)。
-
-新的case6候选在`exp/fp32-compact-c6`，尚待Judge、未合main：五叶子紧凑keep16把合并产物减半，CPU真实入口双方104/104，设备编译与完整设备simulator通过，64/128行模型减少32.61%/35.44%。[实现与待测文件说明](notes/fp32-compact-c6-2026-10-12.md)。本轮[Cast](notes/fp16-padded-cast-2026-10-12.md)与[case8](notes/fp16-batch-merge-c8-2026-10-12.md)负结果已归档并撤回生产。
+下一阶段转向case12的结构性吞吐问题，先隔离完整成本，再验证精确跨行归约。此前Cast、case8及case15 scratch负结果保留在notes，不作为活动生产候选。
 
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
@@ -65,7 +63,7 @@ sqrt(softplus(TopK(x)))
 
 每个大阶段只维护一个活动实验分支，从最新 main 创建。阶段完成后，经本地验证、用户完整 Judge 和 PR 合入 main，再开始下一阶段；不从上一条实验分支继续串接新的长期开发。
 
-现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/fp16-compact-c5`，上一轮为 `exp/fp32-compact-c7-c9`；更早六条 exp 分支清单见 2026-10-04 状态文档。
+现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/fp32-compact-c6`，上一轮为 `exp/fp32-compact-c7-c9`；更早六条 exp 分支清单见 2026-10-04 状态文档。
 
 ## 验证原则
 
