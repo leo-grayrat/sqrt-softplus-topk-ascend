@@ -1,0 +1,221 @@
+{
+  "baseline_ref": "66e48c53cbb55033b7b7cc3ab8548402c70a13eb",
+  "modes": {
+    "baseline": {
+      "profiles": {
+        "sim-r1-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 4.91
+          }
+        },
+        "sim-r1-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 4.9
+          }
+        },
+        "sim-r129-e888-k8-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 12.46,
+            "core1.veccore0": 11.73,
+            "core2.veccore0": 11.71,
+            "core3.veccore0": 11.72,
+            "core4.veccore0": 11.72,
+            "core5.veccore0": 11.7,
+            "core6.veccore0": 11.72,
+            "core7.veccore0": 11.71
+          }
+        },
+        "sim-r192-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 40.84
+          },
+          "instruction_calls": {
+            "BAR": 376,
+            "VMS4V2": 24,
+            "VBS32": 12,
+            "MOV_UB_TO_UB": 120
+          }
+        },
+        "sim-r192-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 40.58
+          },
+          "instruction_calls": {
+            "BAR": 340,
+            "VMS4V2": 24,
+            "VBS32": 12,
+            "MOV_UB_TO_UB": 108
+          }
+        },
+        "sim-r257-e210-k8-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 9.15,
+            "core1.veccore0": 8.84,
+            "core2.veccore0": 8.83,
+            "core3.veccore0": 8.83,
+            "core4.veccore0": 8.83,
+            "core5.veccore0": 8.83,
+            "core6.veccore0": 8.82,
+            "core7.veccore0": 8.83
+          }
+        },
+        "sim-r96-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 21.88
+          },
+          "instruction_calls": {
+            "BAR": 190,
+            "VMS4V2": 12,
+            "VBS32": 6,
+            "MOV_UB_TO_UB": 60
+          }
+        },
+        "sim-r96-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 21.75
+          },
+          "instruction_calls": {
+            "BAR": 172,
+            "VMS4V2": 12,
+            "VBS32": 6,
+            "MOV_UB_TO_UB": 54
+          }
+        }
+      },
+      "header_sha256": "a5631151aa890f25f02c4dc62ec7c2193e716018df428dfd8132a285e68c9f7d",
+      "source_matches_expected": true
+    },
+    "candidate": {
+      "profiles": {
+        "sim-r1-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 4.15
+          }
+        },
+        "sim-r1-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 4.15
+          }
+        },
+        "sim-r129-e888-k8-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 12.69,
+            "core1.veccore0": 11.8,
+            "core2.veccore0": 11.81,
+            "core3.veccore0": 11.82,
+            "core4.veccore0": 11.8,
+            "core5.veccore0": 11.82,
+            "core6.veccore0": 11.8,
+            "core7.veccore0": 11.81
+          }
+        },
+        "sim-r192-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 27.19
+          },
+          "instruction_calls": {
+            "BAR": 118,
+            "VMS4V2": 8,
+            "VBS32": 4,
+            "MOV_UB_TO_UB": 28
+          }
+        },
+        "sim-r192-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 26.34
+          },
+          "instruction_calls": {
+            "BAR": 106,
+            "VMS4V2": 8,
+            "VBS32": 4,
+            "MOV_UB_TO_UB": 24
+          }
+        },
+        "sim-r257-e210-k8-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 9.26,
+            "core1.veccore0": 8.64,
+            "core2.veccore0": 8.63,
+            "core3.veccore0": 8.77,
+            "core4.veccore0": 8.78,
+            "core5.veccore0": 8.78,
+            "core6.veccore0": 8.78,
+            "core7.veccore0": 8.77
+          }
+        },
+        "sim-r385-e150-k6-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 10.98,
+            "core1.veccore0": 10.53,
+            "core2.veccore0": 10.52,
+            "core3.veccore0": 10.53,
+            "core4.veccore0": 10.53,
+            "core5.veccore0": 10.54,
+            "core6.veccore0": 10.53,
+            "core7.veccore0": 10.53
+          }
+        },
+        "sim-r385-e160-k7-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 9.48,
+            "core1.veccore0": 9.06,
+            "core2.veccore0": 9.06,
+            "core3.veccore0": 9.06,
+            "core4.veccore0": 9.06,
+            "core5.veccore0": 9.06,
+            "core6.veccore0": 9.07,
+            "core7.veccore0": 9.06
+          }
+        },
+        "sim-r49-e129-k6-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 4.11,
+            "core1.veccore0": 4.15,
+            "core2.veccore0": 4.15,
+            "core3.veccore0": 4.16,
+            "core4.veccore0": 4.16,
+            "core5.veccore0": 4.15,
+            "core6.veccore0": 4.15,
+            "core7.veccore0": 1.62
+          }
+        },
+        "sim-r49-e159-k7-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 4.15,
+            "core1.veccore0": 4.15,
+            "core2.veccore0": 4.15,
+            "core3.veccore0": 4.15,
+            "core4.veccore0": 4.14,
+            "core5.veccore0": 4.11,
+            "core6.veccore0": 4.15,
+            "core7.veccore0": 1.63
+          }
+        },
+        "sim-r96-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 15.27
+          },
+          "instruction_calls": {
+            "BAR": 60,
+            "VMS4V2": 4,
+            "VBS32": 2,
+            "MOV_UB_TO_UB": 14
+          }
+        },
+        "sim-r96-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 14.57
+          },
+          "instruction_calls": {
+            "BAR": 54,
+            "VMS4V2": 4,
+            "VBS32": 2,
+            "MOV_UB_TO_UB": 12
+          }
+        }
+      },
+      "header_sha256": "6aa8481e031c69a2eb659d147d9a9a84eb33cd3d8d99d3cecba25f5c8279f0c6",
+      "source_matches_expected": true
+    }
+  }
+}

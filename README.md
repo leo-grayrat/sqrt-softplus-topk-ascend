@@ -6,6 +6,8 @@
 
 ## 当前主线
 
+待 Judge 候选：`exp/fp32-compact-c7-c9` 将 FP32、inner=160、k=6/7 改为五叶子紧凑合并和 48 行 batch。case 7/9 对应形状各两组完整模型耗时减少 **30%–35%**；双方 CPU 87/87、候选完整设备编译及 12 次仿真输出检查通过。case 3/13 多核模型最大耗时小幅增加约 1%–2%，真实影响待整套 Judge 确认。[实现与全部对照](notes/fp32-compact-c7-c9-2026-10-11.md)。main 继续表示下述已验证版本。
+
 `main` 是唯一生产基线。FP32 k=8、inner=896 连续批量合并阶段通过用户完整 CANNJudge **15/15 Pass、全部错误占比 0.00%**，经 [PR #60](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/60) 收拢到 main。case 3 从上一套基线的 **139.78 us 降至 114.87 us，耗时减少 17.82%**；case 13 保持在 **131.85 us**，保留 [PR #58 的紧凑合并收益](notes/fp32-compact-merge-2026-10-11.md)。
 
 最新同一次整套 Judge 中，case 6 为 **10.45 us**，case 12/14 为 **122.23/537.70 us**，case 15 为 **1.65 ms**。case 1 比上一轮增加 0.17 us（7.23%），其余波动及完整结果均保留在状态记录；没有重复测量分布，不将这些变化直接归因于代码。[本阶段实现与本地验证](notes/fp32-compact-c3-2026-10-11.md)。
