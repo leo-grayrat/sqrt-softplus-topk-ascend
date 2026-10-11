@@ -1,0 +1,622 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp16-production rows=1 E=64 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1117] exit success!
+RUN fp16-production rows=3 E=97 k=5 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1119] exit success!
+RUN fp16-production rows=16 E=97 k=5 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1121] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1122] exit success!
+[SUCCESS][CORE_2][pid 1123] exit success!
+[SUCCESS][CORE_3][pid 1124] exit success!
+[SUCCESS][CORE_4][pid 1125] exit success!
+[SUCCESS][CORE_5][pid 1126] exit success!
+[SUCCESS][CORE_6][pid 1127] exit success!
+[SUCCESS][CORE_7][pid 1128] exit success!
+RUN fp16-production rows=17 E=128 k=7 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1137] exit success!
+[SUCCESS][CORE_1][pid 1138] exit success!
+[SUCCESS][CORE_2][pid 1139] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1140] exit success!
+[SUCCESS][CORE_4][pid 1141] exit success!
+[SUCCESS][CORE_5][pid 1142] exit success!
+[SUCCESS][CORE_6][pid 1143] exit success!
+[SUCCESS][CORE_7][pid 1144] exit success!
+RUN fp16-production rows=33 E=129 k=3 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1153] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1154] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1155] exit success!
+[SUCCESS][CORE_3][pid 1156] exit success!
+[SUCCESS][CORE_4][pid 1157] exit success!
+[SUCCESS][CORE_5][pid 1158] exit success!
+[SUCCESS][CORE_6][pid 1159] exit success!
+[SUCCESS][CORE_7][pid 1160] exit success!
+RUN fp16-production rows=64 E=256 k=4 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1169] exit success!
+[SUCCESS][CORE_1][pid 1170] exit success!
+[SUCCESS][CORE_2][pid 1171] exit success!
+[SUCCESS][CORE_3][pid 1172] exit success!
+[SUCCESS][CORE_4][pid 1173] exit success!
+[SUCCESS][CORE_5][pid 1174] exit success!
+[SUCCESS][CORE_6][pid 1175] exit success!
+[SUCCESS][CORE_7][pid 1176] exit success!
+RUN fp16-production rows=65 E=256 k=3 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1185] exit success!
+[SUCCESS][CORE_1][pid 1186] exit success!
+[SUCCESS][CORE_2][pid 1187] exit success!
+[SUCCESS][CORE_3][pid 1188] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1189] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_5][pid 1190] exit success!
+[SUCCESS][CORE_6][pid 1191] exit success!
+[SUCCESS][CORE_7][pid 1192] exit success!
+RUN fp16-production rows=249 E=256 k=3 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1201] exit success!
+[SUCCESS][CORE_1][pid 1202] exit success!
+[SUCCESS][CORE_2][pid 1203] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1204] exit success!
+[SUCCESS][CORE_4][pid 1205] exit success!
+[SUCCESS][CORE_5][pid 1206] exit success!
+[SUCCESS][CORE_6][pid 1207] exit success!
+[SUCCESS][CORE_7][pid 1208] exit success!
+RUN fp16-production rows=249 E=256 k=4 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1218] exit success!
+[SUCCESS][CORE_1][pid 1219] exit success!
+[SUCCESS][CORE_2][pid 1220] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1221] exit success!
+[SUCCESS][CORE_4][pid 1222] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_5][pid 1223] exit success!
+[SUCCESS][CORE_6][pid 1224] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_7][pid 1225] exit success!
+RUN fp16-production rows=31 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1234] exit success!
+RUN fp16-production rows=32 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1236] exit success!
+RUN fp16-production rows=497 E=256 k=3 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1238] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1239] exit success!
+[SUCCESS][CORE_2][pid 1240] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1241] exit success!
+[SUCCESS][CORE_4][pid 1242] exit success!
+[SUCCESS][CORE_5][pid 1243] exit success!
+[SUCCESS][CORE_6][pid 1244] exit success!
+[SUCCESS][CORE_7][pid 1245] exit success!
+RUN fp16-production rows=497 E=241 k=4 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1254] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1255] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1256] exit success!
+[SUCCESS][CORE_3][pid 1257] exit success!
+[SUCCESS][CORE_4][pid 1258] exit success!
+[SUCCESS][CORE_5][pid 1259] exit success!
+[SUCCESS][CORE_6][pid 1260] exit success!
+[SUCCESS][CORE_7][pid 1261] exit success!
+RUN fp16-production rows=249 E=256 k=2 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1270] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1271] exit success!
+[SUCCESS][CORE_2][pid 1272] exit success!
+[SUCCESS][CORE_3][pid 1273] exit success!
+[SUCCESS][CORE_4][pid 1274] exit success!
+[SUCCESS][CORE_5][pid 1275] exit success!
+[SUCCESS][CORE_6][pid 1276] exit success!
+[SUCCESS][CORE_7][pid 1277] exit success!
+RUN fp16-production rows=1 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1286] exit success!
+RUN fp16-production rows=33 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1288] exit success!
+RUN fp16-production rows=249 E=255 k=3 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1290] exit success!
+[SUCCESS][CORE_1][pid 1291] exit success!
+[SUCCESS][CORE_2][pid 1292] exit success!
+[SUCCESS][CORE_3][pid 1293] exit success!
+[SUCCESS][CORE_4][pid 1294] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_5][pid 1295] exit success!
+[SUCCESS][CORE_6][pid 1296] exit success!
+[SUCCESS][CORE_7][pid 1297] exit success!
+RUN fp16-production rows=1 E=128 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1306] exit success!
+RUN fp16-production rows=17 E=128 k=16 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1308] exit success!
+[SUCCESS][CORE_1][pid 1309] exit success!
+[SUCCESS][CORE_2][pid 1310] exit success!
+[SUCCESS][CORE_3][pid 1311] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1312] exit success!
+[SUCCESS][CORE_5][pid 1313] exit success!
+[SUCCESS][CORE_6][pid 1314] exit success!
+[SUCCESS][CORE_7][pid 1315] exit success!
+RUN fp16-production rows=17 E=200 k=16 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1324] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1325] exit success!
+[SUCCESS][CORE_2][pid 1326] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1327] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1328] exit success!
+[SUCCESS][CORE_5][pid 1329] exit success!
+[SUCCESS][CORE_6][pid 1330] exit success!
+[SUCCESS][CORE_7][pid 1331] exit success!
+RUN fp16-production rows=17 E=224 k=9 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1340] exit success!
+[SUCCESS][CORE_1][pid 1341] exit success!
+[SUCCESS][CORE_2][pid 1342] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1343] exit success!
+[SUCCESS][CORE_4][pid 1344] exit success!
+[SUCCESS][CORE_5][pid 1345] exit success!
+[SUCCESS][CORE_6][pid 1346] exit success!
+[SUCCESS][CORE_7][pid 1347] exit success!
+RUN fp16-production rows=17 E=257 k=12 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1356] exit success!
+[SUCCESS][CORE_1][pid 1357] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1358] exit success!
+[SUCCESS][CORE_3][pid 1359] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1360] exit success!
+[SUCCESS][CORE_5][pid 1361] exit success!
+[SUCCESS][CORE_6][pid 1362] exit success!
+[SUCCESS][CORE_7][pid 1363] exit success!
+RUN fp16-production rows=17 E=497 k=15 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1372] exit success!
+[SUCCESS][CORE_1][pid 1373] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1374] exit success!
+[SUCCESS][CORE_3][pid 1375] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1376] exit success!
+[SUCCESS][CORE_5][pid 1377] exit success!
+[SUCCESS][CORE_6][pid 1378] exit success!
+[SUCCESS][CORE_7][pid 1379] exit success!
+RUN fp16-production rows=17 E=512 k=10 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1388] exit success!
+[SUCCESS][CORE_1][pid 1389] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1390] exit success!
+[SUCCESS][CORE_3][pid 1391] exit success!
+[SUCCESS][CORE_4][pid 1392] exit success!
+[SUCCESS][CORE_5][pid 1393] exit success!
+[SUCCESS][CORE_6][pid 1394] exit success!
+[SUCCESS][CORE_7][pid 1395] exit success!
+RUN fp16-production rows=121 E=512 k=10 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1404] exit success!
+[SUCCESS][CORE_1][pid 1405] exit success!
+[SUCCESS][CORE_2][pid 1406] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1407] exit success!
+[SUCCESS][CORE_4][pid 1408] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_5][pid 1409] exit success!
+[SUCCESS][CORE_6][pid 1410] exit success!
+[SUCCESS][CORE_7][pid 1411] exit success!
+RUN fp16-production rows=1 E=512 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1420] exit success!
+RUN fp16-production rows=15 E=512 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1422] exit success!
+RUN fp16-production rows=16 E=512 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1424] exit success!
+RUN fp16-production rows=241 E=512 k=10 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1426] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1427] exit success!
+[SUCCESS][CORE_2][pid 1428] exit success!
+[SUCCESS][CORE_3][pid 1429] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1430] exit success!
+[SUCCESS][CORE_5][pid 1431] exit success!
+[SUCCESS][CORE_6][pid 1432] exit success!
+[SUCCESS][CORE_7][pid 1433] exit success!
+RUN fp16-production rows=121 E=512 k=11 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1442] exit success!
+[SUCCESS][CORE_1][pid 1443] exit success!
+[SUCCESS][CORE_2][pid 1444] exit success!
+[SUCCESS][CORE_3][pid 1445] exit success!
+[SUCCESS][CORE_4][pid 1446] exit success!
+[SUCCESS][CORE_5][pid 1447] exit success!
+[SUCCESS][CORE_6][pid 1448] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_7][pid 1449] exit success!
+RUN fp16-production rows=121 E=512 k=12 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1487] exit success!
+[SUCCESS][CORE_1][pid 1488] exit success!
+[SUCCESS][CORE_2][pid 1489] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1490] exit success!
+[SUCCESS][CORE_4][pid 1491] exit success!
+[SUCCESS][CORE_5][pid 1492] exit success!
+[SUCCESS][CORE_6][pid 1493] exit success!
+[SUCCESS][CORE_7][pid 1494] exit success!
+RUN fp16-production rows=121 E=497 k=10 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1503] exit success!
+[SUCCESS][CORE_1][pid 1504] exit success!
+[SUCCESS][CORE_2][pid 1505] exit success!
+[SUCCESS][CORE_3][pid 1506] exit success!
+[SUCCESS][CORE_4][pid 1507] exit success!
+[SUCCESS][CORE_5][pid 1508] exit success!
+[SUCCESS][CORE_6][pid 1509] exit success!
+[SUCCESS][CORE_7][pid 1510] exit success!
+RUN fp16-production rows=121 E=497 k=12 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1519] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1520] exit success!
+[SUCCESS][CORE_2][pid 1521] exit success!
+[SUCCESS][CORE_3][pid 1522] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1523] exit success!
+[SUCCESS][CORE_5][pid 1524] exit success!
+[SUCCESS][CORE_6][pid 1525] exit success!
+[SUCCESS][CORE_7][pid 1526] exit success!
+RUN fp16-production rows=121 E=512 k=13 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1535] exit success!
+[SUCCESS][CORE_1][pid 1536] exit success!
+[SUCCESS][CORE_2][pid 1537] exit success!
+[SUCCESS][CORE_3][pid 1538] exit success!
+[SUCCESS][CORE_4][pid 1539] exit success!
+[SUCCESS][CORE_5][pid 1540] exit success!
+[SUCCESS][CORE_6][pid 1541] exit success!
+[SUCCESS][CORE_7][pid 1542] exit success!
+RUN fp16-production rows=17 E=256 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1551] exit success!
+[SUCCESS][CORE_1][pid 1552] exit success!
+[SUCCESS][CORE_2][pid 1553] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1554] exit success!
+[SUCCESS][CORE_4][pid 1555] exit success!
+[SUCCESS][CORE_5][pid 1556] exit success!
+[SUCCESS][CORE_6][pid 1557] exit success!
+[SUCCESS][CORE_7][pid 1558] exit success!
+RUN fp16-production rows=33 E=241 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1590] exit success!
+[SUCCESS][CORE_1][pid 1591] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1592] exit success!
+[SUCCESS][CORE_3][pid 1593] exit success!
+[SUCCESS][CORE_4][pid 1594] exit success!
+[SUCCESS][CORE_5][pid 1595] exit success!
+[SUCCESS][CORE_6][pid 1596] exit success!
+[SUCCESS][CORE_7][pid 1597] exit success!
+RUN fp16-production rows=1 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1646] exit success!
+RUN fp16-production rows=15 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1648] exit success!
+RUN fp16-production rows=16 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1650] exit success!
+RUN fp16-production rows=17 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1686] exit success!
+RUN fp16-production rows=31 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1697] exit success!
+RUN fp16-production rows=32 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1740] exit success!
+RUN fp16-production rows=33 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1782] exit success!
+RUN fp16-production rows=63 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1808] exit success!
+RUN fp16-production rows=64 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1822] exit success!
+RUN fp16-production rows=65 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1848] exit success!
+RUN fp16-production rows=128 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1933] exit success!
+RUN fp16-production rows=33 E=193 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1998] exit success!
+RUN fp16-production rows=33 E=193 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2048] exit success!
+RUN fp16-production rows=33 E=193 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2072] exit success!
+RUN fp16-production rows=33 E=193 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2079] exit success!
+RUN fp16-production rows=33 E=200 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2103] exit success!
+RUN fp16-production rows=33 E=200 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2121] exit success!
+RUN fp16-production rows=33 E=200 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2139] exit success!
+RUN fp16-production rows=33 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2157] exit success!
+RUN fp16-production rows=33 E=208 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2175] exit success!
+RUN fp16-production rows=33 E=208 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2193] exit success!
+RUN fp16-production rows=33 E=208 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2211] exit success!
+RUN fp16-production rows=33 E=208 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2239] exit success!
+RUN fp16-production rows=33 E=209 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2244] exit success!
+RUN fp16-production rows=33 E=209 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2249] exit success!
+RUN fp16-production rows=33 E=209 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2253] exit success!
+RUN fp16-production rows=33 E=209 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2256] exit success!
+RUN fp16-production rows=33 E=223 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2260] exit success!
+RUN fp16-production rows=33 E=223 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2264] exit success!
+RUN fp16-production rows=33 E=223 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2266] exit success!
+RUN fp16-production rows=33 E=223 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2270] exit success!
+RUN fp16-production rows=33 E=224 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2272] exit success!
+RUN fp16-production rows=33 E=224 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2276] exit success!
+RUN fp16-production rows=33 E=224 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2278] exit success!
+RUN fp16-production rows=33 E=224 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2282] exit success!
+RUN fp16-production rows=257 E=200 k=16 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2284] exit success!
+[SUCCESS][CORE_1][pid 2285] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 2286] exit success!
+[SUCCESS][CORE_3][pid 2287] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 2288] exit success!
+[SUCCESS][CORE_5][pid 2289] exit success!
+[SUCCESS][CORE_6][pid 2290] exit success!
+[SUCCESS][CORE_7][pid 2291] exit success!
+RUN fp16-production rows=513 E=209 k=9 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2303] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 2304] exit success!
+[SUCCESS][CORE_2][pid 2305] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 2306] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 2307] exit success!
+[SUCCESS][CORE_5][pid 2308] exit success!
+[SUCCESS][CORE_6][pid 2309] exit success!
+[SUCCESS][CORE_7][pid 2310] exit success!
+RUN fp16-production rows=33 E=192 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2322] exit success!
+RUN fp16-production rows=33 E=225 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2326] exit success!
+RUN fp16-production rows=33 E=224 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2331] exit success!
+PASS: 76 fp16 production compact cases

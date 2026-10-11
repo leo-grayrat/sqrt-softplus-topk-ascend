@@ -10,6 +10,8 @@
 
 最新同次完整Judge：case7/9为 **16.47/24.39 us**，case3/13为 **115.13/132.17 us**，case6为 **10.29 us**，case12/14为 **122.26/536.85 us**，case15为 **1.65 ms**。case4增加0.09 us（2.32%）等变化全部保留，不据单次跨轮回报认定因果。[完整状态](notes/current-status-2026-10-11-c5.md)。case15 scratch仅约1.3%模型收益，已撤回并[归档](notes/fp32-large-scratch-2026-10-11.md)。
 
+新的case6候选在`exp/fp32-compact-c6`，尚待Judge、未合main：五叶子紧凑keep16把合并产物减半，CPU真实入口双方104/104，设备编译与完整设备simulator通过，64/128行模型减少32.61%/35.44%。[实现与待测文件说明](notes/fp32-compact-c6-2026-10-12.md)。本轮[Cast](notes/fp16-padded-cast-2026-10-12.md)与[case8](notes/fp16-batch-merge-c8-2026-10-12.md)负结果已归档并撤回生产。
+
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
 - [当前状态、完整 15 点和阶段集成范围](notes/current-status-2026-10-11-c5.md)

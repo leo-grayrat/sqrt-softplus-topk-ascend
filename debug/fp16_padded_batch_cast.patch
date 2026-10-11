@@ -1,0 +1,28 @@
+diff --git a/submission/dense_repeat_override.h b/submission/dense_repeat_override.h
+index 258f2ef..8ffe9d7 100644
+--- a/submission/dense_repeat_override.h
++++ b/submission/dense_repeat_override.h
+@@ -1413,6 +1413,23 @@ private:
+             static_cast<uint32_t>(validRows * inner_));
+         AscendC::PipeBarrier<PIPE_V>();
+ 
++        // Cast 64-column strips across rows; strides are in 32-byte blocks.
++        // The gate keeps this experiment on the compact seven-leaf path.
++        if (inner_ == 224 && k_ >= 9 && k_ <= 16) {
++            const AscendC::UnaryRepeatParams repeatParams(
++                1, 1, static_cast<uint8_t>(inner_ / 8),
++                static_cast<uint8_t>(copyAlignedElems_ / 16));
++            for (int32_t col = 0; col < copyAlignedElems_; col += 64) {
++                const uint64_t count = static_cast<uint64_t>(
++                    copyAlignedElems_ - col < 64 ? copyAlignedElems_ - col : 64);
++                AscendC::Cast(floatInput[static_cast<uint32_t>(col)],
++                    staging[static_cast<uint32_t>(col)], AscendC::RoundMode::CAST_NONE,
++                    count, static_cast<uint8_t>(validRows), repeatParams);
++            }
++            AscendC::PipeBarrier<PIPE_V>();
++            return;
++        }
++
+         for (int32_t row = 0; row < validRows; ++row) {
+             AscendC::Cast(
+                 floatInput[static_cast<uint32_t>(row * inner_)],

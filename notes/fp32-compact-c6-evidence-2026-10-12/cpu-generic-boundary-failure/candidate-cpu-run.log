@@ -1,0 +1,663 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN production-topk rows=1 E=129 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1030] exit success!
+RUN production-topk rows=1 E=129 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1032] exit success!
+RUN production-topk rows=1 E=129 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1034] exit success!
+RUN production-topk rows=1 E=129 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1036] exit success!
+RUN production-topk rows=1 E=130 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1038] exit success!
+RUN production-topk rows=1 E=130 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1042] exit success!
+RUN production-topk rows=1 E=130 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1076] exit success!
+RUN production-topk rows=1 E=130 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1082] exit success!
+RUN production-topk rows=1 E=136 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1096] exit success!
+RUN production-topk rows=1 E=136 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1098] exit success!
+RUN production-topk rows=1 E=136 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1100] exit success!
+RUN production-topk rows=1 E=136 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1103] exit success!
+RUN production-topk rows=1 E=152 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1106] exit success!
+RUN production-topk rows=1 E=152 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1108] exit success!
+RUN production-topk rows=1 E=152 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1110] exit success!
+RUN production-topk rows=1 E=152 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1112] exit success!
+RUN production-topk rows=1 E=159 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1114] exit success!
+RUN production-topk rows=1 E=159 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1116] exit success!
+RUN production-topk rows=1 E=159 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1118] exit success!
+RUN production-topk rows=1 E=159 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1120] exit success!
+RUN production-topk rows=1 E=160 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1122] exit success!
+RUN production-topk rows=1 E=160 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1124] exit success!
+RUN production-topk rows=1 E=160 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1126] exit success!
+RUN production-topk rows=1 E=160 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1128] exit success!
+RUN production-topk rows=31 E=129 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1130] exit success!
+RUN production-topk rows=31 E=129 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1144] exit success!
+RUN production-topk rows=31 E=129 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1153] exit success!
+RUN production-topk rows=31 E=129 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1163] exit success!
+RUN production-topk rows=31 E=130 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1165] exit success!
+RUN production-topk rows=31 E=130 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1167] exit success!
+RUN production-topk rows=31 E=130 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1170] exit success!
+RUN production-topk rows=31 E=130 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1172] exit success!
+RUN production-topk rows=31 E=136 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1174] exit success!
+RUN production-topk rows=31 E=136 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1176] exit success!
+RUN production-topk rows=31 E=136 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1178] exit success!
+RUN production-topk rows=31 E=136 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1180] exit success!
+RUN production-topk rows=31 E=152 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1182] exit success!
+RUN production-topk rows=31 E=152 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1184] exit success!
+RUN production-topk rows=31 E=152 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1187] exit success!
+RUN production-topk rows=31 E=152 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1189] exit success!
+RUN production-topk rows=31 E=159 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1191] exit success!
+RUN production-topk rows=31 E=159 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1193] exit success!
+RUN production-topk rows=31 E=159 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1195] exit success!
+RUN production-topk rows=31 E=159 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1197] exit success!
+RUN production-topk rows=31 E=160 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1199] exit success!
+RUN production-topk rows=31 E=160 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1201] exit success!
+RUN production-topk rows=31 E=160 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1203] exit success!
+RUN production-topk rows=31 E=160 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1205] exit success!
+RUN production-topk rows=32 E=129 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1207] exit success!
+RUN production-topk rows=32 E=129 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1209] exit success!
+RUN production-topk rows=32 E=129 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1211] exit success!
+RUN production-topk rows=32 E=129 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1213] exit success!
+RUN production-topk rows=32 E=130 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1215] exit success!
+RUN production-topk rows=32 E=130 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1217] exit success!
+RUN production-topk rows=32 E=130 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1219] exit success!
+RUN production-topk rows=32 E=130 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1221] exit success!
+RUN production-topk rows=32 E=136 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1223] exit success!
+RUN production-topk rows=32 E=136 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1225] exit success!
+RUN production-topk rows=32 E=136 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1227] exit success!
+RUN production-topk rows=32 E=136 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1229] exit success!
+RUN production-topk rows=32 E=152 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1231] exit success!
+RUN production-topk rows=32 E=152 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1233] exit success!
+RUN production-topk rows=32 E=152 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1265] exit success!
+RUN production-topk rows=32 E=152 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1267] exit success!
+RUN production-topk rows=32 E=159 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1269] exit success!
+RUN production-topk rows=32 E=159 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1271] exit success!
+RUN production-topk rows=32 E=159 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1273] exit success!
+RUN production-topk rows=32 E=159 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1275] exit success!
+RUN production-topk rows=32 E=160 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1277] exit success!
+RUN production-topk rows=32 E=160 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1281] exit success!
+RUN production-topk rows=32 E=160 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1344] exit success!
+RUN production-topk rows=32 E=160 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1346] exit success!
+RUN production-topk rows=33 E=129 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1382] exit success!
+RUN production-topk rows=33 E=129 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1390] exit success!
+RUN production-topk rows=33 E=129 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1399] exit success!
+RUN production-topk rows=33 E=129 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1406] exit success!
+RUN production-topk rows=33 E=130 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1414] exit success!
+RUN production-topk rows=33 E=130 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1421] exit success!
+RUN production-topk rows=33 E=130 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1430] exit success!
+RUN production-topk rows=33 E=130 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1438] exit success!
+RUN production-topk rows=33 E=136 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1446] exit success!
+RUN production-topk rows=33 E=136 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1453] exit success!
+RUN production-topk rows=33 E=136 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1457] exit success!
+RUN production-topk rows=33 E=136 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1461] exit success!
+RUN production-topk rows=33 E=152 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1464] exit success!
+RUN production-topk rows=33 E=152 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1467] exit success!
+RUN production-topk rows=33 E=152 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1471] exit success!
+RUN production-topk rows=33 E=152 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1473] exit success!
+RUN production-topk rows=33 E=159 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1477] exit success!
+RUN production-topk rows=33 E=159 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1479] exit success!
+RUN production-topk rows=33 E=159 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1483] exit success!
+RUN production-topk rows=33 E=159 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1487] exit success!
+RUN production-topk rows=33 E=160 k=9 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1489] exit success!
+RUN production-topk rows=33 E=160 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1493] exit success!
+RUN production-topk rows=33 E=160 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1496] exit success!
+RUN production-topk rows=33 E=160 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1499] exit success!
+RUN production-topk rows=17 E=130 k=15 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1503] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1504] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1505] exit success!
+[SUCCESS][CORE_3][pid 1506] exit success!
+[SUCCESS][CORE_4][pid 1507] exit success!
+[SUCCESS][CORE_5][pid 1508] exit success!
+[SUCCESS][CORE_6][pid 1509] exit success!
+[SUCCESS][CORE_7][pid 1510] exit success!
+RUN production-topk rows=65 E=130 k=15 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1519] exit success!
+[SUCCESS][CORE_1][pid 1520] exit success!
+[SUCCESS][CORE_2][pid 1521] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1522] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1523] exit success!
+[SUCCESS][CORE_5][pid 1524] exit success!
+[SUCCESS][CORE_6][pid 1525] exit success!
+[SUCCESS][CORE_7][pid 1526] exit success!
+RUN production-topk rows=97 E=159 k=16 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1536] exit success!
+[SUCCESS][CORE_1][pid 1537] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1538] exit success!
+[SUCCESS][CORE_3][pid 1539] exit success!
+[SUCCESS][CORE_4][pid 1540] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_5][pid 1541] exit success!
+[SUCCESS][CORE_6][pid 1542] exit success!
+[SUCCESS][CORE_7][pid 1543] exit success!
+RUN production-topk rows=129 E=136 k=9 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1553] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1554] exit success!
+[SUCCESS][CORE_2][pid 1555] exit success!
+[SUCCESS][CORE_3][pid 1556] exit success!
+[SUCCESS][CORE_4][pid 1557] exit success!
+[SUCCESS][CORE_5][pid 1558] exit success!
+[SUCCESS][CORE_6][pid 1559] exit success!
+[SUCCESS][CORE_7][pid 1560] exit success!
+RUN production-topk rows=64 E=130 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1570] exit success!
+RUN production-topk rows=128 E=130 k=15 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1575] exit success!
+RUN production-topk rows=257 E=130 k=15 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1581] exit success!
+[SUCCESS][CORE_1][pid 1582] exit success!
+[SUCCESS][CORE_2][pid 1583] exit success!
+[SUCCESS][CORE_3][pid 1584] exit success!
+[SUCCESS][CORE_4][pid 1585] exit success!
+[SUCCESS][CORE_5][pid 1586] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_6][pid 1587] exit success!
+[SUCCESS][CORE_7][pid 1588] exit success!
+RUN production-topk rows=17 E=130 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1597] exit success!
+[SUCCESS][CORE_1][pid 1598] exit success!
+[SUCCESS][CORE_2][pid 1599] exit success!
+[SUCCESS][CORE_3][pid 1600] exit success!
+[SUCCESS][CORE_4][pid 1601] exit success!
+[SUCCESS][CORE_5][pid 1602] exit success!
+[SUCCESS][CORE_6][pid 1603] exit success!
+[SUCCESS][CORE_7][pid 1604] exit success!
+RUN production-topk rows=17 E=128 k=15 cores=8
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: addr2line: DWARF error: invalid or unhandled FORM value: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: 0x23DWARF error: invalid or unhandled FORM value:
+0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][Block_5][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/lib/filter/../../../impl/adv_api/detail/filter/dropout/../../api_check/kernel_check/filter/dropout/../../basic_check/single_tensor_check.h:120][TPositionOneTensorLoopCheck][1620] [TopK] Failed to check tensor position of srcIndexLocal, current api support positions are TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, current position is TPosition::GM.
+[ERROR][CORE_5][pid 1620] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000417311: Handler(int) at ??:?
+[#3] 0x00000000003ff956: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionOneTensorLoopCheck<int, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, 0ul, 1ul, 2ul>(AscendC::LocalTensor<int> const&, char const*, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*, AscendC::Std::IntegerSequence<unsigned long, 0ul, 1ul, 2ul>) at ??:?
+[#4] 0x0000000000403682: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#5] 0x000000000040289e: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TensorVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#6] 0x0000000000401ea7: AscendC::HighLevelApiCheck::CheckFuncClassTopKTmpBuf<float, false, false, false, (AscendC::TopKMode)0>::VerifyingParameters(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<bool> const&, AscendC::LocalTensor<unsigned char> const&, int, AscendC::tiling::TopkTiling const&, AscendC::TopKInfo const&, bool) at ??:?
+[#7] 0x00000000003b8393: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_medium_production_probe.asc:?
+[#8] 0x00000000003af6dc: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_fp32_medium_production_probe.asc:?
+[#9] 0x00000000004194a5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003d2cec: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#11] 0x00000000003aafc8: run_kernel at ??:?
+[#12] 0x00000000003b0901: (anonymous namespace)::RunOne(void*, int, int, int, int) at topk_fp32_medium_production_probe.asc:?
+[#13] 0x00000000003afe16: main at ??:?
+[#14] 0x00000000003aaa34: _start at ??:?
+
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][Block_0][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/lib/filter/../../../impl/adv_api/detail/filter/dropout/../../api_check/kernel_check/filter/dropout/../../basic_check/single_tensor_check.h:120][TPositionOneTensorLoopCheck][1615] [TopK] Failed to check tensor position of srcIndexLocal, current api support positions are TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, current position is TPosition::GM.
+[ERROR][CORE_0][pid 1615] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000417311: Handler(int) at ??:?
+[#3] 0x00000000003ff956: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionOneTensorLoopCheck<int, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, 0ul, 1ul, 2ul>(AscendC::LocalTensor<int> const&, char const*, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*, AscendC::Std::IntegerSequence<unsigned long, 0ul, 1ul, 2ul>) at ??:?
+[#4] 0x0000000000403682: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#5] 0x000000000040289e: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TensorVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#6] 0x0000000000401ea7: AscendC::HighLevelApiCheck::CheckFuncClassTopKTmpBuf<float, false, false, false, (AscendC::TopKMode)0>::VerifyingParameters(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<bool> const&, AscendC::LocalTensor<unsigned char> const&, int, AscendC::tiling::TopkTiling const&, AscendC::TopKInfo const&, bool) at ??:?
+[#7] 0x00000000003b8393: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_medium_production_probe.asc:?
+[#8] 0x00000000003af6dc: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_fp32_medium_production_probe.asc:?
+[#9] 0x00000000004194a5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003d2cec: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#11] 0x00000000003aafc8: run_kernel at ??:?
+[#12] 0x00000000003b0901: (anonymous namespace)::RunOne(void*, int, int, int, int) at topk_fp32_medium_production_probe.asc:?
+[#13] 0x00000000003afe16: main at ??:?
+[#14] 0x00000000003aaa34: _start at ??:?
+
+[TmSim]: Run in serial mode.
+[ERROR][Block_3][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/lib/filter/../../../impl/adv_api/detail/filter/dropout/../../api_check/kernel_check/filter/dropout/../../basic_check/single_tensor_check.h:120][TPositionOneTensorLoopCheck][1618] [TopK] Failed to check tensor position of srcIndexLocal, current api support positions are TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, current position is TPosition::GM.
+[ERROR][CORE_3][pid 1618] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000417311: Handler(int) at ??:?
+[#3] 0x00000000003ff956: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionOneTensorLoopCheck<int, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, 0ul, 1ul, 2ul>(AscendC::LocalTensor<int> const&, char const*, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*, AscendC::Std::IntegerSequence<unsigned long, 0ul, 1ul, 2ul>) at ??:?
+[#4] 0x0000000000403682: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#5] 0x000000000040289e: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TensorVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#6] 0x0000000000401ea7: AscendC::HighLevelApiCheck::CheckFuncClassTopKTmpBuf<float, false, false, false, (AscendC::TopKMode)0>::VerifyingParameters(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<bool> const&, AscendC::LocalTensor<unsigned char> const&, int, AscendC::tiling::TopkTiling const&, AscendC::TopKInfo const&, bool) at ??:?
+[#7] 0x00000000003b8393: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_medium_production_probe.asc:?
+[#8] 0x00000000003af6dc: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_fp32_medium_production_probe.asc:?
+[#9] 0x00000000004194a5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003d2cec: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#11] 0x00000000003aafc8: run_kernel at ??:?
+[#12] 0x00000000003b0901: (anonymous namespace)::RunOne(void*, int, int, int, int) at topk_fp32_medium_production_probe.asc:?
+[#13] 0x00000000003afe16: main at ??:?
+[#14] 0x00000000003aaa34: _start at ??:?
+
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][Block_2][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/lib/filter/../../../impl/adv_api/detail/filter/dropout/../../api_check/kernel_check/filter/dropout/../../basic_check/single_tensor_check.h:120][TPositionOneTensorLoopCheck][1617] [TopK] Failed to check tensor position of srcIndexLocal, current api support positions are TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, current position is TPosition::GM.
+[ERROR][CORE_2][pid 1617] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000417311: Handler(int) at ??:?
+[#3] 0x00000000003ff956: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionOneTensorLoopCheck<int, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, 0ul, 1ul, 2ul>(AscendC::LocalTensor<int> const&, char const*, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*, AscendC::Std::IntegerSequence<unsigned long, 0ul, 1ul, 2ul>) at ??:?
+[#4] 0x0000000000403682: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#5] 0x000000000040289e: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TensorVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#6] 0x0000000000401ea7: AscendC::HighLevelApiCheck::CheckFuncClassTopKTmpBuf<float, false, false, false, (AscendC::TopKMode)0>::VerifyingParameters(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<bool> const&, AscendC::LocalTensor<unsigned char> const&, int, AscendC::tiling::TopkTiling const&, AscendC::TopKInfo const&, bool) at ??:?
+[#7] 0x00000000003b8393: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_medium_production_probe.asc:?
+[#8] 0x00000000003af6dc: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_fp32_medium_production_probe.asc:?
+[#9] 0x00000000004194a5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003d2cec: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#11] 0x00000000003aafc8: run_kernel at ??:?
+[#12] 0x00000000003b0901: (anonymous namespace)::RunOne(void*, int, int, int, int) at topk_fp32_medium_production_probe.asc:?
+[#13] 0x00000000003afe16: main at ??:?
+[#14] 0x00000000003aaa34: _start at ??:?
+
+[TmSim]: Run in serial mode.
+[ERROR][Block_6][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/lib/filter/../../../impl/adv_api/detail/filter/dropout/../../api_check/kernel_check/filter/dropout/../../basic_check/single_tensor_check.h:120][TPositionOneTensorLoopCheck][1621] [TopK] Failed to check tensor position of srcIndexLocal, current api support positions are TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, current position is TPosition::GM.
+[ERROR][CORE_6][pid 1621] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000417311: Handler(int) at ??:?
+[#3] 0x00000000003ff956: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionOneTensorLoopCheck<int, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, 0ul, 1ul, 2ul>(AscendC::LocalTensor<int> const&, char const*, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*, AscendC::Std::IntegerSequence<unsigned long, 0ul, 1ul, 2ul>) at ??:?
+[#4] 0x0000000000403682: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#5] 0x000000000040289e: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TensorVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#6] 0x0000000000401ea7: AscendC::HighLevelApiCheck::CheckFuncClassTopKTmpBuf<float, false, false, false, (AscendC::TopKMode)0>::VerifyingParameters(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<bool> const&, AscendC::LocalTensor<unsigned char> const&, int, AscendC::tiling::TopkTiling const&, AscendC::TopKInfo const&, bool) at ??:?
+[#7] 0x00000000003b8393: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_medium_production_probe.asc:?
+[#8] 0x00000000003af6dc: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_fp32_medium_production_probe.asc:?
+[#9] 0x00000000004194a5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003d2cec: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#11] 0x00000000003aafc8: run_kernel at ??:?
+[#12] 0x00000000003b0901: (anonymous namespace)::RunOne(void*, int, int, int, int) at topk_fp32_medium_production_probe.asc:?
+[#13] 0x00000000003afe16: main at ??:?
+[#14] 0x00000000003aaa34: _start at ??:?
+
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][Block_1][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/lib/filter/../../../impl/adv_api/detail/filter/dropout/../../api_check/kernel_check/filter/dropout/../../basic_check/single_tensor_check.h:120][TPositionOneTensorLoopCheck][1616] [TopK] Failed to check tensor position of srcIndexLocal, current api support positions are TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, current position is TPosition::GM.
+[ERROR][CORE_1][pid 1616] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000417311: Handler(int) at ??:?
+[#3] 0x00000000003ff956: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionOneTensorLoopCheck<int, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, 0ul, 1ul, 2ul>(AscendC::LocalTensor<int> const&, char const*, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*, AscendC::Std::IntegerSequence<unsigned long, 0ul, 1ul, 2ul>) at ??:?
+[#4] 0x0000000000403682: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#5] 0x000000000040289e: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TensorVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#6] 0x0000000000401ea7: AscendC::HighLevelApiCheck::CheckFuncClassTopKTmpBuf<float, false, false, false, (AscendC::TopKMode)0>::VerifyingParameters(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<bool> const&, AscendC::LocalTensor<unsigned char> const&, int, AscendC::tiling::TopkTiling const&, AscendC::TopKInfo const&, bool) at ??:?
+[#7] 0x00000000003b8393: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_medium_production_probe.asc:?
+[#8] 0x00000000003af6dc: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_fp32_medium_production_probe.asc:?
+[#9] 0x00000000004194a5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003d2cec: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#11] 0x00000000003aafc8: run_kernel at ??:?
+[#12] 0x00000000003b0901: (anonymous namespace)::RunOne(void*, int, int, int, int) at topk_fp32_medium_production_probe.asc:?
+[#13] 0x00000000003afe16: main at ??:?
+[#14] 0x00000000003aaa34: _start at ??:?
+
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][Block_7][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/lib/filter/../../../impl/adv_api/detail/filter/dropout/../../api_check/kernel_check/filter/dropout/../../basic_check/single_tensor_check.h:120][TPositionOneTensorLoopCheck][1622] [TopK] Failed to check tensor position of srcIndexLocal, current api support positions are TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, current position is TPosition::GM.
+[ERROR][CORE_7][pid 1622] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000417311: Handler(int) at ??:?
+[#3] 0x00000000003ff956: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionOneTensorLoopCheck<int, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, 0ul, 1ul, 2ul>(AscendC::LocalTensor<int> const&, char const*, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*, AscendC::Std::IntegerSequence<unsigned long, 0ul, 1ul, 2ul>) at ??:?
+[#4] 0x0000000000403682: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#5] 0x000000000040289e: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TensorVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#6] 0x0000000000401ea7: AscendC::HighLevelApiCheck::CheckFuncClassTopKTmpBuf<float, false, false, false, (AscendC::TopKMode)0>::VerifyingParameters(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<bool> const&, AscendC::LocalTensor<unsigned char> const&, int, AscendC::tiling::TopkTiling const&, AscendC::TopKInfo const&, bool) at ??:?
+[#7] 0x00000000003b8393: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_medium_production_probe.asc:?
+[#8] 0x00000000003af6dc: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_fp32_medium_production_probe.asc:?
+[#9] 0x00000000004194a5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003d2cec: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#11] 0x00000000003aafc8: run_kernel at ??:?
+[#12] 0x00000000003b0901: (anonymous namespace)::RunOne(void*, int, int, int, int) at topk_fp32_medium_production_probe.asc:?
+[#13] 0x00000000003afe16: main at ??:?
+[#14] 0x00000000003aaa34: _start at ??:?
+
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][Block_4][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/lib/filter/../../../impl/adv_api/detail/filter/dropout/../../api_check/kernel_check/filter/dropout/../../basic_check/single_tensor_check.h:120][TPositionOneTensorLoopCheck][1619] [TopK] Failed to check tensor position of srcIndexLocal, current api support positions are TPosition::VECIN, TPosition::VECOUT, TPosition::VECCALC, current position is TPosition::GM.
+[ERROR][CORE_4][pid 1619] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000417311: Handler(int) at ??:?
+[#3] 0x00000000003ff956: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionOneTensorLoopCheck<int, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, 0ul, 1ul, 2ul>(AscendC::LocalTensor<int> const&, char const*, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*, AscendC::Std::IntegerSequence<unsigned long, 0ul, 1ul, 2ul>) at ??:?
+[#4] 0x0000000000403682: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TPositionVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#5] 0x000000000040289e: void AscendC::HighLevelApiCheck::SingleTensorCheckFuncBasicClass::TensorVerifyingParameters<AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition> >(AscendC::Std::tuple<AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<float>, AscendC::LocalTensor<int>, AscendC::LocalTensor<bool> >, AscendC::Std::tuple<char const*, char const*, char const*, char const*, char const*>, AscendC::Std::tuple<AscendC::TPosition, AscendC::TPosition, AscendC::TPosition>, char const*) at ??:?
+[#6] 0x0000000000401ea7: AscendC::HighLevelApiCheck::CheckFuncClassTopKTmpBuf<float, false, false, false, (AscendC::TopKMode)0>::VerifyingParameters(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<bool> const&, AscendC::LocalTensor<unsigned char> const&, int, AscendC::tiling::TopkTiling const&, AscendC::TopKInfo const&, bool) at ??:?
+[#7] 0x00000000003b8393: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_medium_production_probe.asc:?
+[#8] 0x00000000003af6dc: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_fp32_medium_production_probe.asc:?
+[#9] 0x00000000004194a5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003d2cec: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#11] 0x00000000003aafc8: run_kernel at ??:?
+[#12] 0x00000000003b0901: (anonymous namespace)::RunOne(void*, int, int, int, int) at topk_fp32_medium_production_probe.asc:?
+[#13] 0x00000000003afe16: main at ??:?
+[#14] 0x00000000003aaa34: _start at ??:?
+
+[MISMATCH] rows=17 E=128 k=15 cores=8 row=0 i=0 actual=0 expected=8.60233

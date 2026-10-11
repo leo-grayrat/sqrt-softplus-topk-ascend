@@ -1,0 +1,161 @@
+diff --git a/submission/dense_repeat_override.h b/submission/dense_repeat_override.h
+index 258f2ef..4975dfe 100644
+--- a/submission/dense_repeat_override.h
++++ b/submission/dense_repeat_override.h
+@@ -2486,6 +2486,11 @@ public:
+     }
+ 
+ private:
++    __aicore__ inline bool UseNativeHalf() const
++    {
++        return experts_ == 256;
++    }
++
+     __aicore__ inline int32_t GroupValidRows(int32_t group) const
+     {
+         const int32_t firstRow = group * batchRows_;
+@@ -2510,8 +2515,12 @@ private:
+     {
+         using namespace AscendC;
+         LocalTensor<uint32_t> pattern = patternBuffer_.Get<uint32_t>();
+-        pattern.SetValue(0, 0x55555555u);
+-        pattern.SetValue(1, 0x55555555u);
++        pattern.SetValue(0, UseNativeHalf() ? 0x11111111u : 0x55555555u);
++        pattern.SetValue(1, UseNativeHalf() ? 0x11111111u : 0x55555555u);
++        if (UseNativeHalf()) {
++            pattern.SetValue(2, 0x11111111u);
++            pattern.SetValue(3, 0x11111111u);
++        }
+         auto eventID = static_cast<event_t>(GetTPipePtr()->FetchEventID(HardEvent::S_V));
+         SetFlag<HardEvent::S_V>(eventID);
+         WaitFlag<HardEvent::S_V>(eventID);
+@@ -2592,38 +2601,29 @@ private:
+         srcList.src2 = src[VENDOR_LARGE_PAIR_FLOATS_32];
+         srcList.src3 = src[VENDOR_LARGE_PAIR_FLOATS_32 * 2];
+         srcList.src4 = src[VENDOR_LARGE_PAIR_FLOATS_32 * 3];
+-        AscendC::MrgSort<float>(dst, srcList, params);
++        if (UseNativeHalf()) {
++            AscendC::MrgSortSrcList<half> halfList;
++            halfList.src1 = srcList.src1.ReinterpretCast<half>();
++            halfList.src2 = srcList.src2.ReinterpretCast<half>();
++            halfList.src3 = srcList.src3.ReinterpretCast<half>();
++            halfList.src4 = srcList.src4.ReinterpretCast<half>();
++            AscendC::MrgSort<half>(dst.ReinterpretCast<half>(), halfList, params);
++        } else {
++            AscendC::MrgSort<float>(dst, srcList, params);
++        }
+         AscendC::PipeBarrier<PIPE_V>();
+     }
+ 
+     __aicore__ inline void MergeTwo64(
+-    const AscendC::LocalTensor<float>& dst,
+-    const AscendC::LocalTensor<float>& src,
+-    int32_t rows)
+-{
+-    AscendC::MrgSort4Info params;
+-    params.elementLengths[0] = VENDOR_LARGE_KEEP_K;
+-    params.elementLengths[1] = VENDOR_LARGE_KEEP_K;
+-    params.elementLengths[2] = 0;
+-    params.elementLengths[3] = 0;
+-    params.ifExhaustedSuspension = false;
+-    params.validBit = 3;
+-    params.repeatTimes = 1;
+-
+-    constexpr int32_t rowFloats = 2 * VENDOR_LARGE_PAIR_FLOATS_64;
+-    for (int32_t row = 0; row < rows; ++row) {
+-        const uint32_t rowBase = static_cast<uint32_t>(row * rowFloats);
+-        AscendC::MrgSortSrcList<float> srcList;
+-        srcList.src1 = src[rowBase];
+-        srcList.src2 = src[rowBase + VENDOR_LARGE_PAIR_FLOATS_64];
+-        srcList.src3 = src[rowBase];
+-        srcList.src4 = src[rowBase];
+-        AscendC::MrgSort<float>(dst[rowBase], srcList, params);
++        const AscendC::LocalTensor<float>& dst,
++        const AscendC::LocalTensor<float>& src,
++        int32_t rows)
++    {
++        // Two sorted length-64 lists are four sorted length-32 sublists.
++        MergeFour32(dst, src, rows);
+     }
+-    AscendC::PipeBarrier<PIPE_V>();
+-}
+ 
+-__aicore__ inline void CopyPrefixPairs(
++    __aicore__ inline void CopyPrefixPairs(
+         const AscendC::LocalTensor<float>& dst,
+         int32_t dstRowFloats,
+         uint32_t dstBase,
+@@ -2652,20 +2652,14 @@ __aicore__ inline void CopyPrefixPairs(
+     {
+         MergeFour32(pairB, pairA, rows * 2);
+ 
+-        constexpr int32_t mergedRowFloats = 256 * 2;
+-        constexpr int32_t packedTwoListsRowFloats = 2 * VENDOR_LARGE_PAIR_FLOATS_64;
+-        constexpr int32_t mergedListStrideFloats = 128 * 2;
+-        for (int32_t list = 0; list < 2; ++list) {
+-            CopyPrefixPairs(
+-                pairA,
+-                packedTwoListsRowFloats,
+-                static_cast<uint32_t>(list * VENDOR_LARGE_PAIR_FLOATS_64),
+-                pairB,
+-                mergedRowFloats,
+-                static_cast<uint32_t>(list * mergedListStrideFloats),
+-                VENDOR_LARGE_KEEP_K,
+-                rows);
+-        }
++        // Flatten the two sorted length-128 lists per row into one copy.
++        AscendC::DataCopyParams params;
++        params.blockCount = static_cast<uint16_t>(rows * 2);
++        params.blockLen = VENDOR_LARGE_PAIR_FLOATS_64 / 8;
++        params.srcStride = (128 - VENDOR_LARGE_KEEP_K) * 2 / 8;
++        params.dstStride = 0;
++        AscendC::DataCopy(pairA, pairB, params);
++        AscendC::PipeBarrier<PIPE_V>();
+ 
+         MergeTwo64(pairB, pairA, rows);
+         CopyPrefixPairs(
+@@ -2692,6 +2686,16 @@ __aicore__ inline void CopyPrefixPairs(
+         params.repeatTimes = static_cast<uint8_t>(rows * 2);
+         params.src0RepeatStride = 8;
+         params.src1RepeatStride = 0;
++        if (UseNativeHalf()) {
++            LocalTensor<half> selected = floatTmpBuffer_.Get<half>();
++            GatherMask(selected, compactPairs.ReinterpretCast<half>(),
++                       pattern.ReinterpretCast<uint16_t>(), true, 128, params, rsvdCnt);
++            PipeBarrier<PIPE_V>();
++            Cast(dst, selected, RoundMode::CAST_NONE,
++                 static_cast<uint32_t>(rows * VENDOR_LARGE_KEEP_K));
++            PipeBarrier<PIPE_V>();
++            return;
++        }
+         GatherMask(
+             dst.ReinterpretCast<int32_t>(),
+             compactPairs.ReinterpretCast<int32_t>(),
+@@ -2710,7 +2714,7 @@ __aicore__ inline void CopyPrefixPairs(
+ 
+         AscendC::LocalTensor<half> staging = inputQueue_.DeQue<half>();
+         AscendC::LocalTensor<float> floatInput = floatInputBuffer_.Get<float>();
+-        ConvertRows(floatInput, staging, validRows);
++        if (!UseNativeHalf()) { ConvertRows(floatInput, staging, validRows); }
+ 
+         AscendC::LocalTensor<int32_t> signedIndex = indexBuffer_.Get<int32_t>();
+         AscendC::LocalTensor<uint32_t> index =
+@@ -2718,11 +2722,13 @@ __aicore__ inline void CopyPrefixPairs(
+         AscendC::LocalTensor<float> pairA = pairABuffer_.Get<float>();
+         AscendC::LocalTensor<float> pairB = pairBBuffer_.Get<float>();
+ 
+-        AscendC::Sort32<float>(
+-            pairA,
+-            floatInput,
+-            index,
+-            validRows * inner_ / VENDOR_SORT_UNIT);
++        if (UseNativeHalf()) {
++            AscendC::Sort32<half>(pairA.ReinterpretCast<half>(), staging, index,
++                                 validRows * inner_ / VENDOR_SORT_UNIT);
++        } else {
++            AscendC::Sort32<float>(pairA, floatInput, index,
++                                  validRows * inner_ / VENDOR_SORT_UNIT);
++        }
+         AscendC::PipeBarrier<PIPE_V>();
+ 
+         BuildK64Pairs(pairA, pairB, validRows);
