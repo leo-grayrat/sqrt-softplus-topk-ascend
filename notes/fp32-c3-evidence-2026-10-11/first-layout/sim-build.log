@@ -1,0 +1,36 @@
+-- System processer: x86_64
+-- CMAKE_ASC_COMPILER: /home/leo/Ascend/cann-9.0.0/bin/bisheng
+-- ASCEND_CANN_PACKAGE_LINUX_PATH: /home/leo/Ascend/cann-9.0.0/x86_64-linux
+-- CMAKE_ASC_LLD_LINKER: /home/leo/Ascend/cann-9.0.0/x86_64-linux/ccec_compiler/bin/ld.lld
+-- The CXX compiler identification is GNU 11.4.0
+-- ASC Simulator enabled: /home/leo/Ascend/cann-9.0.0/tools/simulator/dav_2201/lib
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/leo/cann-c3-compact-20261011/sim
+[ 50%] Building ASC object CMakeFiles/topk_fp32_scratch_production_probe.dir/topk_fp32_scratch_production_probe.asc.o
+/home/leo/cann-c3-compact-20261011/src/debug/cpu_topk_probe/topk_fp32_scratch_production_probe.asc:134:14: warning: 'cce_global' attribute ignored when parsing type [-Wignored-attributes]
+            (GM_ADDR)inputDevice,
+             ^~~~~~~
+/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/impl/utils/kernel_utils_macros.h:23:17: note: expanded from macro 'GM_ADDR'
+#define GM_ADDR __gm__ uint8_t*
+                ^~~~~~
+/home/leo/Ascend/cann-9.0.0/tools/bisheng_compiler/lib/clang/15.0.5/include/__clang_cce_defines.h:61:31: note: expanded from macro '__gm__'
+#define __gm__ __attribute__((cce_global))
+                              ^~~~~~~~~~
+/home/leo/cann-c3-compact-20261011/src/debug/cpu_topk_probe/topk_fp32_scratch_production_probe.asc:136:14: warning: 'cce_global' attribute ignored when parsing type [-Wignored-attributes]
+            (GM_ADDR)outputDevice,
+             ^~~~~~~
+/home/leo/Ascend/cann-9.0.0/x86_64-linux/tikcpp/tikcfw/impl/utils/kernel_utils_macros.h:23:17: note: expanded from macro 'GM_ADDR'
+#define GM_ADDR __gm__ uint8_t*
+                ^~~~~~
+/home/leo/Ascend/cann-9.0.0/tools/bisheng_compiler/lib/clang/15.0.5/include/__clang_cce_defines.h:61:31: note: expanded from macro '__gm__'
+#define __gm__ __attribute__((cce_global))
+                              ^~~~~~~~~~
+2 warnings generated.
+[100%] Linking ASC executable topk_fp32_scratch_production_probe
+[100%] Built target topk_fp32_scratch_production_probe

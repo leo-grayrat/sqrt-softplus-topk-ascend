@@ -1,0 +1,363 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN production-topk rows=1 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1687] exit success!
+RUN production-topk rows=15 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1689] exit success!
+RUN production-topk rows=16 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1691] exit success!
+RUN production-topk rows=17 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1693] exit success!
+RUN production-topk rows=31 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1695] exit success!
+RUN production-topk rows=32 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1697] exit success!
+RUN production-topk rows=33 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1699] exit success!
+RUN production-topk rows=64 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1701] exit success!
+RUN production-topk rows=128 E=210 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1706] exit success!
+RUN production-topk rows=1 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1708] exit success!
+RUN production-topk rows=3 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1710] exit success!
+RUN production-topk rows=4 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1712] exit success!
+RUN production-topk rows=5 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1714] exit success!
+RUN production-topk rows=7 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1716] exit success!
+RUN production-topk rows=8 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1718] exit success!
+RUN production-topk rows=9 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1720] exit success!
+RUN production-topk rows=16 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1722] exit success!
+RUN production-topk rows=32 E=888 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1724] exit success!
+RUN production-topk rows=33 E=193 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1726] exit success!
+RUN production-topk rows=33 E=216 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1728] exit success!
+RUN production-topk rows=33 E=224 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1730] exit success!
+RUN production-topk rows=33 E=865 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1732] exit success!
+RUN production-topk rows=33 E=880 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1734] exit success!
+RUN production-topk rows=33 E=896 k=8 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1736] exit success!
+RUN production-topk rows=17 E=210 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1738] exit success!
+[SUCCESS][CORE_1][pid 1739] exit success!
+[SUCCESS][CORE_2][pid 1740] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1741] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1742] exit success!
+[SUCCESS][CORE_5][pid 1743] exit success!
+[SUCCESS][CORE_6][pid 1744] exit success!
+[SUCCESS][CORE_7][pid 1745] exit success!
+RUN production-topk rows=65 E=210 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1754] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1755] exit success!
+[SUCCESS][CORE_2][pid 1756] exit success!
+[SUCCESS][CORE_3][pid 1757] exit success!
+[SUCCESS][CORE_4][pid 1758] exit success!
+[SUCCESS][CORE_5][pid 1759] exit success!
+[SUCCESS][CORE_6][pid 1760] exit success!
+[SUCCESS][CORE_7][pid 1761] exit success!
+RUN production-topk rows=257 E=210 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1770] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1771] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1772] exit success!
+[SUCCESS][CORE_3][pid 1773] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1774] exit success!
+[SUCCESS][CORE_5][pid 1775] exit success!
+[SUCCESS][CORE_6][pid 1776] exit success!
+[SUCCESS][CORE_7][pid 1777] exit success!
+RUN production-topk rows=17 E=888 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1786] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1787] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1788] exit success!
+[SUCCESS][CORE_3][pid 1789] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1790] exit success!
+[SUCCESS][CORE_5][pid 1791] exit success!
+[SUCCESS][CORE_6][pid 1792] exit success!
+[SUCCESS][CORE_7][pid 1793] exit success!
+RUN production-topk rows=65 E=888 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1802] exit success!
+[SUCCESS][CORE_1][pid 1803] exit success!
+[SUCCESS][CORE_2][pid 1804] exit success!
+[SUCCESS][CORE_3][pid 1805] exit success!
+[SUCCESS][CORE_4][pid 1806] exit success!
+[SUCCESS][CORE_5][pid 1807] exit success!
+[SUCCESS][CORE_6][pid 1808] exit success!
+[SUCCESS][CORE_7][pid 1809] exit success!
+RUN production-topk rows=257 E=888 k=8 cores=8
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1818] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1819] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1820] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1821] exit success!
+[SUCCESS][CORE_4][pid 1822] exit success!
+[SUCCESS][CORE_5][pid 1823] exit success!
+[SUCCESS][CORE_6][pid 1824] exit success!
+[SUCCESS][CORE_7][pid 1825] exit success!
+RUN production-topk rows=33 E=192 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1834] exit success!
+[SUCCESS][CORE_1][pid 1835] exit success!
+[SUCCESS][CORE_2][pid 1836] exit success!
+[SUCCESS][CORE_3][pid 1837] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1838] exit success!
+[SUCCESS][CORE_5][pid 1839] exit success!
+[SUCCESS][CORE_6][pid 1840] exit success!
+[SUCCESS][CORE_7][pid 1841] exit success!
+RUN production-topk rows=33 E=225 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1850] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1851] exit success!
+[SUCCESS][CORE_2][pid 1852] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1853] exit success!
+[SUCCESS][CORE_4][pid 1854] exit success!
+[SUCCESS][CORE_5][pid 1855] exit success!
+[SUCCESS][CORE_6][pid 1856] exit success!
+[SUCCESS][CORE_7][pid 1857] exit success!
+RUN production-topk rows=33 E=864 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1866] exit success!
+[SUCCESS][CORE_1][pid 1867] exit success!
+[SUCCESS][CORE_2][pid 1868] exit success!
+[SUCCESS][CORE_3][pid 1869] exit success!
+[SUCCESS][CORE_4][pid 1870] exit success!
+[SUCCESS][CORE_5][pid 1871] exit success!
+[SUCCESS][CORE_6][pid 1872] exit success!
+[SUCCESS][CORE_7][pid 1873] exit success!
+RUN production-topk rows=33 E=897 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1882] exit success!
+[SUCCESS][CORE_1][pid 1883] exit success!
+[SUCCESS][CORE_2][pid 1884] exit success!
+[SUCCESS][CORE_3][pid 1885] exit success!
+[SUCCESS][CORE_4][pid 1886] exit success!
+[SUCCESS][CORE_5][pid 1887] exit success!
+[SUCCESS][CORE_6][pid 1888] exit success!
+[SUCCESS][CORE_7][pid 1889] exit success!
+RUN production-topk rows=33 E=150 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1898] exit success!
+[SUCCESS][CORE_1][pid 1899] exit success!
+[SUCCESS][CORE_2][pid 1900] exit success!
+[SUCCESS][CORE_3][pid 1901] exit success!
+[SUCCESS][CORE_4][pid 1902] exit success!
+[SUCCESS][CORE_5][pid 1903] exit success!
+[SUCCESS][CORE_6][pid 1904] exit success!
+[SUCCESS][CORE_7][pid 1905] exit success!
+RUN production-topk rows=33 E=160 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1914] exit success!
+[SUCCESS][CORE_1][pid 1915] exit success!
+[SUCCESS][CORE_2][pid 1916] exit success!
+[SUCCESS][CORE_3][pid 1917] exit success!
+[SUCCESS][CORE_4][pid 1918] exit success!
+[SUCCESS][CORE_5][pid 1919] exit success!
+[SUCCESS][CORE_6][pid 1920] exit success!
+[SUCCESS][CORE_7][pid 1921] exit success!
+RUN production-topk rows=33 E=210 k=7 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1930] exit success!
+[SUCCESS][CORE_1][pid 1931] exit success!
+[SUCCESS][CORE_2][pid 1932] exit success!
+[SUCCESS][CORE_3][pid 1933] exit success!
+[SUCCESS][CORE_4][pid 1934] exit success!
+[SUCCESS][CORE_5][pid 1935] exit success!
+[SUCCESS][CORE_6][pid 1936] exit success!
+[SUCCESS][CORE_7][pid 1937] exit success!
+RUN production-topk rows=33 E=888 k=7 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1946] exit success!
+[SUCCESS][CORE_1][pid 1947] exit success!
+[SUCCESS][CORE_2][pid 1948] exit success!
+[SUCCESS][CORE_3][pid 1949] exit success!
+[SUCCESS][CORE_4][pid 1950] exit success!
+[SUCCESS][CORE_5][pid 1951] exit success!
+[SUCCESS][CORE_6][pid 1952] exit success!
+[SUCCESS][CORE_7][pid 1953] exit success!
+RUN production-topk rows=129 E=888 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1962] exit success!
+[SUCCESS][CORE_1][pid 1963] exit success!
+[SUCCESS][CORE_2][pid 1964] exit success!
+[SUCCESS][CORE_3][pid 1965] exit success!
+[SUCCESS][CORE_4][pid 1966] exit success!
+[SUCCESS][CORE_5][pid 1967] exit success!
+[SUCCESS][CORE_6][pid 1968] exit success!
+[SUCCESS][CORE_7][pid 1969] exit success!
+RUN production-topk rows=65 E=865 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1978] exit success!
+[SUCCESS][CORE_1][pid 1979] exit success!
+[SUCCESS][CORE_2][pid 1980] exit success!
+[SUCCESS][CORE_3][pid 1981] exit success!
+[SUCCESS][CORE_4][pid 1982] exit success!
+[SUCCESS][CORE_5][pid 1983] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_6][pid 1984] exit success!
+[SUCCESS][CORE_7][pid 1985] exit success!
+RUN production-topk rows=65 E=896 k=8 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1994] exit success!
+[SUCCESS][CORE_1][pid 1995] exit success!
+[SUCCESS][CORE_2][pid 1996] exit success!
+[SUCCESS][CORE_3][pid 1997] exit success!
+[SUCCESS][CORE_4][pid 1998] exit success!
+[SUCCESS][CORE_5][pid 1999] exit success!
+[SUCCESS][CORE_6][pid 2000] exit success!
+[SUCCESS][CORE_7][pid 2001] exit success!
+PASS: 41 production TopK cases

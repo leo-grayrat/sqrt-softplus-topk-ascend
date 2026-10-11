@@ -6,13 +6,14 @@
 
 ## 当前主线
 
-`main` 是唯一生产基线。2026-10-11 FP32 k=8、inner=224 紧凑合并阶段通过用户完整 CANNJudge **15/15 Pass、全部错误占比 0.00%**，经 [PR #58](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/58) 收拢到 main。case 13 从上一套基线的 **176.78 us 降至 132.12 us，耗时减少 25.26%**；其余点没有明显退化，但本轮没有重复测量分布。
+`main` 是唯一生产基线。FP32 k=8、inner=896 连续批量合并阶段通过用户完整 CANNJudge **15/15 Pass、全部错误占比 0.00%**，经 [PR #60](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/60) 收拢到 main。case 3 从上一套基线的 **139.78 us 降至 114.87 us，耗时减少 17.82%**；case 13 保持在 **131.85 us**，保留 [PR #58 的紧凑合并收益](notes/fp32-compact-merge-2026-10-11.md)。
 
-最新同一次整套 Judge 中，case 6 为 **10.26 us**，case 12/14 为 **122.34/537.67 us**，case 15 为 **1.65 ms**。已有 FP16 small/medium-k、FP32/FP16 large-k 和 FP32 medium-k 路径继续保留；[本阶段实现、本地验证与已知单行模型代价](notes/fp32-compact-merge-2026-10-11.md)。
+最新同一次整套 Judge 中，case 6 为 **10.45 us**，case 12/14 为 **122.23/537.70 us**，case 15 为 **1.65 ms**。case 1 比上一轮增加 0.17 us（7.23%），其余波动及完整结果均保留在状态记录；没有重复测量分布，不将这些变化直接归因于代码。[本阶段实现与本地验证](notes/fp32-compact-c3-2026-10-11.md)。
 
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
-- [当前状态、完整 15 点和阶段集成范围](notes/current-status-2026-10-11.md)
+- [当前状态、完整 15 点和阶段集成范围](notes/current-status-2026-10-11-c3.md)
+- [上一轮 case 13 紧凑合并与完整基线](notes/current-status-2026-10-11.md)
 - [上一阶段基线与分支收拢记录](notes/current-status-2026-10-04.md)
 - [用户提供的结构性优化深度研究报告](notes/structural-optimization-research-2026-10-10.md)
 - [FP32 scratch 复用实测：改善 2–10%，未达准入门槛](notes/fp32-scratch-reuse-2026-10-10.md)
@@ -60,7 +61,7 @@ sqrt(softplus(TopK(x)))
 
 每个大阶段只维护一个活动实验分支，从最新 main 创建。阶段完成后，经本地验证、用户完整 Judge 和 PR 合入 main，再开始下一阶段；不从上一条实验分支继续串接新的长期开发。
 
-现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近阶段分支为 `exp/fp32-k8-compact-merge`，更早六条 exp 分支清单见上一阶段状态文档。
+现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近阶段分支为 `exp/fp32-k8-compact-c3`，上一轮为 `exp/fp32-k8-compact-merge`；更早六条 exp 分支清单见 2026-10-04 状态文档。
 
 ## 验证原则
 

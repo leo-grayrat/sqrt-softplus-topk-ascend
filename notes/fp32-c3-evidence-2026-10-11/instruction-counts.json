@@ -1,0 +1,70 @@
+{
+  "baseline_ref": "6a4ca0ee30f1d76c8288144bf579ea3285a46397",
+  "modes": {
+    "baseline": {
+      "profiles": {
+        "profile-r16": {
+          "core0.veccore0": {
+            "BAR": 280,
+            "VBS32": 4,
+            "VMS4V2": 32,
+            "MOV_UB_TO_UB": 148
+          }
+        },
+        "profile-r32": {
+          "core0.veccore0": {
+            "BAR": 556,
+            "VBS32": 8,
+            "VMS4V2": 64,
+            "MOV_UB_TO_UB": 296
+          }
+        }
+      },
+      "header_sha256": "4af3fe47bf15f0820fe1e61b168fe54487552ee70a1d1a8e36aa93816db688d7",
+      "source_matches_expected": true
+    },
+    "first-layout": {
+      "profiles": {
+        "profile-r16": {
+          "core0.veccore0": {
+            "BAR": 70,
+            "VBS32": 2,
+            "VMS4V2": 6,
+            "MOV_UB_TO_UB": 20
+          }
+        },
+        "profile-r32": {
+          "core0.veccore0": {
+            "BAR": 138,
+            "VBS32": 4,
+            "VMS4V2": 12,
+            "MOV_UB_TO_UB": 40
+          }
+        }
+      },
+      "header_sha256": "62ba0eeff8b194df93a05f4f2a54cd3c769b79aee5b58e159a6e0f3193b78077"
+    },
+    "candidate": {
+      "profiles": {
+        "profile-r16": {
+          "core0.veccore0": {
+            "BAR": 60,
+            "VBS32": 2,
+            "VMS4V2": 6,
+            "MOV_UB_TO_UB": 10
+          }
+        },
+        "profile-r32": {
+          "core0.veccore0": {
+            "BAR": 118,
+            "VBS32": 4,
+            "VMS4V2": 12,
+            "MOV_UB_TO_UB": 20
+          }
+        }
+      },
+      "header_sha256": "a5631151aa890f25f02c4dc62ec7c2193e716018df428dfd8132a285e68c9f7d",
+      "source_matches_expected": true
+    }
+  }
+}

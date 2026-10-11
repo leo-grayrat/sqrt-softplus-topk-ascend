@@ -77,11 +77,11 @@ public:
         inner_ = inner;
         k_ = k;
         blockNum_ = blockNum;
-        reuseScratch_ = k_ == 8 && inner_ == 224;
+        reuseScratch_ = k_ == 8 && (inner_ == 224 || inner_ == 896);
         batchRows_ = SelectVendorBatchRows(rows_, blockNum_, inner_);
         if (reuseScratch_) {
-            // 32 rows * 7 leaves = 224 Sort32 repeats (<256).
-            const int32_t capacity = 32;
+            // Both shapes use at most 224 Sort32 repeats (<256).
+            const int32_t capacity = inner_ == 224 ? 32 : 8;
             const int32_t rowsPerCore = (rows_ + blockNum_ - 1) / blockNum_;
             batchRows_ = rowsPerCore < capacity ? rowsPerCore : capacity;
         }
@@ -317,7 +317,7 @@ private:
     {
         // Seven real top-8 leaves plus one -inf leaf, instead of sixteen
         // slots in the generic tree. Both first-level groups stay batched.
-        CopyTop8Prefixes(pairB, 0, 64, pairA, 0, inner_, inner_, rows);
+        CopyTop8Prefixes(pairB, 0, 64, pairA, 0, 224, 224, rows);
         MergeFourTop8(pairA, pairB, rows * 2);
 
         // Two contiguous 32-pair outputs per row: retain only each top-8.
@@ -352,6 +352,55 @@ private:
         int32_t rows)
     {
         if (reuseScratch_) {
+            if (inner_ == 896) {
+                // All 28 Sort32 leaves are consecutive across rows. Pack
+                // top-8 from every leaf in one strided copy, without splitting
+                // the row into 512-column and tail trees.
+                AscendC::DataCopyParams copy;
+                copy.blockCount = static_cast<uint16_t>(rows * 28);
+                copy.blockLen = 2;
+                copy.srcStride = 6;
+                copy.dstStride = 0;
+                AscendC::DataCopy(pairB, pairA, copy);
+                AscendC::PipeBarrier<PIPE_V>();
+                MergeFourTop8(pairA, pairB, rows * 7);
+
+                // Pack all seven group prefixes in one copy, then pad each
+                // 56-pair row to 64 pairs with one multi-row copy. This replaces
+                // seven column-wise copies with two contiguous commands.
+                copy.blockCount = static_cast<uint16_t>(rows * 7);
+                AscendC::DataCopy(pairB, pairA, copy);
+                AscendC::PipeBarrier<PIPE_V>();
+                AscendC::Duplicate(pairA, -INFINITY, rows * 64 * 2);
+                AscendC::PipeBarrier<PIPE_V>();
+                copy.blockCount = static_cast<uint16_t>(rows);
+                copy.blockLen = 14;
+                copy.srcStride = 0;
+                copy.dstStride = 2;
+                AscendC::DataCopy(pairA, pairB, copy);
+                AscendC::PipeBarrier<PIPE_V>();
+                MergeFourTop8(pairB, pairA, rows * 2);
+
+                copy.blockCount = static_cast<uint16_t>(rows * 2);
+                copy.blockLen = 2;
+                copy.srcStride = 6;
+                copy.dstStride = 0;
+                AscendC::DataCopy(pairA, pairB, copy);
+                AscendC::PipeBarrier<PIPE_V>();
+                AscendC::MrgSort4Info params;
+                for (int32_t i = 0; i < 4; ++i) params.elementLengths[i] = 4;
+                params.ifExhaustedSuspension = false;
+                params.validBit = 15;
+                params.repeatTimes = static_cast<uint16_t>(rows);
+                AscendC::MrgSortSrcList<float> srcList;
+                srcList.src1 = pairA[0];
+                srcList.src2 = pairA[8];
+                srcList.src3 = pairA[16];
+                srcList.src4 = pairA[24];
+                AscendC::MrgSort<float>(pairB, srcList, params);
+                AscendC::PipeBarrier<PIPE_V>();
+                return false;
+            }
             BuildCompact224Pairs(pairA, pairB, rows);
             return true;
         }
