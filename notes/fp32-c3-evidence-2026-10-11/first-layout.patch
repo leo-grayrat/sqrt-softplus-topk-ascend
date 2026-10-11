@@ -1,0 +1,29 @@
+--- a/submission/dense_repeat_override.h
++++ b/submission/dense_repeat_override.h
+@@ -80 +80 @@
+-        reuseScratch_ = k_ == 8 && inner_ == 224;
++        reuseScratch_ = k_ == 8 && (inner_ == 224 || inner_ == 896);
+@@ -83,2 +83,2 @@
+-            // 32 rows * 7 leaves = 224 Sort32 repeats (<256).
+-            const int32_t capacity = 32;
++            // Both shapes use at most 224 Sort32 repeats (<256).
++            const int32_t capacity = inner_ == 224 ? 32 : 8;
+@@ -320 +320 @@
+-        CopyTop8Prefixes(pairB, 0, 64, pairA, 0, inner_, inner_, rows);
++        CopyTop8Prefixes(pairB, 0, 64, pairA, 0, 224, 224, rows);
+@@ -354,0 +355,15 @@
++            if (inner_ == 896) {
++                // All 28 Sort32 leaves are consecutive across rows. Pack
++                // top-8 from every leaf in one strided copy, without splitting
++                // the row into 512-column and tail trees.
++                AscendC::DataCopyParams copy;
++                copy.blockCount = static_cast<uint16_t>(rows * 28);
++                copy.blockLen = 2;
++                copy.srcStride = 6;
++                copy.dstStride = 0;
++                AscendC::DataCopy(pairB, pairA, copy);
++                AscendC::PipeBarrier<PIPE_V>();
++                MergeFourTop8(pairA, pairB, rows * 7);
++                // Seven sorted 32-pair groups per row now have exactly the
++                // same 224-pair layout as the compact E210 path's Sort32 output.
++            }

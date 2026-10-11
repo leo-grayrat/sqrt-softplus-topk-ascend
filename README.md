@@ -6,6 +6,8 @@
 
 ## 当前主线
 
+待 Judge 候选：`exp/fp32-k8-compact-c3` 针对 FP32 k=8、inner=896（case 3），16/32 行完整模型耗时减少 **20.87%/20.42%**，CPU 41/41、完整设备编译和 7 次候选仿真输出检查通过。[实现、对照与交付文件](notes/fp32-compact-c3-2026-10-11.md)。尚无本轮 Judge 结果，main 继续表示下述已验证版本。
+
 `main` 是唯一生产基线。2026-10-11 FP32 k=8、inner=224 紧凑合并阶段通过用户完整 CANNJudge **15/15 Pass、全部错误占比 0.00%**，经 [PR #58](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/58) 收拢到 main。case 13 从上一套基线的 **176.78 us 降至 132.12 us，耗时减少 25.26%**；其余点没有明显退化，但本轮没有重复测量分布。
 
 最新同一次整套 Judge 中，case 6 为 **10.26 us**，case 12/14 为 **122.34/537.67 us**，case 15 为 **1.65 ms**。已有 FP16 small/medium-k、FP32/FP16 large-k 和 FP32 medium-k 路径继续保留；[本阶段实现、本地验证与已知单行模型代价](notes/fp32-compact-merge-2026-10-11.md)。
