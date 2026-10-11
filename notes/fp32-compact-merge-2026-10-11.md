@@ -1,6 +1,8 @@
-# FP32 k=8、inner=224 紧凑合并候选（#57）
+# FP32 k=8、inner=224 紧凑合并：Judge 通过（#57）
 
-分支 `exp/fp32-k8-compact-merge` 从 main 开始，实施用户报告第二项，并组合上一轮已验证正确的 scratch 复用。当前是待 Judge 的候选，尚未合入生产 main。用户只需替换本分支 `submission/dense_repeat_override.h`；kernel.asc 不变。
+分支 `exp/fp32-k8-compact-merge` 从 main 开始，实施用户报告第二项，并组合上一轮已验证正确的 scratch 复用。用户已回报完整 Judge 15/15 Pass、全部错误占比 0.00%；case 13 从 176.78 降至 132.12 us（耗时减少 25.26%，约 1.338 倍加速）。通过 [PR #58](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/58) 收拢到 main。生产修改仅为 `submission/dense_repeat_override.h`；kernel.asc 不变。
+
+完整原始回报和本阶段集成范围见 [当前状态](current-status-2026-10-11.md)。本轮其他点没有明显退化；这是单次整套回报与上一套基线的比较，没有重复测量分布。
 
 ## 改变了什么
 
@@ -34,7 +36,7 @@
 | 128 | 30.46 | 29.51 | 22.19 | 27.15% | 24.81% |
 | 1 | 3.77 | 3.75 | 4.00 | -6.10% | -6.67% |
 
-两组长 batch 均达到已有 20% 模型门槛，相对只复用 scratch 也有独立增益。单行慢 0.23 us，保留为已知短输入代价，不能声称所有规模都变快。是否值得合入仍由完整 15 点 Judge 决定。
+两组长 batch 均达到已有 20% 模型门槛，相对只复用 scratch 也有独立增益。单行慢 0.23 us，保留为已知短输入代价，不能声称所有规模都变快。随后完整 15 点 Judge 已验证正确性，并确认 case 13 的实际收益；该收益不能外推为所有输入规模的提升。
 
 ## 指令佐证
 
@@ -53,4 +55,4 @@ scratch-only 与新候选的排序/合并调用数相同，但每次合并处理
 - [生产入口 probe](../debug/cpu_topk_probe/topk_fp32_scratch_production_probe.asc)。
 - [构建/CPU/仿真日志与指令计数](fp32-compact-evidence-2026-10-11)，仅去除日志行尾空格。
 
-下一步由用户使用本分支完整运行全部 15 个 Judge 测试点，重点观察 case 13，同时确认其他点无实质退化。通过 Judge 后再完成阶段 PR 合入 main；#52 数值边界不在本次修复范围。
+用户完整 Judge 已完成，本阶段经 PR #58 合入 main，实验分支仅保留历史引用。归档收尾不改变已验证生产源码。后续阶段从 main 开始；#52 数值边界不在本次修复范围。
