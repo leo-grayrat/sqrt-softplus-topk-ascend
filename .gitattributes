@@ -3,4 +3,8 @@ tools/run_fp32_scratch_probe.sh text eol=lf
 tools/run_fp32_compact_merge_probe.sh text eol=lf
 tools/run_fp32_compact_c3_probe.sh text eol=lf
 tools/run_fp32_compact_c7_c9_probe.sh text eol=lf
+tools/run_fp32_large_scratch_probe.sh text eol=lf
+tools/run_fp16_compact_c5_probe.sh text eol=lf
+tools/run_fp16_c5_judge_shape_probe.sh text eol=lf
+debug/fp32_large_scratch_reuse.patch text eol=lf whitespace=-blank-at-eol
 debug/fp32_k8_scratch_reuse.patch text eol=lf

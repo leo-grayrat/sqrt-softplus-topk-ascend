@@ -54,6 +54,7 @@ add_executable(topk_fp16_vendor_large_probe
 )
 
 add_executable(topk_fp32_large_production_probe topk_fp32_large_production_probe.asc)
+add_executable(topk_fp16_compact_production_probe topk_fp16_compact_production_probe.asc)
 
 add_executable(topk_threshold_compact_probe topk_threshold_compact_probe.asc)
 
@@ -73,6 +74,7 @@ target_compile_definitions(topk_values_only_raw_probe PRIVATE VALUES_ONLY_RAW=1)
 add_executable(topk_fp32_scratch_production_probe topk_fp32_scratch_production_probe.asc)
 
 foreach(probe_target IN ITEMS
+        topk_fp16_compact_production_probe
         topk_fp32_scratch_production_probe
         topk_values_only_raw_probe
         topk_values_only_probe

@@ -6,6 +6,8 @@
 
 ## 当前主线
 
+待 Judge 候选：xp/fp16-compact-c5 限定 FP16 inner224/k9..16，以七叶子紧凑 keep-16 树将每行合并产物320→160 pair，batch保持32。64/128行完整模型改善30.98%/32.53%，512行/32核模型改善22.80%；双方CPU生产dispatch各76/76，完整设备编译及候选10次真实run_kernel仿真输出检查通过。尚无新Judge结果。[实现与全部证据](notes/fp16-compact-c5-2026-10-11.md)。case15 scratch仅约1.3%模型收益，已撤回并[归档](notes/fp32-large-scratch-2026-10-11.md)。
+
 `main` 是唯一生产基线。FP32 inner=160、k=6/7 的五叶子紧凑合并阶段通过用户完整 CANNJudge **15/15 Pass、全部错误占比 0.00%**，经 [PR #62](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/62) 合入 main。case 7 为 **17.91→16.75 us（减少 6.48%）**，case 9 为 **27.85→24.42 us（减少 12.32%）**；真实收益低于单核模型的 30%–35%。[实现与模型证据](notes/fp32-compact-c7-c9-2026-10-11.md)。
 
 最新同一次完整 Judge 中，case 3/13 为 **115.72/132.27 us**，case 6 为 **10.56 us**，case 12/14 为 **122.72/537.96 us**，case 15 为 **1.65 ms**。case 5 比上一轮增加 0.27 us（3.60%）；其他增加及完整回报均保留，不据单次跨轮测量认定因果。[完整状态](notes/current-status-2026-10-11-c7-c9.md)。

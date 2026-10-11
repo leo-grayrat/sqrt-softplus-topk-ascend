@@ -1,0 +1,160 @@
+{
+  "baseline_ref": "da7197819a225f703ae4a6409def92676d34a0fd",
+  "modes": {
+    "baseline": {
+      "profiles": {
+        "sim-r1-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.66
+          }
+        },
+        "sim-r28-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 39.82
+          },
+          "instruction_calls": {
+            "BAR": 137,
+            "VMS4V2": 21,
+            "VBS32": 7,
+            "MOV_UB_TO_UB": 21
+          }
+        },
+        "sim-r33-e97-k32-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 2.96,
+            "core1.veccore0": 2.95,
+            "core2.veccore0": 2.95,
+            "core3.veccore0": 2.95,
+            "core4.veccore0": 2.95,
+            "core5.veccore0": 2.95,
+            "core6.veccore0": 2.76,
+            "core7.veccore0": 1.63
+          }
+        },
+        "sim-r56-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 77.54
+          },
+          "instruction_calls": {
+            "BAR": 270,
+            "VMS4V2": 42,
+            "VBS32": 14,
+            "MOV_UB_TO_UB": 42
+          }
+        }
+      },
+      "header_sha256": "6aa8481e031c69a2eb659d147d9a9a84eb33cd3d8d99d3cecba25f5c8279f0c6",
+      "source_matches_expected": true
+    },
+    "candidate": {
+      "profiles": {
+        "sim-r1-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.65
+          }
+        },
+        "sim-r113-e1024-k64-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 22.28,
+            "core1.veccore0": 20.7,
+            "core2.veccore0": 20.71,
+            "core3.veccore0": 20.7,
+            "core4.veccore0": 20.7,
+            "core5.veccore0": 20.71,
+            "core6.veccore0": 20.71,
+            "core7.veccore0": 20.71
+          }
+        },
+        "sim-r15-e1017-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 22.49
+          }
+        },
+        "sim-r28-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 39.32
+          },
+          "instruction_calls": {
+            "BAR": 86,
+            "VMS4V2": 12,
+            "VBS32": 4,
+            "MOV_UB_TO_UB": 12
+          }
+        },
+        "sim-r33-e97-k32-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 2.96,
+            "core1.veccore0": 2.95,
+            "core2.veccore0": 2.96,
+            "core3.veccore0": 2.96,
+            "core4.veccore0": 2.95,
+            "core5.veccore0": 2.95,
+            "core6.veccore0": 2.8,
+            "core7.veccore0": 1.65
+          }
+        },
+        "sim-r56-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 76.54
+          },
+          "instruction_calls": {
+            "BAR": 170,
+            "VMS4V2": 24,
+            "VBS32": 8,
+            "MOV_UB_TO_UB": 24
+          }
+        },
+        "sim-r57-e1024-k64-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 12.98,
+            "core1.veccore0": 11.41,
+            "core2.veccore0": 11.42,
+            "core3.veccore0": 11.43,
+            "core4.veccore0": 11.42,
+            "core5.veccore0": 11.42,
+            "core6.veccore0": 11.41,
+            "core7.veccore0": 11.43
+          }
+        },
+        "sim-r57-e993-k64-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 13.6,
+            "core1.veccore0": 12.2,
+            "core2.veccore0": 12.02,
+            "core3.veccore0": 12.05,
+            "core4.veccore0": 12.02,
+            "core5.veccore0": 12.18,
+            "core6.veccore0": 12.05,
+            "core7.veccore0": 12.04
+          }
+        },
+        "sim-r9-e1024-k63-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 7.0,
+            "core1.veccore0": 4.85,
+            "core2.veccore0": 4.85,
+            "core3.veccore0": 4.85,
+            "core4.veccore0": 4.85,
+            "core5.veccore0": 4.85,
+            "core6.veccore0": 4.85,
+            "core7.veccore0": 4.86
+          }
+        },
+        "sim-r9-e992-k64-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 6.95,
+            "core1.veccore0": 4.81,
+            "core2.veccore0": 4.82,
+            "core3.veccore0": 4.8,
+            "core4.veccore0": 4.81,
+            "core5.veccore0": 4.8,
+            "core6.veccore0": 4.82,
+            "core7.veccore0": 4.82
+          }
+        }
+      },
+      "header_sha256": "267e035e13e1048a40cdc6a8575526848c93ffa0c70d0a82fc99250148f98b5a",
+      "source_matches_expected": true
+    }
+  }
+}
