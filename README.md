@@ -6,6 +6,8 @@
 
 ## 当前主线
 
+待测候选：`exp/fp32-k8-compact-merge` 的 FP32 k=8、inner=224 紧凑合并在两组完整模型中改善 23%/27%；[实现、验证与已知单行代价](notes/fp32-compact-merge-2026-10-11.md)。尚未获得 Judge 结果，不替代下述 main 基线。
+
 `main` 是唯一生产基线。2026-10-04 阶段合并汇集了已通过 CANNJudge **15/15 Pass** 的 FP16 small/medium-k、FP32/FP16 large-k，以及 FP32 medium-k 批处理路径。最新整套 Judge 中，case 6 为 **10.19 us**，case 12/14 为 **122.17/537.48 us**，case 15 为 **1.65 ms**。
 
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。

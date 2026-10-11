@@ -77,7 +77,14 @@ public:
         inner_ = inner;
         k_ = k;
         blockNum_ = blockNum;
+        reuseScratch_ = k_ == 8 && inner_ == 224;
         batchRows_ = SelectVendorBatchRows(rows_, blockNum_, inner_);
+        if (reuseScratch_) {
+            // 32 rows * 7 leaves = 224 Sort32 repeats (<256).
+            const int32_t capacity = 32;
+            const int32_t rowsPerCore = (rows_ + blockNum_ - 1) / blockNum_;
+            batchRows_ = rowsPerCore < capacity ? rowsPerCore : capacity;
+        }
         groupCount_ = (rows_ + batchRows_ - 1) / batchRows_;
         activeBlockNum_ = groupCount_ < blockNum_ ? groupCount_ : blockNum_;
 
@@ -98,9 +105,11 @@ public:
             static_cast<uint32_t>(batchRows_ * VENDOR_KEEP_K) * sizeof(float);
 
         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
-        pipe_.InitBuffer(inputBuffer_, batchInputBytes);
+        if (!reuseScratch_) {
+            pipe_.InitBuffer(inputBuffer_, batchInputBytes);
+            pipe_.InitBuffer(indexBuffer_, batchInputBytes);
+        }
         pipe_.InitBuffer(outputQueue_, 1, batchPackedBytes);
-        pipe_.InitBuffer(indexBuffer_, batchInputBytes);
         pipe_.InitBuffer(pairABuffer_, batchPairBytes);
         pipe_.InitBuffer(pairBBuffer_, batchPairBytes);
         pipe_.InitBuffer(floatTmpBuffer_, batchPackedBytes);
@@ -114,7 +123,7 @@ public:
             return;
         }
 
-        InitIndexBatch();
+        if (!reuseScratch_) InitIndexBatch();
         InitValuePattern();
 
         int32_t group = blockIdx;
@@ -301,11 +310,51 @@ private:
         AscendC::PipeBarrier<PIPE_V>();
     }
 
+    __aicore__ inline void BuildCompact224Pairs(
+        const AscendC::LocalTensor<float>& pairA,
+        const AscendC::LocalTensor<float>& pairB,
+        int32_t rows)
+    {
+        // Seven real top-8 leaves plus one -inf leaf, instead of sixteen
+        // slots in the generic tree. Both first-level groups stay batched.
+        CopyTop8Prefixes(pairB, 0, 64, pairA, 0, inner_, inner_, rows);
+        MergeFourTop8(pairA, pairB, rows * 2);
+
+        // Two contiguous 32-pair outputs per row: retain only each top-8.
+        // A single strided copy replaces four per-list prefix copy calls.
+        AscendC::DataCopyParams copy;
+        copy.blockCount = static_cast<uint16_t>(rows * 2);
+        copy.blockLen = 2;
+        copy.srcStride = 6;
+        copy.dstStride = 0;
+        AscendC::DataCopy(pairB, pairA, copy);
+        AscendC::PipeBarrier<PIPE_V>();
+
+        // [A0..A7 B0..B7] is also four sorted length-4 lists. This uses the
+        // existing repeat-enabled split-list merge idiom without a row loop.
+        AscendC::MrgSort4Info params;
+        for (int32_t i = 0; i < 4; ++i) params.elementLengths[i] = 4;
+        params.ifExhaustedSuspension = false;
+        params.validBit = 15;
+        params.repeatTimes = static_cast<uint16_t>(rows);
+        AscendC::MrgSortSrcList<float> srcList;
+        srcList.src1 = pairB[0];
+        srcList.src2 = pairB[8];
+        srcList.src3 = pairB[16];
+        srcList.src4 = pairB[24];
+        AscendC::MrgSort<float>(pairA, srcList, params);
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
     __aicore__ inline bool BuildFinalPairs(
         const AscendC::LocalTensor<float>& pairA,
         const AscendC::LocalTensor<float>& pairB,
         int32_t rows)
     {
+        if (reuseScratch_) {
+            BuildCompact224Pairs(pairA, pairB, rows);
+            return true;
+        }
         if (inner_ <= 512) {
             if (inner_ > VENDOR_MERGE_UNIT) {
                 CopyTop8Prefixes(
@@ -389,8 +438,8 @@ private:
         uint64_t rsvdCnt = 0;
         params.src0BlockStride = 1;
         params.repeatTimes = static_cast<uint8_t>(rows);
-        params.src0RepeatStride =
-            static_cast<uint8_t>(VENDOR_FINAL_PAIR_FLOATS / 8);
+        params.src0RepeatStride = static_cast<uint8_t>(
+            (reuseScratch_ ? 32 : VENDOR_FINAL_PAIR_FLOATS) / 8);
         params.src1RepeatStride = 0;
         GatherMask(
             dst.ReinterpretCast<int32_t>(),
@@ -411,11 +460,19 @@ private:
         AscendC::LocalTensor<float> staging = inputQueue_.DeQue<float>();
         AscendC::LocalTensor<float> input = staging;
         if (copyAlignedElems_ < inner_) {
-            input = inputBuffer_.Get<float>();
+            input = reuseScratch_ ? pairBBuffer_.Get<float>() : inputBuffer_.Get<float>();
             RearrangeRows(input, staging, validRows);
         }
 
-        AscendC::LocalTensor<int32_t> signedIndex = indexBuffer_.Get<int32_t>();
+        // pairB is dead until merging. Its first half holds padded input;
+        // its second half holds payload indices, refreshed after every merge.
+        AscendC::LocalTensor<int32_t> signedIndex = reuseScratch_
+            ? pairBBuffer_.Get<int32_t>()[batchRows_ * inner_]
+            : indexBuffer_.Get<int32_t>();
+        if (reuseScratch_) {
+            AscendC::Duplicate(signedIndex, int32_t(0), validRows * inner_);
+            AscendC::PipeBarrier<PIPE_V>();
+        }
         AscendC::LocalTensor<uint32_t> index =
             signedIndex.ReinterpretCast<uint32_t>();
         AscendC::LocalTensor<float> pairA = pairABuffer_.Get<float>();
@@ -474,6 +531,7 @@ private:
     AscendC::GlobalTensor<float> inputGm_;
     AscendC::GlobalTensor<float> outputGm_;
 
+    bool reuseScratch_ = false;
     int32_t rows_ = 0;
     int32_t experts_ = 0;
     int32_t inner_ = 0;

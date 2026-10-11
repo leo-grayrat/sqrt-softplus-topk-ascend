@@ -2,6 +2,8 @@
 
 ## 当前入口
 
+- **2026-10-11 紧凑合并候选待 Judge**：[FP32 k=8 / inner=224](notes/fp32-compact-merge-2026-10-11.md)。CPU 38/38，完整设备编译通过；64/128 行模型相对 main 改善 23.13%/27.15%，相对 scratch-only 改善 21.32%/24.81%；单行慢 0.23 us。新生产代码只在实验分支，待完整 15 点 Judge 后阶段 PR 合 main。跟踪 #57。
+
 - **2026-10-10 FP32 scratch 复用已实现测量**：[完整记录](notes/fp32-scratch-reuse-2026-10-10.md)。基线/候选 CPU 各 38/38，候选完整设备编译通过；E210 改善 2.3–3.1%、E888 约 10%，未达 20% 门槛。保留可复现研究补丁，生产代码恢复 main；无需新 Judge。跟踪 #55。本次是报告第一项，未实施第二项 merge tree 或 #52。
 
 - **2026-10-10 用户研究报告归档**：[完整原文](notes/structural-optimization-research-2026-10-10.md) / [意思重述与来源说明](notes/structural-optimization-research-reading-2026-10-10.md)。按用户要求停止推进原下一阶段计划，本次只存档和重述，尚未实施报告中的 FP32 scratch 复用等建议。
