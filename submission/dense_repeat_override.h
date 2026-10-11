@@ -77,11 +77,12 @@ public:
         inner_ = inner;
         k_ = k;
         blockNum_ = blockNum;
-        reuseScratch_ = k_ == 8 && (inner_ == 224 || inner_ == 896);
+        reuseScratch_ = (k_ == 8 && (inner_ == 224 || inner_ == 896)) ||
+            (inner_ == 160 && (k_ == 6 || k_ == 7));
         batchRows_ = SelectVendorBatchRows(rows_, blockNum_, inner_);
         if (reuseScratch_) {
-            // Both shapes use at most 224 Sort32 repeats (<256).
-            const int32_t capacity = inner_ == 224 ? 32 : 8;
+            // Short rows use at most 240 Sort32 repeats (<256).
+            const int32_t capacity = inner_ == 160 ? 48 : (inner_ == 224 ? 32 : 8);
             const int32_t rowsPerCore = (rows_ + blockNum_ - 1) / blockNum_;
             batchRows_ = rowsPerCore < capacity ? rowsPerCore : capacity;
         }
@@ -310,14 +311,14 @@ private:
         AscendC::PipeBarrier<PIPE_V>();
     }
 
-    __aicore__ inline void BuildCompact224Pairs(
+    __aicore__ inline void BuildCompactShortPairs(
         const AscendC::LocalTensor<float>& pairA,
         const AscendC::LocalTensor<float>& pairB,
         int32_t rows)
     {
-        // Seven real top-8 leaves plus one -inf leaf, instead of sixteen
+        // Five or seven real top-8 leaves padded to eight, instead of sixteen
         // slots in the generic tree. Both first-level groups stay batched.
-        CopyTop8Prefixes(pairB, 0, 64, pairA, 0, 224, 224, rows);
+        CopyTop8Prefixes(pairB, 0, 64, pairA, 0, inner_, inner_, rows);
         MergeFourTop8(pairA, pairB, rows * 2);
 
         // Two contiguous 32-pair outputs per row: retain only each top-8.
@@ -401,7 +402,7 @@ private:
                 AscendC::PipeBarrier<PIPE_V>();
                 return false;
             }
-            BuildCompact224Pairs(pairA, pairB, rows);
+            BuildCompactShortPairs(pairA, pairB, rows);
             return true;
         }
         if (inner_ <= 512) {

@@ -78,7 +78,8 @@ if "AscendC::LocalTensor<float> input = staging;" not in body:
     raise SystemExit("FAIL: aligned rows do not sort directly from staging")
 legacy_input = "input = inputBuffer_.Get<float>();" in body
 aliased_input = (
-    "reuseScratch_ = k_ == 8 && (inner_ == 224 || inner_ == 896);" in body
+    "reuseScratch_ = (k_ == 8 && (inner_ == 224 || inner_ == 896)) ||" in body
+    and "(inner_ == 160 && (k_ == 6 || k_ == 7));" in body
     and "input = reuseScratch_ ? pairBBuffer_.Get<float>() : inputBuffer_.Get<float>();" in body
     and "pairBBuffer_.Get<int32_t>()[batchRows_ * inner_]" in body
 )
@@ -99,7 +100,7 @@ if "params.repeatTimes = static_cast<uint8_t>(rows)" not in body:
 legacy_stride = "VENDOR_FINAL_PAIR_FLOATS / 8" in body
 compact_stride = (
     "(reuseScratch_ ? 32 : VENDOR_FINAL_PAIR_FLOATS) / 8" in body
-    and "BuildCompact224Pairs(pairA, pairB, rows)" in body
+    and "BuildCompactShortPairs(pairA, pairB, rows)" in body
 )
 if "params.src0RepeatStride" not in body or not (legacy_stride or compact_stride):
     raise SystemExit("FAIL: true-k GatherMask does not advance by one final-pair row")
