@@ -1,0 +1,217 @@
+{
+  "baseline_ref": "2e24d982bd961dee21fa288ae27fee20ca2d7304",
+  "modes": {
+    "baseline": {
+      "profiles": {
+        "sim-r1-e256-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.13
+          }
+        },
+        "sim-r128-e256-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 44.89
+          },
+          "instruction_calls": {
+            "BAR": 300,
+            "VMS4V2": 136,
+            "VBS32": 8,
+            "VCONV": 16,
+            "MOV_UB_TO_UB": 24
+          }
+        },
+        "sim-r257-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 5.51,
+            "core1.veccore0": 5.24,
+            "core2.veccore0": 5.24,
+            "core3.veccore0": 5.24,
+            "core4.veccore0": 5.24,
+            "core5.veccore0": 5.24,
+            "core6.veccore0": 5.24,
+            "core7.veccore0": 5.24
+          }
+        },
+        "sim-r257-e241-k64-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 14.19,
+            "core1.veccore0": 13.55,
+            "core2.veccore0": 13.55,
+            "core3.veccore0": 13.56,
+            "core4.veccore0": 13.54,
+            "core5.veccore0": 13.56,
+            "core6.veccore0": 13.55,
+            "core7.veccore0": 13.56
+          }
+        },
+        "sim-r4096-e256-k64-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 44.91,
+            "core1.veccore0": 44.91,
+            "core10.veccore0": 44.92,
+            "core11.veccore0": 44.91,
+            "core12.veccore0": 44.92,
+            "core13.veccore0": 44.92,
+            "core14.veccore0": 44.92,
+            "core15.veccore0": 44.92,
+            "core16.veccore0": 44.91,
+            "core17.veccore0": 44.91,
+            "core18.veccore0": 44.91,
+            "core19.veccore0": 44.91,
+            "core2.veccore0": 44.91,
+            "core20.veccore0": 44.91,
+            "core21.veccore0": 44.92,
+            "core22.veccore0": 44.91,
+            "core23.veccore0": 44.92,
+            "core24.veccore0": 44.91,
+            "core25.veccore0": 44.91,
+            "core26.veccore0": 44.92,
+            "core27.veccore0": 44.92,
+            "core28.veccore0": 44.91,
+            "core29.veccore0": 44.91,
+            "core3.veccore0": 44.91,
+            "core30.veccore0": 44.91,
+            "core31.veccore0": 44.91,
+            "core4.veccore0": 44.91,
+            "core5.veccore0": 44.91,
+            "core6.veccore0": 44.91,
+            "core7.veccore0": 44.91,
+            "core8.veccore0": 44.92,
+            "core9.veccore0": 44.91
+          }
+        },
+        "sim-r64-e256-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 23.67
+          },
+          "instruction_calls": {
+            "BAR": 152,
+            "VMS4V2": 68,
+            "VBS32": 4,
+            "VCONV": 8,
+            "MOV_UB_TO_UB": 12
+          }
+        }
+      },
+      "header_sha256": "c8723357cd7673880875b6a3289289e39879f55ce4e81fbd27444218a2df57f8",
+      "source_matches_expected": true
+    },
+    "candidate": {
+      "profiles": {
+        "sim-r1-e256-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.31
+          }
+        },
+        "sim-r128-e256-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 44.64
+          },
+          "instruction_calls": {
+            "BAR": 148,
+            "VMS4V2": 16,
+            "VBS32": 8,
+            "VCONV": 16,
+            "MOV_UB_TO_UB": 16
+          }
+        },
+        "sim-r257-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 5.73,
+            "core1.veccore0": 5.45,
+            "core2.veccore0": 5.45,
+            "core3.veccore0": 5.45,
+            "core4.veccore0": 5.41,
+            "core5.veccore0": 5.45,
+            "core6.veccore0": 5.45,
+            "core7.veccore0": 5.45
+          }
+        },
+        "sim-r257-e241-k64-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 14.22,
+            "core1.veccore0": 13.52,
+            "core2.veccore0": 13.53,
+            "core3.veccore0": 13.53,
+            "core4.veccore0": 13.53,
+            "core5.veccore0": 13.52,
+            "core6.veccore0": 13.53,
+            "core7.veccore0": 13.54
+          }
+        },
+        "sim-r33-e225-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 14.22
+          }
+        },
+        "sim-r4096-e256-k64-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 44.66,
+            "core1.veccore0": 44.67,
+            "core10.veccore0": 44.66,
+            "core11.veccore0": 44.67,
+            "core12.veccore0": 44.66,
+            "core13.veccore0": 44.67,
+            "core14.veccore0": 44.66,
+            "core15.veccore0": 44.67,
+            "core16.veccore0": 44.67,
+            "core17.veccore0": 44.66,
+            "core18.veccore0": 44.66,
+            "core19.veccore0": 44.66,
+            "core2.veccore0": 44.66,
+            "core20.veccore0": 44.66,
+            "core21.veccore0": 44.66,
+            "core22.veccore0": 44.67,
+            "core23.veccore0": 44.66,
+            "core24.veccore0": 44.67,
+            "core25.veccore0": 44.67,
+            "core26.veccore0": 44.67,
+            "core27.veccore0": 44.66,
+            "core28.veccore0": 44.67,
+            "core29.veccore0": 44.66,
+            "core3.veccore0": 44.67,
+            "core30.veccore0": 44.66,
+            "core31.veccore0": 44.66,
+            "core4.veccore0": 44.66,
+            "core5.veccore0": 44.62,
+            "core6.veccore0": 44.67,
+            "core7.veccore0": 44.66,
+            "core8.veccore0": 44.66,
+            "core9.veccore0": 44.66
+          }
+        },
+        "sim-r513-e241-k64-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 24.69,
+            "core1.veccore0": 24.08,
+            "core2.veccore0": 24.07,
+            "core3.veccore0": 24.07,
+            "core4.veccore0": 24.07,
+            "core5.veccore0": 24.07,
+            "core6.veccore0": 24.06,
+            "core7.veccore0": 24.08
+          }
+        },
+        "sim-r64-e256-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 23.62
+          },
+          "instruction_calls": {
+            "BAR": 76,
+            "VMS4V2": 8,
+            "VBS32": 4,
+            "VCONV": 8,
+            "MOV_UB_TO_UB": 8
+          }
+        },
+        "sim-r65-e255-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 24.25
+          }
+        }
+      },
+      "header_sha256": "88630055bab6648086d8a6f97e589d6ef241eedfe92b3b1669bd385b8136b86f",
+      "source_matches_expected": true
+    }
+  }
+}

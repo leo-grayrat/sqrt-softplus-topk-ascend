@@ -8,3 +8,9 @@ tools/run_fp16_compact_c5_probe.sh text eol=lf
 tools/run_fp16_c5_judge_shape_probe.sh text eol=lf
 debug/fp32_large_scratch_reuse.patch text eol=lf whitespace=-blank-at-eol
 debug/fp32_k8_scratch_reuse.patch text eol=lf
+tools/run_fp16_padded_cast_probe.sh text eol=lf
+debug/fp16_padded_batch_cast.patch text eol=lf whitespace=-blank-at-eol
+tools/run_fp16_batch_merge_c8_probe.sh text eol=lf
+debug/fp16_c8_batch_merge_only.patch text eol=lf whitespace=-blank-at-eol
+debug/fp16_c8_native_sort.patch text eol=lf whitespace=-blank-at-eol
+tools/run_fp32_compact_c6_probe.sh text eol=lf

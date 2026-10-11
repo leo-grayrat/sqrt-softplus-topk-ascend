@@ -1729,6 +1729,59 @@ public:
     }
 
 private:
+    __aicore__ inline bool UseCompactShort() const
+    {
+        return inner_ == 160 && k_ >= 9 && k_ <= 16;
+    }
+
+    __aicore__ inline void BuildCompactShortPairs(
+        const AscendC::LocalTensor<float>& pairA,
+        const AscendC::LocalTensor<float>& pairB,
+        int32_t rows)
+    {
+        // Five Sort32 top-16 leaves become eight slots. Flatten the leaf
+        // prefixes first, then pad each row with one aligned row copy.
+        AscendC::DataCopyParams copy;
+        copy.blockCount = static_cast<uint16_t>(rows * 5);
+        copy.blockLen = 4;
+        copy.srcStride = 4;
+        copy.dstStride = 0;
+        AscendC::DataCopy(pairB, pairA, copy);
+        AscendC::PipeBarrier<PIPE_V>();
+        AscendC::Duplicate(pairA, -INFINITY, static_cast<uint32_t>(rows * 128 * 2));
+        AscendC::PipeBarrier<PIPE_V>();
+        copy.blockCount = static_cast<uint16_t>(rows);
+        copy.blockLen = 20;
+        copy.srcStride = 0;
+        copy.dstStride = 12;
+        AscendC::DataCopy(pairA, pairB, copy);
+        AscendC::PipeBarrier<PIPE_V>();
+        MergeFourTop16(pairB, pairA, rows * 2);
+
+        // Retain top-16 from two 64-pair lists per row.
+        copy.blockCount = static_cast<uint16_t>(rows * 2);
+        copy.blockLen = 4;
+        copy.srcStride = 12;
+        copy.dstStride = 0;
+        AscendC::DataCopy(pairA, pairB, copy);
+        AscendC::PipeBarrier<PIPE_V>();
+
+        // Two sorted length-16 lists are four sorted length-8 sublists.
+        // Full repeated merge writes 32 pairs per row into pairB.
+        AscendC::MrgSort4Info params;
+        for (int32_t i = 0; i < 4; ++i) params.elementLengths[i] = 8;
+        params.ifExhaustedSuspension = false;
+        params.validBit = 15;
+        params.repeatTimes = static_cast<uint16_t>(rows);
+        AscendC::MrgSortSrcList<float> srcList;
+        srcList.src1 = pairA[0];
+        srcList.src2 = pairA[16];
+        srcList.src3 = pairA[32];
+        srcList.src4 = pairA[48];
+        AscendC::MrgSort<float>(pairB, srcList, params);
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
     __aicore__ inline int32_t GroupValidRows(int32_t group) const
     {
         const int32_t firstRow = group * batchRows_;
@@ -1878,6 +1931,10 @@ private:
         const AscendC::LocalTensor<float>& pairB,
         int32_t rows)
     {
+        if (UseCompactShort()) {
+            BuildCompactShortPairs(pairA, pairB, rows);
+            return;
+        }
         if (inner_ > 128) {
             CopyTop16FromSort32(
                 pairB,
@@ -1910,7 +1967,7 @@ private:
         params.src0BlockStride = 1;
         params.repeatTimes = static_cast<uint8_t>(rows);
         params.src0RepeatStride =
-            static_cast<uint8_t>(VENDOR_MEDIUM_FINAL_PAIR_FLOATS / 8);
+            static_cast<uint8_t>(UseCompactShort() ? 8 : VENDOR_MEDIUM_FINAL_PAIR_FLOATS / 8);
         params.src1RepeatStride = 0;
         GatherMask(
             dst.ReinterpretCast<int32_t>(),
@@ -1954,7 +2011,7 @@ private:
         BuildFinalPairs(pairA, pairB, validRows);
 
         AscendC::LocalTensor<float> floatOut = outputQueue_.AllocTensor<float>();
-        ExtractKValues(floatOut, pairA, validRows);
+        ExtractKValues(floatOut, UseCompactShort() ? pairB : pairA, validRows);
 
         AscendC::LocalTensor<float> tmp = floatTmpBuffer_.Get<float>();
         StableSoftplusSqrt(

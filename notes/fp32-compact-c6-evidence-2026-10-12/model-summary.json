@@ -1,0 +1,251 @@
+{
+  "baseline_ref": "2e24d982bd961dee21fa288ae27fee20ca2d7304",
+  "modes": {
+    "baseline": {
+      "profiles": {
+        "sim-r1-e130-k15-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 2.87
+          }
+        },
+        "sim-r1024-e130-k15-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 12.26,
+            "core1.veccore0": 12.09,
+            "core10.veccore0": 12.07,
+            "core11.veccore0": 12.27,
+            "core12.veccore0": 12.23,
+            "core13.veccore0": 12.27,
+            "core14.veccore0": 12.25,
+            "core15.veccore0": 12.26,
+            "core16.veccore0": 12.27,
+            "core17.veccore0": 12.23,
+            "core18.veccore0": 12.24,
+            "core19.veccore0": 12.26,
+            "core2.veccore0": 12.26,
+            "core20.veccore0": 11.93,
+            "core21.veccore0": 12.26,
+            "core22.veccore0": 12.25,
+            "core23.veccore0": 12.26,
+            "core24.veccore0": 12.25,
+            "core25.veccore0": 12.25,
+            "core26.veccore0": 11.93,
+            "core27.veccore0": 12.26,
+            "core28.veccore0": 12.22,
+            "core29.veccore0": 12.26,
+            "core3.veccore0": 12.26,
+            "core30.veccore0": 12.25,
+            "core31.veccore0": 12.05,
+            "core4.veccore0": 12.26,
+            "core5.veccore0": 12.26,
+            "core6.veccore0": 12.26,
+            "core7.veccore0": 12.26,
+            "core8.veccore0": 12.26,
+            "core9.veccore0": 12.26
+          }
+        },
+        "sim-r128-e130-k15-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 38.01
+          },
+          "instruction_calls": {
+            "BAR": 126,
+            "VMS4V2": 8,
+            "VBS32": 4,
+            "MOV_UB_TO_UB": 40
+          }
+        },
+        "sim-r129-e161-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 13.52,
+            "core1.veccore0": 12.44,
+            "core2.veccore0": 12.44,
+            "core3.veccore0": 12.43,
+            "core4.veccore0": 12.43,
+            "core5.veccore0": 12.44,
+            "core6.veccore0": 12.44,
+            "core7.veccore0": 12.44
+          }
+        },
+        "sim-r257-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 18.72,
+            "core1.veccore0": 17.82,
+            "core2.veccore0": 17.81,
+            "core3.veccore0": 17.82,
+            "core4.veccore0": 17.82,
+            "core5.veccore0": 17.82,
+            "core6.veccore0": 17.8,
+            "core7.veccore0": 17.8
+          }
+        },
+        "sim-r257-e130-k15-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 12.68,
+            "core1.veccore0": 12.08,
+            "core2.veccore0": 11.92,
+            "core3.veccore0": 12.26,
+            "core4.veccore0": 12.24,
+            "core5.veccore0": 12.25,
+            "core6.veccore0": 12.22,
+            "core7.veccore0": 12.25
+          }
+        },
+        "sim-r64-e130-k15-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 20.18
+          },
+          "instruction_calls": {
+            "BAR": 64,
+            "VMS4V2": 4,
+            "VBS32": 2,
+            "MOV_UB_TO_UB": 20
+          }
+        }
+      },
+      "probe_sha256": "8d65c9ef14f3052ef4a396b7673f87d7f95990ad5e66109eed7acc45b0ddce32",
+      "header_sha256": "c8723357cd7673880875b6a3289289e39879f55ce4e81fbd27444218a2df57f8",
+      "source_matches_expected": true
+    },
+    "candidate": {
+      "profiles": {
+        "sim-r1-e130-k15-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 2.89
+          }
+        },
+        "sim-r1024-e130-k15-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 8.94,
+            "core1.veccore0": 8.9,
+            "core10.veccore0": 8.9,
+            "core11.veccore0": 8.93,
+            "core12.veccore0": 8.73,
+            "core13.veccore0": 8.93,
+            "core14.veccore0": 8.91,
+            "core15.veccore0": 8.92,
+            "core16.veccore0": 8.92,
+            "core17.veccore0": 8.92,
+            "core18.veccore0": 8.73,
+            "core19.veccore0": 8.93,
+            "core2.veccore0": 8.6,
+            "core20.veccore0": 8.89,
+            "core21.veccore0": 8.93,
+            "core22.veccore0": 8.92,
+            "core23.veccore0": 8.92,
+            "core24.veccore0": 8.91,
+            "core25.veccore0": 8.92,
+            "core26.veccore0": 8.73,
+            "core27.veccore0": 8.92,
+            "core28.veccore0": 8.89,
+            "core29.veccore0": 8.92,
+            "core3.veccore0": 8.93,
+            "core30.veccore0": 8.92,
+            "core31.veccore0": 8.89,
+            "core4.veccore0": 8.93,
+            "core5.veccore0": 8.92,
+            "core6.veccore0": 8.92,
+            "core7.veccore0": 8.93,
+            "core8.veccore0": 8.92,
+            "core9.veccore0": 8.92
+          }
+        },
+        "sim-r128-e130-k15-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 24.54
+          },
+          "instruction_calls": {
+            "BAR": 90,
+            "VMS4V2": 8,
+            "VBS32": 4,
+            "MOV_UB_TO_UB": 16
+          }
+        },
+        "sim-r129-e161-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 13.51,
+            "core1.veccore0": 12.45,
+            "core2.veccore0": 12.44,
+            "core3.veccore0": 12.43,
+            "core4.veccore0": 12.44,
+            "core5.veccore0": 12.44,
+            "core6.veccore0": 12.45,
+            "core7.veccore0": 12.45
+          }
+        },
+        "sim-r17-e130-k17-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 5.26,
+            "core1.veccore0": 4.25,
+            "core2.veccore0": 4.26,
+            "core3.veccore0": 4.26,
+            "core4.veccore0": 4.26,
+            "core5.veccore0": 3.97,
+            "core6.veccore0": 4.26,
+            "core7.veccore0": 4.26
+          }
+        },
+        "sim-r257-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 18.7,
+            "core1.veccore0": 17.79,
+            "core2.veccore0": 17.81,
+            "core3.veccore0": 17.81,
+            "core4.veccore0": 17.82,
+            "core5.veccore0": 17.81,
+            "core6.veccore0": 17.8,
+            "core7.veccore0": 17.8
+          }
+        },
+        "sim-r257-e130-k15-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 9.33,
+            "core1.veccore0": 8.73,
+            "core2.veccore0": 8.7,
+            "core3.veccore0": 8.9,
+            "core4.veccore0": 8.89,
+            "core5.veccore0": 8.88,
+            "core6.veccore0": 8.88,
+            "core7.veccore0": 8.89
+          }
+        },
+        "sim-r513-e136-k10-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 14.43,
+            "core1.veccore0": 13.64,
+            "core2.veccore0": 13.62,
+            "core3.veccore0": 13.95,
+            "core4.veccore0": 13.82,
+            "core5.veccore0": 13.82,
+            "core6.veccore0": 13.78,
+            "core7.veccore0": 13.82
+          }
+        },
+        "sim-r64-e130-k15-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 13.6
+          },
+          "instruction_calls": {
+            "BAR": 46,
+            "VMS4V2": 4,
+            "VBS32": 2,
+            "MOV_UB_TO_UB": 8
+          }
+        },
+        "sim-r65-e129-k9-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 14.08
+          }
+        },
+        "sim-r65-e159-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 14.1
+          }
+        }
+      },
+      "probe_sha256": "8d65c9ef14f3052ef4a396b7673f87d7f95990ad5e66109eed7acc45b0ddce32",
+      "header_sha256": "b949d1c0fb9fe7756532bb98f2d00406cd94c113e36105c069f9d9c276595b40",
+      "source_matches_expected": true
+    }
+  }
+}
