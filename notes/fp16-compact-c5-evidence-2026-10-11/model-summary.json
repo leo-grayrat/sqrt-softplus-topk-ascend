@@ -1,0 +1,225 @@
+{
+  "baseline_ref": "da7197819a225f703ae4a6409def92676d34a0fd",
+  "modes": {
+    "baseline": {
+      "profiles": {
+        "sim-r1-e200-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.25
+          }
+        },
+        "sim-r121-e512-k10-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 8.13,
+            "core1.veccore0": 7.5,
+            "core2.veccore0": 7.5,
+            "core3.veccore0": 7.5,
+            "core4.veccore0": 7.49,
+            "core5.veccore0": 7.49,
+            "core6.veccore0": 7.5,
+            "core7.veccore0": 7.49
+          }
+        },
+        "sim-r128-e200-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 42.94
+          },
+          "instruction_calls": {
+            "BAR": 270,
+            "VMS4V2": 8,
+            "VBS32": 4,
+            "MOV_UB_TO_UB": 44
+          }
+        },
+        "sim-r257-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 5.8,
+            "core1.veccore0": 5.37,
+            "core2.veccore0": 5.37,
+            "core3.veccore0": 5.37,
+            "core4.veccore0": 5.37,
+            "core5.veccore0": 5.37,
+            "core6.veccore0": 5.37,
+            "core7.veccore0": 5.37
+          }
+        },
+        "sim-r512-e200-k16-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 7.85,
+            "core1.veccore0": 7.83,
+            "core10.veccore0": 7.83,
+            "core11.veccore0": 7.84,
+            "core12.veccore0": 7.84,
+            "core13.veccore0": 7.84,
+            "core14.veccore0": 7.83,
+            "core15.veccore0": 7.84,
+            "core16.veccore0": 7.83,
+            "core17.veccore0": 7.83,
+            "core18.veccore0": 7.83,
+            "core19.veccore0": 7.83,
+            "core2.veccore0": 7.84,
+            "core20.veccore0": 7.83,
+            "core21.veccore0": 7.83,
+            "core22.veccore0": 7.82,
+            "core23.veccore0": 7.83,
+            "core24.veccore0": 7.83,
+            "core25.veccore0": 7.83,
+            "core26.veccore0": 7.52,
+            "core27.veccore0": 7.83,
+            "core28.veccore0": 7.83,
+            "core29.veccore0": 7.82,
+            "core3.veccore0": 7.84,
+            "core30.veccore0": 7.82,
+            "core31.veccore0": 7.82,
+            "core4.veccore0": 7.85,
+            "core5.veccore0": 7.83,
+            "core6.veccore0": 7.85,
+            "core7.veccore0": 7.84,
+            "core8.veccore0": 7.83,
+            "core9.veccore0": 7.84
+          }
+        },
+        "sim-r64-e200-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 22.82
+          },
+          "instruction_calls": {
+            "BAR": 136,
+            "VMS4V2": 4,
+            "VBS32": 2,
+            "MOV_UB_TO_UB": 22
+          }
+        }
+      },
+      "header_sha256": "6aa8481e031c69a2eb659d147d9a9a84eb33cd3d8d99d3cecba25f5c8279f0c6",
+      "source_matches_expected": true
+    },
+    "candidate": {
+      "profiles": {
+        "sim-r1-e200-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 2.94
+          }
+        },
+        "sim-r121-e512-k10-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 7.89,
+            "core1.veccore0": 7.43,
+            "core2.veccore0": 7.42,
+            "core3.veccore0": 7.42,
+            "core4.veccore0": 7.43,
+            "core5.veccore0": 7.42,
+            "core6.veccore0": 7.42,
+            "core7.veccore0": 7.43
+          }
+        },
+        "sim-r128-e200-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 28.97
+          },
+          "instruction_calls": {
+            "BAR": 226,
+            "VMS4V2": 8,
+            "VBS32": 4,
+            "MOV_UB_TO_UB": 12
+          }
+        },
+        "sim-r257-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 5.51,
+            "core1.veccore0": 5.25,
+            "core2.veccore0": 5.24,
+            "core3.veccore0": 5.24,
+            "core4.veccore0": 5.24,
+            "core5.veccore0": 5.24,
+            "core6.veccore0": 5.25,
+            "core7.veccore0": 5.24
+          }
+        },
+        "sim-r257-e200-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 10.16,
+            "core1.veccore0": 9.97,
+            "core2.veccore0": 9.81,
+            "core3.veccore0": 9.96,
+            "core4.veccore0": 9.83,
+            "core5.veccore0": 9.97,
+            "core6.veccore0": 9.97,
+            "core7.veccore0": 9.83
+          }
+        },
+        "sim-r512-e200-k16-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 6.06,
+            "core1.veccore0": 6.06,
+            "core10.veccore0": 6.06,
+            "core11.veccore0": 6.05,
+            "core12.veccore0": 6.05,
+            "core13.veccore0": 6.06,
+            "core14.veccore0": 6.05,
+            "core15.veccore0": 6.06,
+            "core16.veccore0": 6.05,
+            "core17.veccore0": 6.05,
+            "core18.veccore0": 6.05,
+            "core19.veccore0": 6.05,
+            "core2.veccore0": 6.06,
+            "core20.veccore0": 6.05,
+            "core21.veccore0": 6.04,
+            "core22.veccore0": 6.05,
+            "core23.veccore0": 6.05,
+            "core24.veccore0": 6.04,
+            "core25.veccore0": 6.05,
+            "core26.veccore0": 6.04,
+            "core27.veccore0": 6.05,
+            "core28.veccore0": 6.05,
+            "core29.veccore0": 6.05,
+            "core3.veccore0": 6.06,
+            "core30.veccore0": 6.05,
+            "core31.veccore0": 6.04,
+            "core4.veccore0": 6.05,
+            "core5.veccore0": 6.06,
+            "core6.veccore0": 6.05,
+            "core7.veccore0": 6.06,
+            "core8.veccore0": 6.06,
+            "core9.veccore0": 6.05
+          }
+        },
+        "sim-r513-e209-k9-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 16.16,
+            "core1.veccore0": 15.65,
+            "core2.veccore0": 15.63,
+            "core3.veccore0": 15.63,
+            "core4.veccore0": 15.65,
+            "core5.veccore0": 15.64,
+            "core6.veccore0": 15.63,
+            "core7.veccore0": 15.64
+          }
+        },
+        "sim-r64-e200-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 15.75
+          },
+          "instruction_calls": {
+            "BAR": 114,
+            "VMS4V2": 4,
+            "VBS32": 2,
+            "MOV_UB_TO_UB": 6
+          }
+        },
+        "sim-r65-e193-k9-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 16.28
+          }
+        },
+        "sim-r65-e223-k15-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 15.33
+          }
+        }
+      },
+      "header_sha256": "c8723357cd7673880875b6a3289289e39879f55ce4e81fbd27444218a2df57f8",
+      "source_matches_expected": true
+    }
+  }
+}

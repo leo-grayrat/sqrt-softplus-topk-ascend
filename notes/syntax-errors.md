@@ -2,6 +2,12 @@
 
 调试约定：每发现一个明确问题，先建 GitHub issue；修复后保持 issue 打开，直到本地或 CANNJudge 重新验证该问题不再出现，再关闭。
 
+## 2026-10-11：FP16 CPU 模板 kernel 注册限制（#64）
+
+直接调用真实 run_kernel 时，main 和候选均报 `Kernel mode not found ... sqrt_softplus_top_k_dispatch_custom<half>`。现有 FP16 probe 已用非模板包装绕开同一限制。仅 CPU 构建沿用包装方式调用生产 RunVendorTopKDispatch；simulator 仍直接 run_kernel，检查 host tiling 和实际模板 launch。生产源码不因调试器改变，不把 CPU 包装结果写成完整 host 入口验证。
+
+包装 global 的定义也必须对 device 编译可见，不能整体放入 `#ifdef ASCENDC_CPU_DEBUG`，否则生成 mode registry 时找不到它，同样报错。只对调用位置条件编译，沿用既有 probe 的全局定义布局。
+
 ## 1. host 函数不能直接从 `__aicore__` 调用
 
 症状：

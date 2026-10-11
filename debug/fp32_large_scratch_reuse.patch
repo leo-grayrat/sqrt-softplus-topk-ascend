@@ -1,0 +1,80 @@
+diff --git a/submission/dense_repeat_override.h b/submission/dense_repeat_override.h
+index 150d919..350c362 100644
+--- a/submission/dense_repeat_override.h
++++ b/submission/dense_repeat_override.h
+@@ -1969,7 +1969,13 @@ public:
+         inner_ = inner;
+         k_ = k;
+         blockNum_ = blockNum;
++        reuseScratch_ = k_ == 64 && inner_ == 1024;
+         batchRows_ = SelectVendorBatchRows(rows_, blockNum_, inner_);
++        if (reuseScratch_) {
++            // 7 rows use 224 Sort32 repeats; 8 rows would exceed 255.
++            const int32_t rowsPerCore = (rows_ + blockNum_ - 1) / blockNum_;
++            batchRows_ = rowsPerCore < 7 ? rowsPerCore : 7;
++        }
+         groupCount_ = (rows_ + batchRows_ - 1) / batchRows_;
+         activeBlockNum_ = groupCount_ < blockNum_ ? groupCount_ : blockNum_;
+ 
+@@ -1990,8 +1996,10 @@ public:
+             static_cast<uint32_t>(batchRows_ * k_) * sizeof(float);
+ 
+         pipe_.InitBuffer(inputQueue_, 2, batchStageBytes);
+-        pipe_.InitBuffer(inputBuffer_, batchInputBytes);
+-        pipe_.InitBuffer(indexBuffer_, batchInputBytes);
++        if (!reuseScratch_) {
++            pipe_.InitBuffer(inputBuffer_, batchInputBytes);
++            pipe_.InitBuffer(indexBuffer_, batchInputBytes);
++        }
+         pipe_.InitBuffer(pairABuffer_, batchPairBytes);
+         pipe_.InitBuffer(pairBBuffer_, batchPairBytes);
+         pipe_.InitBuffer(outputQueue_, 1, batchOutputBytes);
+@@ -2006,7 +2014,7 @@ public:
+             return;
+         }
+ 
+-        InitIndexBatch();
++        if (!reuseScratch_) InitIndexBatch();
+         InitValuePattern();
+ 
+         int32_t group = blockIdx;
+@@ -2277,17 +2285,27 @@ private:
+         const int32_t validRows = GroupValidRows(group);
+ 
+         AscendC::LocalTensor<float> staging = inputQueue_.DeQue<float>();
++        AscendC::LocalTensor<float> pairA = pairABuffer_.Get<float>();
++        AscendC::LocalTensor<float> pairB = pairBBuffer_.Get<float>();
+         AscendC::LocalTensor<float> input = staging;
+         if (copyAlignedElems_ < inner_) {
+-            input = inputBuffer_.Get<float>();
++            input = reuseScratch_ ? pairB : inputBuffer_.Get<float>();
+             RearrangeRows(input, staging, validRows);
+         }
+ 
+-        AscendC::LocalTensor<int32_t> signedIndex = indexBuffer_.Get<int32_t>();
++        // Sort32 consumes both halves before the barrier. Merge then owns
++        // all of pairB, so the zero payload must be refreshed every batch.
++        AscendC::LocalTensor<int32_t> signedIndex;
++        if (reuseScratch_) {
++            signedIndex = pairB[batchRows_ * inner_].ReinterpretCast<int32_t>();
++            AscendC::Duplicate(signedIndex, static_cast<int32_t>(0),
++                              static_cast<uint32_t>(validRows * inner_));
++            AscendC::PipeBarrier<PIPE_V>();
++        } else {
++            signedIndex = indexBuffer_.Get<int32_t>();
++        }
+         AscendC::LocalTensor<uint32_t> index =
+             signedIndex.ReinterpretCast<uint32_t>();
+-        AscendC::LocalTensor<float> pairA = pairABuffer_.Get<float>();
+-        AscendC::LocalTensor<float> pairB = pairBBuffer_.Get<float>();
+ 
+         AscendC::Sort32<float>(
+             pairA,
+@@ -2343,6 +2361,7 @@ private:
+     AscendC::GlobalTensor<float> inputGm_;
+     AscendC::GlobalTensor<float> outputGm_;
+ 
++    bool reuseScratch_ = false;
+     int32_t rows_ = 0;
+     int32_t experts_ = 0;
+     int32_t inner_ = 0;
