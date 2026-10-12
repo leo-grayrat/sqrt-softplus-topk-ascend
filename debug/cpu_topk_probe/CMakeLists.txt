@@ -112,3 +112,23 @@ foreach(probe_target IN ITEMS
         $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>
     )
 endforeach()
+
+foreach(kind IN ITEMS full raw baseline)
+ add_executable(topk_reduction_${kind} topk_reduction_probe.asc)
+ target_link_libraries(topk_reduction_${kind} PRIVATE tiling_api register platform unified_dlog dl m graph_base)
+ target_compile_options(topk_reduction_${kind} PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)
+endforeach()
+target_compile_definitions(topk_reduction_raw PRIVATE VALUES_ONLY_RAW=1)
+target_compile_definitions(topk_reduction_baseline PRIVATE VALUES_ONLY_BASELINE=1)
+
+foreach(kind IN ITEMS full raw baseline)
+ add_executable(topk_block_reduce_${kind} topk_block_reduce_probe.asc)
+ target_link_libraries(topk_block_reduce_${kind} PRIVATE tiling_api register platform unified_dlog dl m graph_base)
+ target_compile_options(topk_block_reduce_${kind} PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)
+endforeach()
+target_compile_definitions(topk_block_reduce_raw PRIVATE VALUES_ONLY_RAW=1)
+target_compile_definitions(topk_block_reduce_baseline PRIVATE VALUES_ONLY_BASELINE=1)
+
+add_executable(topk_c12_block_production_probe topk_c12_block_production_probe.asc)
+target_link_libraries(topk_c12_block_production_probe PRIVATE tiling_api register platform unified_dlog dl m graph_base)
+target_compile_options(topk_c12_block_production_probe PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)

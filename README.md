@@ -10,9 +10,11 @@
 
 下一阶段转向case12的结构性吞吐问题，先隔离完整成本，再验证精确跨行归约。此前Cast、case8及case15 scratch负结果保留在notes，不作为活动生产候选。
 
+活动候选`exp/c12-batched-reduction`采用精确分块最大值筛选，FP16 E256/k3每行排序256→64个值，去掉多层合并。生产入口96/192行模型减少46.59%/51.91%，CPU双方43/43、完整设备编译及18次最终仿真输出检查通过；尚待Judge。[实现、全形状测量与局限](notes/c12-block-reduction-2026-10-12.md)。
+
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
-- [当前状态、完整 15 点和阶段集成范围](notes/current-status-2026-10-11-c5.md)
+- [当前主线完整15点](notes/current-status-2026-10-12-c6.md)
 - [上一轮 case7/9与完整基线](notes/current-status-2026-10-11-c7-c9.md)
 - [上一轮 case 3 连续合并与完整基线](notes/current-status-2026-10-11-c3.md)
 - [上一轮 case 13 紧凑合并与完整基线](notes/current-status-2026-10-11.md)

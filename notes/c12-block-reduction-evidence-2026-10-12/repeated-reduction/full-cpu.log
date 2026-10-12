@@ -1,0 +1,227 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN values-only-comparison rows=1 E=256 k=2 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4412] exit success!
+RUN values-only-comparison rows=3 E=256 k=2 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4414] exit success!
+RUN values-only-comparison rows=30 E=256 k=2 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4416] exit success!
+RUN values-only-comparison rows=31 E=256 k=2 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4420] exit success!
+RUN values-only-comparison rows=32 E=256 k=2 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4422] exit success!
+RUN values-only-comparison rows=62 E=256 k=2 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4424] exit success!
+RUN values-only-comparison rows=63 E=256 k=2 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4426] exit success!
+RUN values-only-comparison rows=124 E=256 k=2 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4453] exit success!
+RUN values-only-comparison rows=17 E=256 k=2 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4471] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 4472] exit success!
+[SUCCESS][CORE_2][pid 4473] exit success!
+[SUCCESS][CORE_3][pid 4474] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 4475] exit success!
+[SUCCESS][CORE_5][pid 4476] exit success!
+[SUCCESS][CORE_6][pid 4477] exit success!
+[SUCCESS][CORE_7][pid 4478] exit success!
+RUN values-only-comparison rows=249 E=256 k=2 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4487] exit success!
+[SUCCESS][CORE_1][pid 4488] exit success!
+[SUCCESS][CORE_2][pid 4489] exit success!
+[SUCCESS][CORE_3][pid 4490] exit success!
+[SUCCESS][CORE_4][pid 4491] exit success!
+[SUCCESS][CORE_5][pid 4492] exit success!
+[SUCCESS][CORE_6][pid 4493] exit success!
+[SUCCESS][CORE_7][pid 4494] exit success!
+RUN values-only-comparison rows=497 E=256 k=2 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4506] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 4507] exit success!
+[SUCCESS][CORE_2][pid 4508] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 4509] exit success!
+[SUCCESS][CORE_4][pid 4510] exit success!
+[SUCCESS][CORE_5][pid 4511] exit success!
+[SUCCESS][CORE_6][pid 4512] exit success!
+[SUCCESS][CORE_7][pid 4513] exit success!
+RUN values-only-comparison rows=1 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4530] exit success!
+RUN values-only-comparison rows=3 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4532] exit success!
+RUN values-only-comparison rows=30 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4534] exit success!
+RUN values-only-comparison rows=31 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4536] exit success!
+RUN values-only-comparison rows=32 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4538] exit success!
+RUN values-only-comparison rows=62 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4540] exit success!
+RUN values-only-comparison rows=63 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4542] exit success!
+RUN values-only-comparison rows=124 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4544] exit success!
+RUN values-only-comparison rows=17 E=256 k=3 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4550] exit success!
+[SUCCESS][CORE_1][pid 4551] exit success!
+[SUCCESS][CORE_2][pid 4552] exit success!
+[SUCCESS][CORE_3][pid 4553] exit success!
+[SUCCESS][CORE_4][pid 4554] exit success!
+[SUCCESS][CORE_5][pid 4555] exit success!
+[SUCCESS][CORE_6][pid 4556] exit success!
+[SUCCESS][CORE_7][pid 4557] exit success!
+RUN values-only-comparison rows=249 E=256 k=3 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4566] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 4567] exit success!
+[SUCCESS][CORE_2][pid 4568] exit success!
+[SUCCESS][CORE_3][pid 4569] exit success!
+[SUCCESS][CORE_4][pid 4570] exit success!
+[SUCCESS][CORE_5][pid 4571] exit success!
+[SUCCESS][CORE_6][pid 4572] exit success!
+[SUCCESS][CORE_7][pid 4573] exit success!
+RUN values-only-comparison rows=497 E=256 k=3 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4582] exit success!
+[SUCCESS][CORE_1][pid 4583] exit success!
+[SUCCESS][CORE_2][pid 4584] exit success!
+[SUCCESS][CORE_3][pid 4585] exit success!
+[SUCCESS][CORE_4][pid 4586] exit success!
+[SUCCESS][CORE_5][pid 4587] exit success!
+[SUCCESS][CORE_6][pid 4588] exit success!
+[SUCCESS][CORE_7][pid 4589] exit success!
+RUN values-only-comparison rows=1 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4598] exit success!
+RUN values-only-comparison rows=3 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4600] exit success!
+RUN values-only-comparison rows=30 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4602] exit success!
+RUN values-only-comparison rows=31 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4604] exit success!
+RUN values-only-comparison rows=32 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4606] exit success!
+RUN values-only-comparison rows=62 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4608] exit success!
+RUN values-only-comparison rows=63 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4610] exit success!
+RUN values-only-comparison rows=124 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4612] exit success!
+RUN values-only-comparison rows=17 E=256 k=4 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4614] exit success!
+[SUCCESS][CORE_1][pid 4615] exit success!
+[SUCCESS][CORE_2][pid 4616] exit success!
+[SUCCESS][CORE_3][pid 4617] exit success!
+[SUCCESS][CORE_4][pid 4618] exit success!
+[SUCCESS][CORE_5][pid 4619] exit success!
+[SUCCESS][CORE_6][pid 4620] exit success!
+[SUCCESS][CORE_7][pid 4621] exit success!
+RUN values-only-comparison rows=249 E=256 k=4 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4630] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 4631] exit success!
+[SUCCESS][CORE_2][pid 4632] exit success!
+[SUCCESS][CORE_3][pid 4633] exit success!
+[SUCCESS][CORE_4][pid 4634] exit success!
+[SUCCESS][CORE_5][pid 4635] exit success!
+[SUCCESS][CORE_6][pid 4636] exit success!
+[SUCCESS][CORE_7][pid 4637] exit success!
+RUN values-only-comparison rows=497 E=256 k=4 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 4646] exit success!
+[SUCCESS][CORE_1][pid 4647] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 4648] exit success!
+[SUCCESS][CORE_3][pid 4649] exit success!
+[SUCCESS][CORE_4][pid 4650] exit success!
+[SUCCESS][CORE_5][pid 4651] exit success!
+[SUCCESS][CORE_6][pid 4652] exit success!
+[SUCCESS][CORE_7][pid 4653] exit success!
+PASS: 33 values-only comparison cases

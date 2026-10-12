@@ -1,0 +1,30 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN values-only-comparison rows=1 E=256 k=2 cores=1
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][Block_0][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/asc/impl/basic_api/dav_c220/kernel_operator_vec_scatter_impl.h:32][ScatterImpl][798] Scatter is not supported on current device.
+[ERROR][CORE_0][pid 798] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x000000000044e691: Handler(int) at ??:?
+[#3] 0x0000000000457207: void AscendC::ScatterImpl<float>(float*, float*, unsigned int*, unsigned int, unsigned int, unsigned long, unsigned char, unsigned char) at ??:?
+[#4] 0x0000000000456f51: void AscendC::Scatter<float>(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<unsigned int> const&, unsigned int, unsigned long, unsigned char, unsigned char) at ??:?
+[#5] 0x0000000000455eaf: void AscendC::Scatter<float>(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<float> const&, AscendC::LocalTensor<unsigned int> const&, unsigned int, unsigned int) at ??:?
+[#6] 0x000000000045088a: ReductionResearchKernel::Compute(int) at ??:?
+[#7] 0x000000000044f72a: ReductionResearchKernel::Process() at ??:?
+[#8] 0x0000000000408e02: (anonymous namespace)::topk_fp16_vendor_cpu_debug_kernel(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_reduction_probe.asc:?
+[#9] 0x000000000044e305: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, int, AscendC::tiling::TopkTiling) at ??:?
+[#10] 0x00000000003e8a3b: main at ??:?
+[#11] 0x00000000003e2cb4: _start at ??:?
+
+[MISMATCH] rows=1 E=256 k=2 cores=1 row=0 i=0 actual=0 exact=5.47722578 hostHalf=5.47656 tol=0.00195513 rawTop=30
