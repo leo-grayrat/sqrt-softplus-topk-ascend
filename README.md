@@ -6,13 +6,13 @@
 
 ## 当前主线
 
-`main` 以用户Judge验证的PR #70为当前阶段基线：15/15 Pass、全部错误占比0.00%，case6 **10.29→8.50 us，减少17.40%**。[完整同次15点结果](notes/current-status-2026-10-12-c6.md)。
+`main` 以PR #72的精确分块筛选阶段为基线：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case12 **122.37→49.24 us，减少59.76%**。[同次完整15点](notes/current-status-2026-10-12-c12.md)。[实现与所有模型/负结果](notes/c12-block-reduction-2026-10-12.md)。
 
-下一阶段转向case12的结构性吞吐问题，先隔离完整成本，再验证精确跨行归约。此前Cast、case8及case15 scratch负结果保留在notes，不作为活动生产候选。
+case14/15仍为536.41 us/1.65 ms。下一阶段从本基线研究case14 FP16 E512/k10的精确分块筛选，停止继续局部打磨case12。
 
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
-- [当前状态、完整 15 点和阶段集成范围](notes/current-status-2026-10-11-c5.md)
+- [当前主线完整15点](notes/current-status-2026-10-12-c12.md)
 - [上一轮 case7/9与完整基线](notes/current-status-2026-10-11-c7-c9.md)
 - [上一轮 case 3 连续合并与完整基线](notes/current-status-2026-10-11-c3.md)
 - [上一轮 case 13 紧凑合并与完整基线](notes/current-status-2026-10-11.md)
@@ -63,7 +63,7 @@ sqrt(softplus(TopK(x)))
 
 每个大阶段只维护一个活动实验分支，从最新 main 创建。阶段完成后，经本地验证、用户完整 Judge 和 PR 合入 main，再开始下一阶段；不从上一条实验分支继续串接新的长期开发。
 
-现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/fp32-compact-c6`，上一轮为 `exp/fp32-compact-c7-c9`；更早六条 exp 分支清单见 2026-10-04 状态文档。
+现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/c12-batched-reduction`，上一轮为 `exp/fp32-compact-c7-c9`；更早六条 exp 分支清单见 2026-10-04 状态文档。
 
 ## 验证原则
 

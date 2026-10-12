@@ -126,3 +126,13 @@ Failed to check validBit value in MrgSort, its valid value is 3 / 7 / 15
 2026-10-04，#49 基线 probe 调用真实 run_kernel 时，CPU 环境需先通过 `PlatformAscendCManager::GetInstance("Ascend910B1")` 初始化平台，否则 host tiling 可能直接失败并未启动 kernel。
 
 初始化后，原有通用 TopK 路径被 CANN 9 CPU 检查器拒绝：未使用的默认 `LocalTensor<int32_t> srcIndexLocal` 被识别为 GM，报 `Failed to check tensor position of srcIndexLocal`。没有禁用检查器或修改旧提交；旧路径改用 simulator 验证，32/64 行均通过。新增 medium-k 路径绕过高阶 TopK，CPU 31/31 通过。不要把这个 CPU 失败描述成已有 Judge 版本在真机计算错误，也不要声称基线 CPU 通过。
+
+## 10. SDK 声明 Scatter 不代表 dav_c220 支持
+
+2026-10-12，#71重复归约原型在CPU执行Scatter时被明确拒绝：`Scatter is not supported on current device`。CANN9接口头有模板声明，但实际`asc/impl/basic_api/dav_c220/kernel_operator_vec_scatter_impl.h`调用`ASCENDC_REPORT_NOT_SUPPORT`。检查产品实现后撤回Scatter，改用索引归约、Compare EQ和Select；没有禁用检查器。首次失败日志归档在本阶段evidence/failures。
+
+## 11. 偏移源视图的 CPU Gather 模型异常
+
+2026-10-12，#71重复归约中，从不同rank的归约源子视图、非零srcBaseAddr读取索引，CPU模型出现读回-inf和后续索引表破坏；同一个3行设备sim用例通过。缩小最终排序源视图解决了一个跨页SIGSEGV，但单独收紧索引源视图不足以解决全部问题。最终将每轮归约结果先物化到独立根缓冲，Gather只用根张量及srcBaseAddr0，raw/full各33/33通过。该记录限定于此CPU模型复现，不推广为硬件Gather禁止子视图。
+
+分块筛选batch48还曾在CPU Gather模型跨页写入处SIGSEGV；batch32的51组研究和43组生产回归通过。本候选取32，不据这个异常认定真机有32KiB源张量限制；48版本没有交付。

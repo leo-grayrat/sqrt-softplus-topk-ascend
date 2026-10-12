@@ -1,0 +1,50 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN values-only-comparison rows=3 E=256 k=3 cores=1
+[TmSim]: Run in serial mode.
+INPUT rank=0 lane61=38 lane62=39 lane63=40 off62=88 laneconst62=62
+BROADCAST rank=0 index62=63 index63=63
+C12 rank=0 row28 j=0 value=27 bits=1104674816
+C12 rank=0 row28 j=1 value=0 bits=0
+C12 rank=0 row28 j=2 value=15.9297 bits=1098833920
+C12 rank=0 row28 j=3 value=6.16571e-44 bits=44
+C12 rank=0 row28 j=4 value=14.2969 bits=1097121792
+C12 rank=0 row28 j=5 value=8.82818e-44 bits=63
+C12 rank=0 row28 j=6 value=40 bits=1109393408
+C12 rank=0 row28 j=7 value=8.82818e-44 bits=63
+INPUT rank=1 lane61=38 lane62=39 lane63=-inf off62=88 laneconst62=62
+BROADCAST rank=1 index62=-8388608 index63=-8388608
+C12 rank=1 row28 j=0 value=14.5 bits=1097334784
+C12 rank=1 row28 j=1 value=2.8026e-45 bits=2
+C12 rank=1 row28 j=2 value=15.7188 bits=1098612736
+C12 rank=1 row28 j=3 value=5.1848e-44 bits=37
+C12 rank=1 row28 j=4 value=14.0859 bits=1096900608
+C12 rank=1 row28 j=5 value=7.84727e-44 bits=56
+C12 rank=1 row28 j=6 value=39 bits=1109131264
+C12 rank=1 row28 j=7 value=8.68805e-44 bits=62
+INPUT rank=2 lane61=38 lane62=39 lane63=-inf off62=88 laneconst62=62
+C12 rank=2 row28 j=0 value=14.1875 bits=1097007104
+C12 rank=2 row28 j=1 value=8.26766e-44 bits=59
+C12 rank=2 row28 j=2 value=15.4375 bits=1098317824
+C12 rank=2 row28 j=3 value=4.2039e-44 bits=30
+C12 rank=2 row28 j=4 value=13.8125 bits=1096613888
+C12 rank=2 row28 j=5 value=6.86636e-44 bits=49
+C12 rank=2 row28 j=6 value=39 bits=1109131264
+C12 rank=2 row28 j=7 value=8.68805e-44 bits=62
+PACK row28 j=0 value=27 offset=64
+PACK row28 j=1 value=15.9297 offset=72
+PACK row28 j=2 value=14.2969 offset=80
+PACK row28 j=3 value=40 offset=88
+PACK row28 j=4 value=14.5 offset=160
+PACK row28 j=5 value=15.7188 offset=168
+PACK row28 j=6 value=14.0859 offset=176
+PACK row28 j=7 value=39 offset=184
+PACK row28 j=8 value=14.1875 offset=256
+PACK row28 j=9 value=15.4375 offset=264
+PACK row28 j=10 value=13.8125 offset=272
+PACK row28 j=11 value=39 offset=280
+SORT row28 j=0 value=40
+SORT row28 j=1 value=0
+SORT row28 j=2 value=39
+SORT row28 j=3 value=0
+[SUCCESS][CORE_0][pid 641] exit success!
+[MISMATCH] rows=3 E=256 k=3 cores=1 row=2 i=2 actual=39 exact=38 hostHalf=38 tol=0.015627 rawTop=38
