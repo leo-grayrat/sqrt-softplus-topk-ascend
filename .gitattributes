@@ -15,3 +15,4 @@ debug/fp16_c8_batch_merge_only.patch text eol=lf whitespace=-blank-at-eol
 debug/fp16_c8_native_sort.patch text eol=lf whitespace=-blank-at-eol
 tools/run_fp32_compact_c6_probe.sh text eol=lf
 tools/run_c12*.sh text eol=lf
+tools/run_c14*.sh text eol=lf

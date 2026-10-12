@@ -8,7 +8,7 @@
 
 `main` 以PR #72的精确分块筛选阶段为基线：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case12 **122.37→49.24 us，减少59.76%**。[同次完整15点](notes/current-status-2026-10-12-c12.md)。[实现与所有模型/负结果](notes/c12-block-reduction-2026-10-12.md)。
 
-case14/15仍为536.41 us/1.65 ms。下一阶段从本基线研究case14 FP16 E512/k10的精确分块筛选，停止继续局部打磨case12。
+case14/15的已验证Judge基线仍为536.41 us/1.65 ms。`exp/c14-block-max-selection`已完成case14精确分块筛选候选：4096行/32核生产入口仿真49.35→35.74 us（减少27.58%），等待完整Judge后再合main。[实现、测量与失败记录](notes/c14-block-reduction-2026-10-12.md)。仿真收益不是Judge结果。
 
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 

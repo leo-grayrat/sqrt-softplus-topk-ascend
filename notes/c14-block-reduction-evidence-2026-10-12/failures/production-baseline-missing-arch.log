@@ -1,0 +1,38 @@
+-- System processer: x86_64
+-- CMAKE_ASC_COMPILER: /home/leo/Ascend/cann-9.0.0/bin/bisheng
+-- ASCEND_CANN_PACKAGE_LINUX_PATH: /home/leo/Ascend/cann-9.0.0/x86_64-linux
+-- CMAKE_ASC_LLD_LINKER: /home/leo/Ascend/cann-9.0.0/x86_64-linux/ccec_compiler/bin/ld.lld
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/leo/cann-c14-production-baseline-v1/cpu
+[ 50%] Building ASC object CMakeFiles/topk_c14_block_production_probe.dir/topk_c14_block_production_probe.asc.o
+LLVM ERROR: PlugIn Error: no aicore arch specified.
+
+PLEASE submit a bug report to https://github.com/llvm/llvm-project/issues/ and include the crash backtrace, preprocessed source, and associated run script.
+Stack dump:
+0.	Program arguments: /home/leo/Ascend/cann-9.0.0/bin/bisheng -fPIC -g -D_GLIBCXX_USE_CXX11_ABI=0 -DASCENDC_DEBUG=1 -D__NPU_ARCH__=2201 --run-mode=cpu -isystem/home/leo/Ascend/cann-9.0.0/tools/tikicpulib/lib/include -isystem/home/leo/Ascend/cann-9.0.0/include -isystem/home/leo/Ascend/cann-9.0.0/asc/impl/adv_api -isystem/home/leo/Ascend/cann-9.0.0/asc/impl/basic_api -isystem/home/leo/Ascend/cann-9.0.0/asc/impl/c_api -isystem/home/leo/Ascend/cann-9.0.0/asc/impl/micro_api -isystem/home/leo/Ascend/cann-9.0.0/asc/impl/simt_api -isystem/home/leo/Ascend/cann-9.0.0/asc/impl/utils -isystem/home/leo/Ascend/cann-9.0.0/asc/include -isystem/home/leo/Ascend/cann-9.0.0/asc/include/adv_api -isystem/home/leo/Ascend/cann-9.0.0/asc/include/adv_api/matmul -isystem/home/leo/Ascend/cann-9.0.0/asc/include/aicpu_api -isystem/home/leo/Ascend/cann-9.0.0/asc/include/basic_api -isystem/home/leo/Ascend/cann-9.0.0/asc/include/c_api -isystem/home/leo/Ascend/cann-9.0.0/asc/include/interface -isystem/home/leo/Ascend/cann-9.0.0/asc/include/micro_api -isystem/home/leo/Ascend/cann-9.0.0/asc/include/simt_api -isystem/home/leo/Ascend/cann-9.0.0/asc/include/tiling -isystem/home/leo/Ascend/cann-9.0.0/asc/include/utils -MD -MT CMakeFiles/topk_c14_block_production_probe.dir/topk_c14_block_production_probe.asc.o -MF CMakeFiles/topk_c14_block_production_probe.dir/topk_c14_block_production_probe.asc.o.d -o CMakeFiles/topk_c14_block_production_probe.dir/topk_c14_block_production_probe.asc.o -c --asc-aicore-lang /home/leo/cann-c14-production-baseline-v1/src/debug/cpu_topk_probe/topk_c14_block_production_probe.asc
+1.	Compilation construction
+Stack dump without symbol names (ensure you have llvm-symbolizer in your PATH or set the environment var `LLVM_SYMBOLIZER_PATH` to point to it):
+/home/leo/Ascend/cann-9.0.0/bin/bisheng(+0x2fc50ef)[0x5dd2374090ef]
+/home/leo/Ascend/cann-9.0.0/bin/bisheng(+0x2fc277c)[0x5dd23740677c]
+/lib/x86_64-linux-gnu/libc.so.6(+0x42520)[0x71e90b842520]
+/lib/x86_64-linux-gnu/libc.so.6(pthread_kill+0x12c)[0x71e90b8969bc]
+/lib/x86_64-linux-gnu/libc.so.6(raise+0x16)[0x71e90b842476]
+/lib/x86_64-linux-gnu/libc.so.6(abort+0xd3)[0x71e90b8287f3]
+/home/leo/Ascend/cann-9.0.0/bin/bisheng(_ZN4llvm18report_fatal_errorERKNS_5TwineEb+0x98)[0x5dd23734e448]
+/home/leo/Ascend/cann-9.0.0/bin/bisheng(+0x2f0a5e8)[0x5dd23734e5e8]
+/home/leo/Ascend/cann-9.0.0/bin/bisheng(+0x389f3e1)[0x5dd237ce33e1]
+/home/leo/Ascend/cann-9.0.0/bin/bisheng(_Z10clang_mainiPPc+0x13c4)[0x5dd2355d27a4]
+/lib/x86_64-linux-gnu/libc.so.6(+0x29d90)[0x71e90b829d90]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80)[0x71e90b829e40]
+/home/leo/Ascend/cann-9.0.0/bin/bisheng(+0x118a277)[0x5dd2355ce277]
+gmake[3]: *** [CMakeFiles/topk_c14_block_production_probe.dir/build.make:76: CMakeFiles/topk_c14_block_production_probe.dir/topk_c14_block_production_probe.asc.o] Aborted (core dumped)
+gmake[2]: *** [CMakeFiles/Makefile2:979: CMakeFiles/topk_c14_block_production_probe.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:986: CMakeFiles/topk_c14_block_production_probe.dir/rule] Error 2
+gmake: *** [Makefile:540: topk_c14_block_production_probe] Error 2
