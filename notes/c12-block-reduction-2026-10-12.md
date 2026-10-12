@@ -1,6 +1,6 @@
 # Case12：基于分块最大值的精确筛选（2026-10-12）
 
-跟踪[#71](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/71)。从PR #70后main开始，用户最近Judge15/15，case12为122.37 us。根据用户TOP20，case12中位数33.13 us，本队慢3.69倍；[差距与研究转向](top20-comparison-2026-10-12.md)。本分支exp/c12-batched-reduction尚待新Judge，不合main。
+跟踪[#71](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/71)。从PR #70后main开始，用户最近Judge15/15，case12为122.37 us。根据用户TOP20，case12中位数33.13 us，本队慢3.69倍；[差距与研究转向](top20-comparison-2026-10-12.md)。本分支已获完整Judge15/15 Pass，case12为49.24 us（减少59.76%），通过PR #72集成；下文模型与负结果作为实验记录保留。
 
 ## 改了选择结构
 
@@ -63,4 +63,4 @@ bash tools/run_c12_production_probe.sh candidate /absolute/new/candidate-build
 
 baseline固定PR #70后main；candidate冻结当前提交。研究、重复归约、成本隔离分别有独立run_c12脚本，诊断生成器固定旧生产基线。冻结目录/home/leo/cann-c12-production-{baseline,candidate}-v2。完整日志、源码校验、指令调用数见[机器可读证据](c12-block-reduction-evidence-2026-10-12/model-summary.json)。指令调用数不是工作量或wall-time分解。
 
-Judge只替换本分支submission/dense_repeat_override.h，跑完整15点并回报错误比例和耗时。main仍为用户已测case6基线；等用户Judge后再决定集成。
+用户完整Judge15/15、误差均0.00%，case12 122.37→49.24 us，减少59.76%。[同次完整15点与阶段集成](current-status-2026-10-12-c12.md)。通过PR #72集成；后续从新main开始case14研究，不在本阶段分支追加生产改动。
