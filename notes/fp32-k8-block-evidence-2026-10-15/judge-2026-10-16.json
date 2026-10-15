@@ -1,0 +1,131 @@
+{
+  "reported_date": "2026-10-16",
+  "source": "user complete CANNJudge report",
+  "status": "15/15 Pass; all error ratios 0.00%",
+  "unit": "us",
+  "case15_original_display": "1.08ms",
+  "case3_reduction_percent": 53.49483372406007,
+  "case3_speedup": 2.150298730395818,
+  "results": [
+    {
+      "case": 1,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 2.33,
+      "previous_us": 2.45,
+      "platform_best_us": 1.68
+    },
+    {
+      "case": 2,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 2.93,
+      "previous_us": 2.96,
+      "platform_best_us": 2.06
+    },
+    {
+      "case": 3,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 53.56,
+      "previous_us": 115.17,
+      "platform_best_us": 39.9
+    },
+    {
+      "case": 4,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 3.85,
+      "previous_us": 3.78,
+      "platform_best_us": 2.14
+    },
+    {
+      "case": 5,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 6.51,
+      "previous_us": 6.58,
+      "platform_best_us": 4.1
+    },
+    {
+      "case": 6,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 8.36,
+      "previous_us": 8.59,
+      "platform_best_us": 5.54
+    },
+    {
+      "case": 7,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 16.43,
+      "previous_us": 16.56,
+      "platform_best_us": 7.24
+    },
+    {
+      "case": 8,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 33.56,
+      "previous_us": 33.41,
+      "platform_best_us": 15.07
+    },
+    {
+      "case": 9,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 24.3,
+      "previous_us": 24.29,
+      "platform_best_us": 9.11
+    },
+    {
+      "case": 10,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 42.38,
+      "previous_us": 42.18,
+      "platform_best_us": 15.97
+    },
+    {
+      "case": 11,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 52.09,
+      "previous_us": 51.92,
+      "platform_best_us": 33.05
+    },
+    {
+      "case": 12,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 48.91,
+      "previous_us": 48.85,
+      "platform_best_us": 27.62
+    },
+    {
+      "case": 13,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 132.01,
+      "previous_us": 132.28,
+      "platform_best_us": 43.15
+    },
+    {
+      "case": 14,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 327.53,
+      "previous_us": 326.65,
+      "platform_best_us": 95.73
+    },
+    {
+      "case": 15,
+      "result": "Pass",
+      "error_ratio_percent": 0.0,
+      "current_us": 1080.0,
+      "previous_us": 1080.0,
+      "platform_best_us": 359.79
+    }
+  ]
+}

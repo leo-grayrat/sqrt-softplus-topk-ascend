@@ -1,6 +1,6 @@
 # FP32 k8：分块最大值精确筛选（2026-10-15）
 
-跟踪[#77](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/77)。从PR #76后的已验证main开始，活动分支`exp/fp32-k8-block-selection`。该main完整Judge15/15，case3 T7777/E888/k8为115.17 us、case13 T32999/E210/k8为132.28 us。当前候选只接入E888/k8，本地验证完成，等待用户完整15点CANNJudge；尚未合并main。
+跟踪[#77](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/77)。从PR #76后的已验证main开始，阶段分支`exp/fp32-k8-block-selection`。该main完整Judge15/15，case3 T7777/E888/k8为115.17 us、case13 T32999/E210/k8为132.28 us。本阶段只接入E888/k8，用户2026-10-16完整Judge15/15、误差均0.00%，case3降至53.56 us，耗时减少53.49%。通过PR #78集成，[同次完整结果](current-status-2026-10-16-c3.md)。下文保留前期模型与研究负结果。
 
 ## 选择结构
 
@@ -45,7 +45,7 @@ CANN9/dav-2201，Ascend910B1 simulator，记录最慢核duration。双方同一h
 |r64-e888-k8-c1|38.03|21.60|43.20%|
 |r7777-e888-k8-c32|141.14|71.85|49.09%|
 
-单行回退和所有多尺度结果原样保留。E210生产走旧路径，其整形状模型变化也照实列出，不能因源码范围未变而省略回退数据。模型绝对时间和比例不等于真实NPU的CANNJudge，当前不据此承诺提交后的性能。
+单行回退和所有多尺度结果原样保留。E210生产走旧路径，其整形状模型变化也照实列出，不能因源码范围未变而省略回退数据。模型绝对时间和比例与真实NPU分别报告；本次用户完整Judge15/15，case3为53.56 us、减少53.49%，没有用真机结果改写前期模型数据。
 
 ## 验证与失败记录
 
@@ -60,7 +60,7 @@ CANN9/dav-2201，Ascend910B1 simulator，记录最慢核duration。双方同一h
 
 [全部计时、逐核数量、源指纹与core0指令调用数](fp32-k8-block-evidence-2026-10-15/model-summary.json)。指令调用数不能直接当作耗时分解。原始完整build/run目录保留在WSL的`/home/leo/cann-fp32-k8-block-v2`和`/home/leo/cann-fp32-k8-production-{baseline,candidate}-v1`。
 
-## 复现和待测文件
+## 复现和生产文件
 
 先source安装的CANN set_env.sh，再使用新的绝对构建目录：
 
@@ -74,4 +74,4 @@ python3 tools/check_fp32_k8_block_scope.py
 
 研究与生产baseline固定PR #76后的main，candidate冻结当前submission。准入JSON是已测冻结版本的记录，不会自动使用新目录更新；复跑后应比较实测计时再审计gate。
 
-用户只需替换[submission/dense_repeat_override.h](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/blob/exp/fp32-k8-block-selection/submission/dense_repeat_override.h)，运行完整15点Judge并回传结果。获得完整Judge后再收尾PR合入main；当前main仍是已验证的C15版本。
+用户完整Judge15/15已确认，通过[PR #78](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/78)集成本阶段，#77获用户验证后关闭。生产文件为[submission/dense_repeat_override.h](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/blob/main/submission/dense_repeat_override.h)。已测header保持不变，后续阶段从新的已验证main开始。
