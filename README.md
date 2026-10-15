@@ -10,6 +10,8 @@
 
 [case14实现、模型与失败记录](notes/c14-block-reduction-2026-10-12.md)：前期4096行/32核模型减少27.58%，完整Judge减少39.08%，分开报告。已集成的[case12阶段](notes/current-status-2026-10-12-c12.md)此前Judge 122.37→49.24 us，减少59.76%。下一阶段优先研究case15的结构性瓶颈。
 
+`exp/c15-group-max-selection`已完成case15四路分组精确筛选候选：排序1024→512值，1043行/32核生产入口模型耗时减少22.85%。等待用户完整Judge，尚未合main。[实现、所有模型与复现](notes/c15-group-selection-2026-10-15.md)。
+
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
 - [当前主线完整15点](notes/current-status-2026-10-15-c14.md)
