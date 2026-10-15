@@ -144,3 +144,17 @@ target_compile_definitions(topk_c14_block_baseline PRIVATE VALUES_ONLY_BASELINE=
 add_executable(topk_c14_block_production_probe topk_c14_block_production_probe.asc)
 target_link_libraries(topk_c14_block_production_probe PRIVATE tiling_api register platform unified_dlog dl m graph_base)
 target_compile_options(topk_c14_block_production_probe PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)
+
+foreach(kind IN ITEMS full raw baseline baseline_raw copy)
+ add_executable(topk_c15_group_${kind} topk_c15_group_research_probe.asc)
+ target_link_libraries(topk_c15_group_${kind} PRIVATE tiling_api register platform unified_dlog dl m graph_base)
+ target_compile_options(topk_c15_group_${kind} PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)
+endforeach()
+target_compile_definitions(topk_c15_group_raw PRIVATE C15_RAW=1)
+target_compile_definitions(topk_c15_group_baseline PRIVATE C15_BASELINE=1)
+target_compile_definitions(topk_c15_group_baseline_raw PRIVATE C15_BASELINE_RAW=1)
+target_compile_definitions(topk_c15_group_copy PRIVATE C15_COPY=1)
+
+add_executable(topk_c15_group_production_probe topk_c15_group_production_probe.asc)
+target_link_libraries(topk_c15_group_production_probe PRIVATE tiling_api register platform unified_dlog dl m graph_base)
+target_compile_options(topk_c15_group_production_probe PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)

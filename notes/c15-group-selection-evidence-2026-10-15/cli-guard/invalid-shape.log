@@ -1,0 +1,2 @@
+unsupported fp32 large probe shape rows=1 E=1000 inner=1024 k=64
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
