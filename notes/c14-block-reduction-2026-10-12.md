@@ -1,6 +1,6 @@
 # Case14：精确分块最大值筛选（2026-10-12）
 
-跟踪[#73](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/73)。从PR #72后main开始，用户同一次完整Judge15/15、case12为49.24 us，case14 FP16 T65536/E512/k10为536.41 us。本分支`exp/c14-block-max-selection`完成本地验证，等待用户完整15点Judge；本轮没有真机NPU数据。
+跟踪[#73](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/73)。从PR #72后main开始，用户同一次完整Judge15/15、case12为49.24 us，case14 FP16 T65536/E512/k10为536.41 us。本分支`exp/c14-block-max-selection`已于2026-10-15获用户完整Judge15/15、误差均0.00%，case14为326.76 us（减少39.08%），通过PR #74集成。[同次完整结果](current-status-2026-10-15-c14.md)。下文为前期本地模型记录，本机无NPU。
 
 ## 选择结构与精确性
 
@@ -61,4 +61,4 @@ python3 tools/check_c14_source_scope.py
 
 研究和生产baseline均固定PR #72后的main，candidate冻结当前submission；研究baseline不会意外调用当前候选gate。冻结目录`/home/leo/cann-c14-block-v2`、`/home/leo/cann-c14-production-{baseline,candidate}-v2`。启动后台进程后发生用量中断，继续时确认双方COMPLETE，归档只使用实际完成的日志。
 
-用户只需用本分支`submission/dense_repeat_override.h`替换同名文件，再跑完整15点Judge。PR保持Draft，#73保持打开；确认完整正确性及整体收益后再合main。PR #72已合main，C12结果单独归档，不将不同候选的单点最优拼接为本轮结果。
+2026-10-15用户已回报完整15/15 Judge，case14 536.41→326.76 us，减少39.08%。通过PR #74集成本阶段，#73在用户验证后关闭。收尾不再改用户已测header；[同次完整结果与阶段记录](current-status-2026-10-15-c14.md)。C12结果单独归档，不将不同候选单点最优拼接为本轮结果。

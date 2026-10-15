@@ -6,13 +6,14 @@
 
 ## 当前主线
 
-`main` 以PR #72的精确分块筛选阶段为基线：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case12 **122.37→49.24 us，减少59.76%**。[同次完整15点](notes/current-status-2026-10-12-c12.md)。[实现与所有模型/负结果](notes/c12-block-reduction-2026-10-12.md)。
+`main` 更新至PR #74的case14精确分块筛选阶段：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case14 **536.41→326.76 us，减少39.08%**。同次case12为48.76 us，case15为1.65 ms。[同次完整15点与阶段集成](notes/current-status-2026-10-15-c14.md)。
 
-case14/15的已验证Judge基线仍为536.41 us/1.65 ms。`exp/c14-block-max-selection`已完成case14精确分块筛选候选：4096行/32核生产入口仿真49.35→35.74 us（减少27.58%），等待完整Judge后再合main。[实现、测量与失败记录](notes/c14-block-reduction-2026-10-12.md)。仿真收益不是Judge结果。
+[case14实现、模型与失败记录](notes/c14-block-reduction-2026-10-12.md)：前期4096行/32核模型减少27.58%，完整Judge减少39.08%，分开报告。已集成的[case12阶段](notes/current-status-2026-10-12-c12.md)此前Judge 122.37→49.24 us，减少59.76%。下一阶段优先研究case15的结构性瓶颈。
 
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
-- [当前主线完整15点](notes/current-status-2026-10-12-c12.md)
+- [当前主线完整15点](notes/current-status-2026-10-15-c14.md)
+- [上一轮case12结构性优化与完整基线](notes/current-status-2026-10-12-c12.md)
 - [上一轮 case7/9与完整基线](notes/current-status-2026-10-11-c7-c9.md)
 - [上一轮 case 3 连续合并与完整基线](notes/current-status-2026-10-11-c3.md)
 - [上一轮 case 13 紧凑合并与完整基线](notes/current-status-2026-10-11.md)
