@@ -1,6 +1,6 @@
 # Case15：四路分组最大值精确筛选（2026-10-15）
 
-跟踪[#75](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/75)。从PR #74后的main开始，用户完整Judge15/15，case15 FP32 T65555/E1024/k64仍为1.65 ms；同次平台最优358.05 us。本分支`exp/c15-group-max-selection`是本地验证通过的待Judge候选，尚无本轮真实NPU/Judge数据。已获Judge的C12/C14实现保留。
+跟踪[#75](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/75)。从PR #74后的main开始，用户完整Judge15/15，case15 FP32 T65555/E1024/k64仍为1.65 ms；同次平台最优358.05 us。本分支`exp/c15-group-max-selection`已获用户完整Judge15/15、误差均0.00%，case15为1.08 ms（按显示值计算减少约34.55%），通过PR #76集成。[同次完整结果](current-status-2026-10-15-c15.md)。下文保留前期本地实验数据；C12/C14实现保留。
 
 ## 减少参与排序的原值
 
@@ -39,7 +39,7 @@ CANN9/dav-2201、Ascend910B1 simulator；双方FP32 CPU和sim均调用实际run_
 |129行尾batch / 8核|25.39|18.55|26.94%|
 |1行 / 1核|3.81|4.01|-5.25%|
 
-1043行=1024+19，与完整65555行具有相同的19行全局尾部同余，新batch末批为3行。此形状检查所有输出与32核尾组分配，不能代替完整65555行的吞吐、缓存或Judge测量。上表包含单行和尾batch结果，没有挑选只变快的点；最终比赛收益留待用户完整15点Judge。
+1043行=1024+19，与完整65555行具有相同的19行全局尾部同余，新batch末批为3行。此形状检查所有输出与32核尾组分配，不能代替完整65555行的吞吐、缓存或Judge测量。上表包含单行和尾batch结果，没有挑选只变快的点；在本地验证时收益留待Judge；用户随后完整15点通过、case15 1.08 ms，减少约34.55%，与模型独立报告。
 
 ## 验证与源审计
 
@@ -68,4 +68,4 @@ python3 tools/check_c15_source_scope.py
 
 研究及生产baseline固定PR #74后的main，诊断clone保留该版本选择代码；candidate冻结当前submission。目录`/home/leo/cann-c15-group-v1`、`/home/leo/cann-c15-production-{baseline,candidate}-v1`、`/home/leo/cann-c15-guard-v1`保留原始构建与结果。
 
-用户只需替换本分支`submission/dense_repeat_override.h`并跑完整15点Judge。PR保持Draft、#75保持打开，完整正确性及收益确认后再合main；不在main中覆盖已验证基线，不拼接不同分支单点最优。
+用户已回报完整15/15、case15 1.65→1.08 ms（按显示值减少约34.55%）。通过PR #76集成本阶段，#75获用户验证后关闭；收尾不再改已测header。[同次完整结果与阶段集成](current-status-2026-10-15-c15.md)。不拼接不同分支单点最优，后续实验从新的已验证main开始。
