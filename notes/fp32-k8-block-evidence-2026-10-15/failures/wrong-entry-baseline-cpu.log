@@ -1,0 +1,24 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp32-large rows=1 E=210 inner=224 k=8 cores=1
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][Block_0][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/asc/include/basic_api/../../impl/basic_api/kernel_tpipe_impl.h:314][InitBuffer][1347] buffer length is 0, which should be larger than 0, and at least less than or equal to 196608
+[ERROR][CORE_0][pid 1347] error happened! =========
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x00000000004fc581: Handler(int) at ??:?
+[#3] 0x00000000004bb4b5: bool AscendC::TPipe::InitBuffer<(AscendC::TPosition)11>(AscendC::TBuf<(AscendC::TPosition)11>&, unsigned int) at ??:?
+[#4] 0x0000000000488469: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp32_k8_block_research_probe.asc:?
+[#5] 0x00000000004abfd8: (anonymous namespace)::fp32_k8_research_launch(unsigned char*, unsigned char*, int, int, int) at topk_fp32_k8_block_research_probe.asc:?
+[#6] 0x00000000004fc1f4: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int), unsigned char*, unsigned char*, int, int, int>(void (*)(unsigned char*, unsigned char*, int, int, int), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int) at ??:?
+[#7] 0x00000000004804d0: main at ??:?
+[#8] 0x000000000047a884: _start at ??:?
+
+[MISMATCH] rows=1 E=210 k=8 row=0 i=0 actual=0 exact=6.3245554 rawTop=40

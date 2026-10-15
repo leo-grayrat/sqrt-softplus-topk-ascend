@@ -136,3 +136,7 @@ Failed to check validBit value in MrgSort, its valid value is 3 / 7 / 15
 2026-10-12，#71重复归约中，从不同rank的归约源子视图、非零srcBaseAddr读取索引，CPU模型出现读回-inf和后续索引表破坏；同一个3行设备sim用例通过。缩小最终排序源视图解决了一个跨页SIGSEGV，但单独收紧索引源视图不足以解决全部问题。最终将每轮归约结果先物化到独立根缓冲，Gather只用根张量及srcBaseAddr0，raw/full各33/33通过。该记录限定于此CPU模型复现，不推广为硬件Gather禁止子视图。
 
 分块筛选batch48还曾在CPU Gather模型跨页写入处SIGSEGV；batch32的51组研究和43组生产回归通过。本候选取32，不据这个异常认定真机有32KiB源张量限制；48版本没有交付。
+
+## 12. FP32小k研究probe必须匹配实际prefix入口
+
+2026-10-15，#77研究v1基线把E210/E888、k8送入TagFloat dispatch并使用空tiling，CPU首例报零长InitBuffer，输出也未生成。实际run_kernel对FP32 k<=8提前调用独立prefix dispatch，vendor-perf选择类不使用这份通用TopK tiling。修正为直接实例化实际SqrtSoftplusVendorPerfTopKKernel，在新v2目录重建三种研究target；原v1失败保留在evidence/failures且不计入性能比较。生产probe始终调用实际run_kernel。不要为让错误wrapper通过而捏造tiling或禁用CPU检查器。

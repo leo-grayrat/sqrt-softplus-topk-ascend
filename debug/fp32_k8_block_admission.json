@@ -1,0 +1,37 @@
+{
+  "baseline": "c2482715d319e1b93065c239fa1bb9b997a7916a",
+  "threshold_percent": 20,
+  "admitted_experts": [
+    888
+  ],
+  "research": {
+    "888": [
+      {
+        "rows": 32,
+        "baseline_us": 20.03,
+        "candidate_us": 11.92,
+        "reduction_percent": 40.48926610084873
+      },
+      {
+        "rows": 64,
+        "baseline_us": 37.85,
+        "candidate_us": 20.54,
+        "reduction_percent": 45.733157199471606
+      }
+    ],
+    "210": [
+      {
+        "rows": 64,
+        "baseline_us": 12.15,
+        "candidate_us": 12.36,
+        "reduction_percent": -1.7283950617283939
+      },
+      {
+        "rows": 128,
+        "baseline_us": 21.61,
+        "candidate_us": 20.06,
+        "reduction_percent": 7.172605275335497
+      }
+    ]
+  }
+}

@@ -17,3 +17,5 @@ tools/run_fp32_compact_c6_probe.sh text eol=lf
 tools/run_c12*.sh text eol=lf
 tools/run_c14*.sh text eol=lf
 tools/run_c15*.sh text eol=lf
+tools/run_fp32_k8_block*.sh text eol=lf
+submission/dense_repeat_override.h text eol=lf

@@ -4,6 +4,10 @@
 
 仓库已经接入真实 CANNJudge starter project，并在 CANN 9.0 / dav-2201 上完成多轮 Ascend C 实现、CPU twin-debug、Bisheng 编译和真实 Judge 性能实验。
 
+## 当前候选
+
+FP32 k8分块最大值精确筛选已完成本地验证，分支`exp/fp32-k8-block-selection`只接入E888/k8，等待完整CANNJudge。[算法、完整形状仿真、失败记录与复现](notes/fp32-k8-block-selection-2026-10-15.md)。待测只替换该分支的`submission/dense_repeat_override.h`；main仍为下述已验证基线。
+
 ## 当前主线
 
 `main` 更新至PR #76的case15精确分组筛选阶段：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case15 **1.65→1.08 ms，按平台显示值计算减少约34.55%**。同次case12/14为48.85/326.65 us。[同次完整15点与阶段集成](notes/current-status-2026-10-15-c15.md)。
@@ -65,7 +69,7 @@ sqrt(softplus(TopK(x)))
 
 每个大阶段只维护一个活动实验分支，从最新 main 创建。阶段完成后，经本地验证、用户完整 Judge 和 PR 合入 main，再开始下一阶段；不从上一条实验分支继续串接新的长期开发。
 
-现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/c12-batched-reduction`，上一轮为 `exp/fp32-compact-c7-c9`；更早六条 exp 分支清单见 2026-10-04 状态文档。
+现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/c15-group-max-selection`，上一轮为 `exp/c14-block-max-selection`；更早六条 exp 分支清单见 2026-10-04 状态文档。
 
 ## 验证原则
 
