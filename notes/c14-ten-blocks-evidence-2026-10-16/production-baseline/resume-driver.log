@@ -1,0 +1,54 @@
+PASS: 1 C14 production dispatch cases
+core0.veccore0      35.37               35.03               
+core1.veccore0      35.44               35.08               
+core10.veccore0     35.7                35.26               
+core11.veccore0     35.4                35.04               
+core12.veccore0     35.64               35.21               
+core13.veccore0     35.37               35.02               
+core14.veccore0     35.29               34.96               
+core15.veccore0     35.32               35                  
+core16.veccore0     35.44               35.11               
+core17.veccore0     35.39               35.06               
+core18.veccore0     35.38               35.03               
+core19.veccore0     35.36               34.99               
+core2.veccore0      35.45               35.09               
+core20.veccore0     35.42               35.09               
+core21.veccore0     35.39               35.06               
+core22.veccore0     35.57               35.12               
+core23.veccore0     35.32               34.97               
+core24.veccore0     35.33               34.98               
+core25.veccore0     35.36               35                  
+core26.veccore0     35.68               35.25               
+core27.veccore0     35.42               35.08               
+core28.veccore0     35.38               35.02               
+core29.veccore0     35.34               34.98               
+core3.veccore0      35.45               35.1                
+core30.veccore0     35.33               34.98               
+core31.veccore0     35.37               35.01               
+core4.veccore0      35.35               35.02               
+core5.veccore0      35.31               34.97               
+core6.veccore0      35.36               35.01               
+core7.veccore0      35.49               35.15               
+core8.veccore0      35.37               35.05               
+core9.veccore0      35.36               35.02               
+core0.veccore0      14.74               13.52               
+PASS: 1 C14 production dispatch cases
+core0.veccore0      4.2                 3                   
+core1.veccore0      4.2                 3.01                
+core2.veccore0      4.2                 3                   
+core3.veccore0      4.21                3                   
+core4.veccore0      4.2                 3.01                
+core5.veccore0      4.2                 3                   
+core6.veccore0      4.19                3                   
+core7.veccore0      4.1                 2.68                
+PASS: 1 C14 production dispatch cases
+core0.veccore0      4.85                3.24                
+core1.veccore0      4.86                3.24                
+core2.veccore0      4.86                3.25                
+core3.veccore0      4.86                3.24                
+core4.veccore0      4.85                3.24                
+core5.veccore0      4.86                3.24                
+core6.veccore0      4.24                2.6                 
+core7.veccore0      2.42                0.96                
+PASS: 1 C14 production dispatch cases
+COMPLETE bounded resume; full 65536-row attempt remains incomplete

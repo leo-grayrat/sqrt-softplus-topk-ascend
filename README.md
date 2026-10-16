@@ -6,6 +6,8 @@
 
 ## 当前主线
 
+本分支待Judge候选：[case14十块筛选与成对搬运](notes/c14-ten-blocks-2026-10-16.md)。batch16→24、阶段间缓冲复用，4096行模型35.70→27.32us（减少23.47%）；实体Judge尚未确认。仅替换`submission/dense_repeat_override.h`并跑完整15点，未提前合入main。[CANNBot及9.0官方资料使用记录](notes/cannbot-resources-2026-10-16.md)。
+
 `main`更新至PR #80的case13四值精确分组阶段：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case13 **132.01→74.01 us，耗时减少43.94%（约1.78倍加速）**。同次case3/12/14/15为52.60/48.84/326.63/1080.00 us。[同次完整15点与阶段集成](notes/current-status-2026-10-16-c13.md)。
 
 [case13实现、负结果和全部证据](notes/c13-strided-selection-2026-10-16.md)：只接入FP32 E210/k8，Sort32输入224→96、merge 80→16对，batch仍32。前期完整形状模型减少44.35%，与本次Judge减少43.94%分别记录。此前[case3阶段](notes/current-status-2026-10-16-c3.md)Judge 115.17→53.56 us、[case15阶段](notes/current-status-2026-10-15-c15.md)1.65→1.08 ms、[case14阶段](notes/current-status-2026-10-15-c14.md)536.41→326.76 us、[case12阶段](notes/current-status-2026-10-12-c12.md)122.37→49.24 us均已集成。后续实验从新的已验证main开始。

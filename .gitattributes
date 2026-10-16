@@ -20,3 +20,7 @@ tools/run_c15*.sh text eol=lf
 tools/run_fp32_k8_block*.sh text eol=lf
 submission/dense_repeat_override.h text eol=lf
 tools/run_c13*.sh text eol=lf
+# Preserve frozen sources and diagnostic formatting in the C14 evidence archive.
+notes/c14-ten-blocks-evidence-2026-10-16/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+# Research class fragments deliberately retain a separating blank line at EOF.
+debug/cpu_topk_probe/c14*_kernel.h text eol=lf whitespace=-blank-at-eof

@@ -1,0 +1,107 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN values-only-comparison rows=3 E=512 k=10 cores=1
+[TmSim]: Run in serial mode.
+TRACE max row=0 j=0 value=30 id=0
+TRACE max row=0 j=1 value=22 id=1
+TRACE max row=0 j=2 value=-20 id=2
+TRACE max row=0 j=3 value=-20 id=3
+TRACE max row=0 j=4 value=-20 id=4
+TRACE max row=0 j=5 value=-20 id=5
+TRACE max row=0 j=6 value=-20 id=6
+TRACE max row=0 j=7 value=-20 id=7
+TRACE max row=0 j=8 value=-20 id=8
+TRACE max row=0 j=9 value=-20 id=9
+TRACE max row=0 j=10 value=-20 id=10
+TRACE max row=0 j=11 value=-20 id=11
+TRACE max row=1 j=0 value=-4 id=0
+TRACE max row=1 j=1 value=-4 id=1
+TRACE max row=1 j=2 value=-4 id=2
+TRACE max row=1 j=3 value=-4 id=3
+TRACE max row=1 j=4 value=-4 id=4
+TRACE max row=1 j=5 value=-4 id=5
+TRACE max row=1 j=6 value=-4 id=6
+TRACE max row=1 j=7 value=-4 id=7
+TRACE max row=1 j=8 value=-4 id=8
+TRACE max row=1 j=9 value=-4 id=9
+TRACE max row=1 j=10 value=-4 id=10
+TRACE max row=1 j=11 value=-4 id=11
+TRACE max row=2 j=0 value=40 id=63
+TRACE max row=2 j=1 value=32 id=62
+TRACE max row=2 j=2 value=27 id=0
+TRACE max row=2 j=3 value=16.0938 id=46
+TRACE max row=2 j=4 value=16.0781 id=14
+TRACE max row=2 j=5 value=15.9062 id=29
+TRACE max row=2 j=6 value=15.8125 id=45
+TRACE max row=2 j=7 value=15.7969 id=13
+TRACE max row=2 j=8 value=15.7031 id=61
+TRACE max row=2 j=9 value=15.5938 id=12
+TRACE max row=2 j=10 value=15.5312 id=44
+TRACE max row=2 j=11 value=15.4297 id=60
+TRACE packed row=0 j=0 value=30 offset=0
+TRACE packed row=0 j=1 value=22 offset=32
+TRACE packed row=0 j=2 value=-20 offset=64
+TRACE packed row=0 j=3 value=-20 offset=96
+TRACE packed row=0 j=4 value=-20 offset=128
+TRACE packed row=0 j=5 value=-20 offset=160
+TRACE packed row=0 j=6 value=-20 offset=192
+TRACE packed row=0 j=7 value=-20 offset=224
+TRACE packed row=0 j=8 value=-20 offset=256
+TRACE packed row=0 j=9 value=-20 offset=288
+TRACE packed row=0 j=10 value=-20 offset=320
+TRACE packed row=0 j=11 value=-20 offset=352
+TRACE packed row=1 j=0 value=-4 offset=2048
+TRACE packed row=1 j=1 value=-4 offset=2080
+TRACE packed row=1 j=2 value=-4 offset=2112
+TRACE packed row=1 j=3 value=-4 offset=2144
+TRACE packed row=1 j=4 value=-4 offset=2176
+TRACE packed row=1 j=5 value=-4 offset=2208
+TRACE packed row=1 j=6 value=-4 offset=2240
+TRACE packed row=1 j=7 value=-4 offset=2272
+TRACE packed row=1 j=8 value=-4 offset=2304
+TRACE packed row=1 j=9 value=-4 offset=2336
+TRACE packed row=1 j=10 value=-4 offset=2368
+TRACE packed row=1 j=11 value=-4 offset=2400
+TRACE packed row=2 j=0 value=33 offset=6112
+TRACE packed row=2 j=1 value=15.9219 offset=6080
+TRACE packed row=2 j=2 value=27 offset=4096
+TRACE packed row=2 j=3 value=2.19922 offset=5568
+TRACE packed row=2 j=4 value=6.82031 offset=4544
+TRACE packed row=2 j=5 value=15.7031 offset=5024
+TRACE packed row=2 j=6 value=-2.70703 offset=5536
+TRACE packed row=2 j=7 value=1.91406 offset=4512
+TRACE packed row=2 j=8 value=11.0781 offset=6048
+TRACE packed row=2 j=9 value=-2.92578 offset=4480
+TRACE packed row=2 j=10 value=-7.54688 offset=5504
+TRACE packed row=2 j=11 value=6.17188 offset=6016
+TRACE result row=0 j=0 value=30
+TRACE result row=0 j=1 value=29
+TRACE result row=0 j=2 value=28
+TRACE result row=0 j=3 value=27
+TRACE result row=0 j=4 value=26
+TRACE result row=0 j=5 value=25
+TRACE result row=0 j=6 value=24
+TRACE result row=0 j=7 value=23
+TRACE result row=0 j=8 value=22
+TRACE result row=0 j=9 value=21
+TRACE result row=1 j=0 value=-4
+TRACE result row=1 j=1 value=-4
+TRACE result row=1 j=2 value=-4
+TRACE result row=1 j=3 value=-4
+TRACE result row=1 j=4 value=-4
+TRACE result row=1 j=5 value=-4
+TRACE result row=1 j=6 value=-4
+TRACE result row=1 j=7 value=-4
+TRACE result row=1 j=8 value=-4
+TRACE result row=1 j=9 value=-4
+TRACE result row=2 j=0 value=15.8125
+TRACE result row=2 j=1 value=15.7969
+TRACE result row=2 j=2 value=15.7031
+TRACE result row=2 j=3 value=15.5938
+TRACE result row=2 j=4 value=11.2891
+TRACE result row=2 j=5 value=11.1797
+TRACE result row=2 j=6 value=11.1719
+TRACE result row=2 j=7 value=11.0781
+TRACE result row=2 j=8 value=10.9609
+TRACE result row=2 j=9 value=6.66016
+[SUCCESS][CORE_0][pid 636] exit success!
+[MISMATCH] rows=3 E=512 k=10 cores=1 row=2 i=0 actual=15.8125 exact=40 hostHalf=40 tol=0.015627 rawTop=40

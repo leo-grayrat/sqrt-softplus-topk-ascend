@@ -1,0 +1,8 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN values-only-comparison rows=1 E=512 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 3496] exit success!
+RUN values-only-comparison rows=3 E=512 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 3498] exit success!
+[MISMATCH] rows=3 E=512 k=10 cores=1 row=2 i=0 actual=3.96289 exact=6.3245554 hostHalf=6.32422 tol=0.00195513 rawTop=40

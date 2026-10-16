@@ -1,0 +1,5 @@
+-- System processer: x86_64
+-- CMAKE_ASC_COMPILER: /home/leo/Ascend/cann-9.0.0/bin/bisheng
+-- ASCEND_CANN_PACKAGE_LINUX_PATH: /home/leo/Ascend/cann-9.0.0/x86_64-linux
+-- CMAKE_ASC_LLD_LINKER: /home/leo/Ascend/cann-9.0.0/x86_64-linux/ccec_compiler/bin/ld.lld
+-- The CXX compiler identification is GNU 11.4.0

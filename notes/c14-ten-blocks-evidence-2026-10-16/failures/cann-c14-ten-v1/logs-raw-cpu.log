@@ -1,0 +1,27 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN values-only-comparison rows=1 E=512 k=10 cores=1
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR]Failed to check dstLocal size in Duplicate when in normal mode, tensor size needs to be at least 256 bytes, while current tensor size is only 192 bytes.
+[ERROR][Block_0][AIV_0][/home/leo/Ascend/cann-9.0.0/x86_64-linux/asc/include/basic_api/../../impl/basic_api/kernel_operator_vec_duplicate_intf_impl.h:69][Duplicate][2632] Failed to pass Duplicate mask count mode check.
+[ERROR][CORE_0][pid 2632] error happened! ========= 
+SIGABRT Signal (Abort Signal from abort) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x0000000000583351: Handler(int) at ??:?
+[#3] 0x00000000005776de: void AscendC::Duplicate<float, true>(AscendC::LocalTensor<float> const&, float const&, unsigned long, unsigned char, unsigned short, unsigned char) at ??:?
+[#4] 0x00000000005863b6: C14ExactTenBlocksResearchKernel::Compute(int) at ??:?
+[#5] 0x00000000005852ba: C14ExactTenBlocksResearchKernel::Process() at ??:?
+[#6] 0x0000000000533ce2: (anonymous namespace)::topk_fp16_vendor_cpu_debug_kernel(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_c14_exact_ten_research_probe.asc:?
+[#7] 0x0000000000582fc5: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, int, AscendC::tiling::TopkTiling) at ??:?
+[#8] 0x000000000050183f: main at ??:?
+[#9] 0x00000000004fb214: _start at ??:?
+
+[MISMATCH] rows=1 E=512 k=10 cores=1 row=0 i=0 actual=0 exact=30 hostHalf=30 tol=0.0078145 rawTop=30

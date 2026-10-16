@@ -140,3 +140,9 @@ Failed to check validBit value in MrgSort, its valid value is 3 / 7 / 15
 ## 12. FP32小k研究probe必须匹配实际prefix入口
 
 2026-10-15，#77研究v1基线把E210/E888、k8送入TagFloat dispatch并使用空tiling，CPU首例报零长InitBuffer，输出也未生成。实际run_kernel对FP32 k<=8提前调用独立prefix dispatch，vendor-perf选择类不使用这份通用TopK tiling。修正为直接实例化实际SqrtSoftplusVendorPerfTopKKernel，在新v2目录重建三种研究target；原v1失败保留在evidence/failures且不计入性能比较。生产probe始终调用实际run_kernel。不要为让错误wrapper通过而捏造tiling或禁用CPU检查器。
+
+## 13. Duplicate连续掩码与位掩码不是同一种重载
+
+2026-10-16，#81的研究把`uint64_t(65535)`当作低16位置位掩码，传给`Duplicate(dst,value,uint64_t mask,repeat,stride,stride)`。SDK的`kernel_operator_vec_duplicate_intf_impl.h`明确将该重载归为MASK_COUNT_MODE；位掩码重载接受`uint64_t mask[]`。误用使跨行填充覆盖下一行候选，单行不能暴露全部问题。连续填充16/24个值应分别传`uint64_t(16)`和`uint64_t(24)`。修正后的研究raw/full均通过17组CPU比较，没有关闭检查器。
+
+同次研究还发现，原始FP16值经float再以CAST_RINT转回half会将负无穷饱和成-65504，不能用它做逐值原始选择检查。raw诊断改为FP32输出，生产half输出和变换合同保持原样。另一首版三路合并的`validBit=7`不符合SDK对repeat>1要求四路等长、validBit=15的约束；改成四份等长列表并填充第四份。CANN9的`asc_mrgsort4_impl.h`第27–28行记载此限制。普通printf仅放在CPU条件编译块，不能把stdio调用带进device链接。
