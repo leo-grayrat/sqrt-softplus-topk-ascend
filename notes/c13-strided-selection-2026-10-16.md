@@ -1,6 +1,6 @@
 # Case13：四值跨段分组与紧凑top8合并（2026-10-16）
 
-跟踪[#79](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/79)。从PR #78后的已验证main起步，该main完整15/15，case3为53.56 us、case13 T32999/E210/k8为132.01 us。本阶段分支`exp/c13-strided-group-selection`仅接入FP32 E210/k8，本地验证完成，等待完整CANNJudge；main仍是已验证的PR #78版本。
+跟踪[#79](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/79)。从PR #78后的已验证main起步，该main完整15/15，case3为53.56 us、case13 T32999/E210/k8为132.01 us。本阶段分支`exp/c13-strided-group-selection`仅接入FP32 E210/k8，用户本轮完整Judge15/15、误差均0.00%，case13降至74.01 us，耗时减少43.94%。通过PR #80集成，[同次完整结果](current-status-2026-10-16-c13.md)。下文保留前期模型与负结果。
 
 ## 改变分组和中间列表大小
 
@@ -45,7 +45,7 @@
 |r64-e210-k8-c1|12.83|9.85|23.23%|
 |r65-e1024-k64-c8|11.20|11.55|-3.13%|
 
-完整T32999/E210/k8、32核模型为160.82→89.49 us，减少44.35%。单行、尾batch及已有C3/C15回归原样列出，不只展示加速点。模型比例和绝对时长均不能替代用户真机Judge；当前不预测Judge时间。
+完整T32999/E210/k8、32核模型为160.82→89.49 us，减少44.35%。单行、尾batch及已有C3/C15回归原样列出，不只展示加速点。模型与用户真机Judge分别记录：本次完整15/15，case13为74.01 us、减少43.94%，不改写前期模型计时。
 
 ## 验证与范围
 
@@ -58,7 +58,7 @@
 
 研究冻结之后才追加生产CMake target，研究构建的CMake与交付版差异仅为未使用的生产target；实际研究类、probe及编译选项未变。所有原始与LF归一化源指纹、完整CPU/编译/模型日志及core0指令调用数均归档于[证据](c13-strided-selection-evidence-2026-10-16/model-summary.json)。指令调用数不是时间分解。#52/#68独立数值问题继续开放。
 
-## 复现与待测
+## 复现与生产文件
 
 先source安装的CANN set_env.sh，使用全新绝对构建目录：
 
@@ -72,4 +72,4 @@ python3 tools/check_c13_selection_scope.py
 
 研究和生产baseline固定PR #78后的main，candidate冻结当前submission。准入JSON为本轮冻结结果，复跑时需核对新计时再判断。原目录为WSL的`/home/leo/cann-c13-selection-v1`、`/home/leo/cann-c13-production-{baseline,candidate}-v1`，失败或负结果不被成功运行覆盖。
 
-只需替换[submission/dense_repeat_override.h](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/blob/exp/c13-strided-group-selection/submission/dense_repeat_override.h)，运行完整15点CANNJudge。完整Judge确认后再收尾PR合入main；本阶段issue在此之前保持开放。
+用户完整Judge15/15已确认，通过[PR #80](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/80)集成本阶段，#79获用户验证后关闭。当前生产文件为[submission/dense_repeat_override.h](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/blob/main/submission/dense_repeat_override.h)。已测header保持不变，后续实验从新的已验证main开始。
