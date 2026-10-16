@@ -1,0 +1,19 @@
+PASS: 31 C14 production dispatch cases
+PASS: 49 C13 production cases
+core0.veccore0      19.27               18.92               
+PASS: 1 C14 production dispatch cases
+core0.veccore0      35.36               35                  
+PASS: 1 C14 production dispatch cases
+core0.veccore0      4.01                2.96                
+PASS: 1 C14 production dispatch cases
+core0.veccore0      12                  11.46               
+PASS: 1 C14 production dispatch cases
+core0.veccore0      11.5                10.92               
+core1.veccore0      11.59               10.98               
+core2.veccore0      11.6                10.98               
+core3.veccore0      11.53               10.95               
+core4.veccore0      11.5                10.94               
+core5.veccore0      11.49               10.92               
+core6.veccore0      11.54               10.97               
+core7.veccore0      9.98                9.42                
+PASS: 1 C14 production dispatch cases

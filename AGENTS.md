@@ -13,3 +13,7 @@
 ## Reference
 
 `reference/reference.py` 中的 `official` 用来保留题面 PyTorch 示例的计算行为，不要为了方便随意改写它。若题面、starter project 与 Judge 的 contract 发生冲突，先记录冲突，再依据真实比赛环境处理。
+
+## CANN 资料
+
+[已核实的 CANNBot Skills 与 asc-devkit 资料入口](notes/cannbot-resources-2026-10-16.md)。新增 API 用法先查匹配版本文档的所有重载、芯片支持和参数单位，再以本机 SDK、编译和输出检查验证。CANNBot 的默认 A3/CANN8.5 环境与本仓 CANN9/dav-2201/910B 不同，不能照搬；950/arch35 专用实现也不能直接用于当前硬件。

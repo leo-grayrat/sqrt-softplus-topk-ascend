@@ -1,0 +1,48 @@
+{
+  "baseline": "92189c1e0d2339ed6113785ac8810007d750cb50",
+  "selected": "half",
+  "comparison": [
+    {
+      "rows": 64,
+      "baseline_us": 19.79,
+      "candidate_us": 13.98,
+      "reduction_percent": 29.35826174835775
+    },
+    {
+      "rows": 128,
+      "baseline_us": 35.87,
+      "candidate_us": 24.62,
+      "reduction_percent": 31.363256202955103
+    }
+  ],
+  "candidates": {
+    "full": [
+      {
+        "rows": 64,
+        "baseline_us": 19.79,
+        "candidate_us": 16.49,
+        "reduction_percent": 16.67508842849925
+      },
+      {
+        "rows": 128,
+        "baseline_us": 35.87,
+        "candidate_us": 29.3,
+        "reduction_percent": 18.316141622525784
+      }
+    ],
+    "half": [
+      {
+        "rows": 64,
+        "baseline_us": 19.79,
+        "candidate_us": 13.98,
+        "reduction_percent": 29.35826174835775
+      },
+      {
+        "rows": 128,
+        "baseline_us": 35.87,
+        "candidate_us": 24.62,
+        "reduction_percent": 31.363256202955103
+      }
+    ]
+  }
+}

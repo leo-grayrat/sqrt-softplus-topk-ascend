@@ -1,0 +1,39 @@
+-- System processer: x86_64
+-- CMAKE_ASC_COMPILER: /home/leo/Ascend/cann-9.0.0/bin/bisheng
+-- ASCEND_CANN_PACKAGE_LINUX_PATH: /home/leo/Ascend/cann-9.0.0/x86_64-linux
+-- CMAKE_ASC_LLD_LINKER: /home/leo/Ascend/cann-9.0.0/x86_64-linux/ccec_compiler/bin/ld.lld
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/leo/cann-c14-ten-trace-v1/cpu
+[ 50%] Building ASC object CMakeFiles/topk_c14_ten_raw.dir/topk_c14_exact_ten_research_probe.asc.o
+ld.lld: error: undefined symbol: __extendsfdf2
+>>> referenced by topk_c14_exact_ten_research_probe.asc
+>>>               /tmp/topk_c14_exact_ten_research_probe-1a3513.o-64ef09.extract:((anonymous namespace)::topk_fp16_vendor_cpu_debug_kernel(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling))
+>>> referenced by topk_c14_exact_ten_research_probe.asc
+>>>               /tmp/topk_c14_exact_ten_research_probe-1a3513.o-64ef09.extract:((anonymous namespace)::topk_fp16_vendor_cpu_debug_kernel(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling))
+>>> referenced by topk_c14_exact_ten_research_probe.asc
+>>>               /tmp/topk_c14_exact_ten_research_probe-1a3513.o-64ef09.extract:((anonymous namespace)::topk_fp16_vendor_cpu_debug_kernel(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling))
+>>> referenced 31 more times
+
+ld.lld: error: undefined symbol: printf
+>>> referenced by topk_c14_exact_ten_research_probe.asc
+>>>               /tmp/topk_c14_exact_ten_research_probe-1a3513.o-64ef09.extract:((anonymous namespace)::topk_fp16_vendor_cpu_debug_kernel(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling))
+>>> referenced by topk_c14_exact_ten_research_probe.asc
+>>>               /tmp/topk_c14_exact_ten_research_probe-1a3513.o-64ef09.extract:((anonymous namespace)::topk_fp16_vendor_cpu_debug_kernel(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling))
+>>> referenced by topk_c14_exact_ten_research_probe.asc
+>>>               /tmp/topk_c14_exact_ten_research_probe-1a3513.o-64ef09.extract:((anonymous namespace)::topk_fp16_vendor_cpu_debug_kernel(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling))
+>>> referenced 31 more times
+cceld: ccec ReturnCode: 1
+cceld: ExecutionFailed: 0
+cceld: ErrMsg: 
+bisheng: error: linker command failed with exit code 1 (use -v to see invocation)
+gmake[3]: *** [CMakeFiles/topk_c14_ten_raw.dir/build.make:76: CMakeFiles/topk_c14_ten_raw.dir/topk_c14_exact_ten_research_probe.asc.o] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:1489: CMakeFiles/topk_c14_ten_raw.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:1496: CMakeFiles/topk_c14_ten_raw.dir/rule] Error 2
+gmake: *** [Makefile:774: topk_c14_ten_raw] Error 2

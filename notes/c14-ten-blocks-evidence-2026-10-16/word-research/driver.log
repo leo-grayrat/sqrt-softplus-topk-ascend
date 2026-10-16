@@ -1,0 +1,11 @@
+PASS: 17 values-only comparison cases
+PASS: 17 values-only comparison cases
+core0.veccore0      13.98               13.59               
+PASS: 1 values-only comparison cases
+core0.veccore0      13.79               13.34               
+PASS: 1 values-only comparison cases
+core0.veccore0      24.62               24.21               
+PASS: 1 values-only comparison cases
+core0.veccore0      24.34               23.88               
+PASS: 1 values-only comparison cases
+COMPLETE
