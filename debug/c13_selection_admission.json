@@ -1,0 +1,35 @@
+{
+  "baseline": "ec0e9621f28446c1439c06cc580fc84b8e6359d6",
+  "threshold_percent": 20,
+  "candidates": {
+    "full": [
+      {
+        "rows": 64,
+        "baseline_us": 11.98,
+        "candidate_us": 9.27,
+        "reduction_percent": 22.621035058430728
+      },
+      {
+        "rows": 128,
+        "baseline_us": 21.44,
+        "candidate_us": 14.34,
+        "reduction_percent": 33.115671641791046
+      }
+    ],
+    "block": [
+      {
+        "rows": 64,
+        "baseline_us": 11.98,
+        "candidate_us": 10.52,
+        "reduction_percent": 12.186978297161943
+      },
+      {
+        "rows": 128,
+        "baseline_us": 21.44,
+        "candidate_us": 16.58,
+        "reduction_percent": 22.66791044776121
+      }
+    ]
+  },
+  "selected": "full"
+}

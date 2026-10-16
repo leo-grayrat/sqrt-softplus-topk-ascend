@@ -6,13 +6,14 @@
 
 ## 当前主线
 
-`main`更新至PR #78的case3精确分块筛选阶段：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case3 **115.17→53.56 us，耗时减少53.49%（约2.15倍加速）**。同次case12/13/14/15为48.91/132.01/327.53/1080.00 us。[同次完整15点与阶段集成](notes/current-status-2026-10-16-c3.md)。
+`main`更新至PR #80的case13四值精确分组阶段：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case13 **132.01→74.01 us，耗时减少43.94%（约1.78倍加速）**。同次case3/12/14/15为52.60/48.84/326.63/1080.00 us。[同次完整15点与阶段集成](notes/current-status-2026-10-16-c13.md)。
 
-[case3实现、负结果和完整证据](notes/fp32-k8-block-selection-2026-10-15.md)：只接入FP32 E888/k8，每行排序896→192值；E210研究未达门槛，保留旧路径。前期整形状模型减少49.09%，与本次Judge减少53.49%分别记录。此前[case15阶段](notes/current-status-2026-10-15-c15.md)Judge 1.65→1.08 ms、[case14阶段](notes/current-status-2026-10-15-c14.md)536.41→326.76 us、[case12阶段](notes/current-status-2026-10-12-c12.md)122.37→49.24 us均已集成。后续实验从新的已验证main开始。
+[case13实现、负结果和全部证据](notes/c13-strided-selection-2026-10-16.md)：只接入FP32 E210/k8，Sort32输入224→96、merge 80→16对，batch仍32。前期完整形状模型减少44.35%，与本次Judge减少43.94%分别记录。此前[case3阶段](notes/current-status-2026-10-16-c3.md)Judge 115.17→53.56 us、[case15阶段](notes/current-status-2026-10-15-c15.md)1.65→1.08 ms、[case14阶段](notes/current-status-2026-10-15-c14.md)536.41→326.76 us、[case12阶段](notes/current-status-2026-10-12-c12.md)122.37→49.24 us均已集成。后续实验从新的已验证main开始。
 
 当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
-- [当前主线完整15点](notes/current-status-2026-10-16-c3.md)
+- [当前主线完整15点](notes/current-status-2026-10-16-c13.md)
+- [上一轮case3结构性优化与完整基线](notes/current-status-2026-10-16-c3.md)
 - [上一轮case15结构性优化与完整基线](notes/current-status-2026-10-15-c15.md)
 - [上一轮case14结构性优化与完整基线](notes/current-status-2026-10-15-c14.md)
 - [上一轮case12结构性优化与完整基线](notes/current-status-2026-10-12-c12.md)
@@ -66,7 +67,7 @@ sqrt(softplus(TopK(x)))
 
 每个大阶段只维护一个活动实验分支，从最新 main 创建。阶段完成后，经本地验证、用户完整 Judge 和 PR 合入 main，再开始下一阶段；不从上一条实验分支继续串接新的长期开发。
 
-现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/fp32-k8-block-selection`，上一轮为 `exp/c15-group-max-selection`；更早六条 exp 分支清单见 2026-10-04 状态文档。
+现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/c13-strided-group-selection`，上一轮为 `exp/fp32-k8-block-selection`；更早六条 exp 分支清单见 2026-10-04 状态文档。
 
 ## 验证原则
 
