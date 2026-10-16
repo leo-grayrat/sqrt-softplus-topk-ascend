@@ -169,3 +169,17 @@ target_compile_definitions(topk_fp32_k8_block_baseline PRIVATE FP32_K8_BASELINE=
 add_executable(topk_fp32_k8_block_production_probe topk_fp32_k8_block_production_probe.asc)
 target_link_libraries(topk_fp32_k8_block_production_probe PRIVATE tiling_api register platform unified_dlog dl m graph_base)
 target_compile_options(topk_fp32_k8_block_production_probe PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)
+
+foreach(kind IN ITEMS full raw block block_raw baseline)
+ add_executable(topk_c13_selection_${kind} topk_c13_selection_research_probe.asc)
+ target_link_libraries(topk_c13_selection_${kind} PRIVATE tiling_api register platform unified_dlog dl m graph_base)
+ target_compile_options(topk_c13_selection_${kind} PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)
+endforeach()
+target_compile_definitions(topk_c13_selection_raw PRIVATE C13_RAW=1)
+target_compile_definitions(topk_c13_selection_block PRIVATE C13_BLOCK8=1)
+target_compile_definitions(topk_c13_selection_block_raw PRIVATE C13_BLOCK8=1 C13_RAW=1)
+target_compile_definitions(topk_c13_selection_baseline PRIVATE C13_BASELINE=1)
+
+add_executable(topk_c13_selection_production_probe topk_c13_selection_production_probe.asc)
+target_link_libraries(topk_c13_selection_production_probe PRIVATE tiling_api register platform unified_dlog dl m graph_base)
+target_compile_options(topk_c13_selection_production_probe PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)

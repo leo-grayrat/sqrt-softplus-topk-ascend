@@ -4,6 +4,10 @@
 
 仓库已经接入真实 CANNJudge starter project，并在 CANN 9.0 / dav-2201 上完成多轮 Ascend C 实现、CPU twin-debug、Bisheng 编译和真实 Judge 性能实验。
 
+## 当前候选
+
+case13四值跨段分组已完成本地验证，活动分支`exp/c13-strided-group-selection`只接入FP32 E210/k8。完整32999行/32核模型减少44.35%，真机Judge待测。[实现、负结果与复现](notes/c13-strided-selection-2026-10-16.md)。只替换该分支的`submission/dense_repeat_override.h`；main仍是下述已验证基线。
+
 ## 当前主线
 
 `main`更新至PR #78的case3精确分块筛选阶段：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case3 **115.17→53.56 us，耗时减少53.49%（约2.15倍加速）**。同次case12/13/14/15为48.91/132.01/327.53/1080.00 us。[同次完整15点与阶段集成](notes/current-status-2026-10-16-c3.md)。
