@@ -2,6 +2,8 @@
 
 日期：2026-09-14
 
+2026-10-18复核：实验当时尚不知道测试点形状。后来9月15日取得形状表，本次据此回看生产入口，dense/batch4对应覆盖为空，重复ReduceMax只命中C1。早期“模型到Judge失配”和路线无效的归因需要修正，具体见[完整复盘](contest-retrospective-2026-10-18.md)。
+
 ## 1. 当前问题与实验约束
 
 目标算子：`SqrtSoftplusTopK`。输入 `router_logits(T,E)`，`E=64..1024`，`k=1..64`，FP16/FP32，目标平台为 dav-2201 / Atlas A2/A3 类 Ascend C 环境。
