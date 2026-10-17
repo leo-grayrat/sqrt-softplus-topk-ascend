@@ -311,6 +311,66 @@ private:
         AscendC::PipeBarrier<PIPE_V>();
     }
 
+    __aicore__ inline void BuildFiveLeafShortPairs(
+        const AscendC::LocalTensor<float>& pairA,
+        const AscendC::LocalTensor<float>& pairB,
+        int32_t rows)
+    {
+        // Sort32 produced five length-32 lists per row. Pack all five top-8
+        // prefixes consecutively: 40 pairs / 80 floats per row.
+        AscendC::DataCopyParams copy;
+        copy.blockCount = static_cast<uint16_t>(rows * 5);
+        copy.blockLen = 2;
+        copy.srcStride = 6;
+        copy.dstStride = 0;
+        AscendC::DataCopy(pairB, pairA, copy);
+        AscendC::PipeBarrier<PIPE_V>();
+
+        // A[0:64*rows] holds four top-8 lists per row, ready for repeated
+        // four-way merge. A[64*rows:80*rows] saves the fifth top-8 leaf.
+        // Both copies finish before B is overwritten by the merge.
+        copy.blockCount = static_cast<uint16_t>(rows);
+        copy.blockLen = 8;
+        copy.srcStride = 2;
+        copy.dstStride = 0;
+        AscendC::DataCopy(pairA, pairB, copy);
+        copy.blockLen = 2;
+        copy.srcStride = 8;
+        AscendC::DataCopy(pairA[rows * 64], pairB[64], copy);
+        AscendC::PipeBarrier<PIPE_V>();
+
+        // Exactly one first-level group per row; the fifth leaf needs no
+        // merge against three all-negative-infinity lists.
+        MergeFourTop8(pairB, pairA, rows);
+
+        // Assemble [merged top-8, saved fifth top-8] at 16 pairs per row.
+        // The saved source starts at 64*rows floats; all destinations end
+        // before 32*rows floats, so the same-buffer tail copy is disjoint.
+        copy.blockCount = static_cast<uint16_t>(rows);
+        copy.blockLen = 2;
+        copy.srcStride = 6;
+        copy.dstStride = 2;
+        AscendC::DataCopy(pairA, pairB, copy);
+        copy.srcStride = 0;
+        AscendC::DataCopy(pairA[16], pairA[rows * 64], copy);
+        AscendC::PipeBarrier<PIPE_V>();
+
+        // Splitting two sorted length-8 lists into four sorted length-4
+        // lists meets MrgSort repeat-mode's equal/contiguous-list contract.
+        AscendC::MrgSort4Info params;
+        for (int32_t i = 0; i < 4; ++i) params.elementLengths[i] = 4;
+        params.ifExhaustedSuspension = false;
+        params.validBit = 15;
+        params.repeatTimes = static_cast<uint16_t>(rows);
+        AscendC::MrgSortSrcList<float> srcList;
+        srcList.src1 = pairA[0];
+        srcList.src2 = pairA[8];
+        srcList.src3 = pairA[16];
+        srcList.src4 = pairA[24];
+        AscendC::MrgSort<float>(pairB, srcList, params);
+        AscendC::PipeBarrier<PIPE_V>();
+    }
+
     __aicore__ inline void BuildCompactShortPairs(
         const AscendC::LocalTensor<float>& pairA,
         const AscendC::LocalTensor<float>& pairB,
@@ -353,6 +413,10 @@ private:
         int32_t rows)
     {
         if (reuseScratch_) {
+            if (inner_ == 160 && (k_ == 6 || k_ == 7)) {
+                BuildFiveLeafShortPairs(pairA, pairB, rows);
+                return false;
+            }
             if (inner_ == 896) {
                 // All 28 Sort32 leaves are consecutive across rows. Pack
                 // top-8 from every leaf in one strided copy, without splitting
@@ -1796,6 +1860,180 @@ constexpr int32_t VENDOR_MEDIUM_MERGED_GROUP_COLS = 64;
 constexpr int32_t VENDOR_MEDIUM_FINAL_VALUES = 64;
 constexpr int32_t VENDOR_MEDIUM_FINAL_PAIR_FLOATS = VENDOR_MEDIUM_FINAL_VALUES * 2;
 
+class SqrtSoftplusPairGroupTop16HalfKernel {
+public:
+    __aicore__ inline void Init(GM_ADDR input, GM_ADDR output, int32_t rows, int32_t cores)
+    {
+        rows_ = rows;
+        const int32_t perCore = (rows + cores - 1) / cores;
+        const int32_t batchesPerCore = (perCore + 47) / 48;
+        batch_ = (perCore + batchesPerCore - 1) / batchesPerCore;
+        groups_ = (rows + batch_ - 1) / batch_;
+        active_ = groups_ < cores ? groups_ : cores;
+        tableCount_ = (batch_ * 32 + 63) / 64 * 64;
+        input_.SetGlobalBuffer(reinterpret_cast<__gm__ half*>(input));
+        output_.SetGlobalBuffer(reinterpret_cast<__gm__ half*>(output));
+        pipe_.InitBuffer(inputQueue_, 2, batch_ * 128 * 2);
+        pipe_.InitBuffer(outputQueue_, 1, batch_ * 16 * 2);
+        pipe_.InitBuffer(values_, batch_ * 128 * 4);
+        pipe_.InitBuffer(maxima_, batch_ * 64 * 4);
+        pipe_.InitBuffer(pairA_, batch_ * 128 * 4);
+        pipe_.InitBuffer(pairB_, batch_ * 128 * 4);
+        pipe_.InitBuffer(maxIndex_, batch_ * 64 * 4);
+        pipe_.InitBuffer(gatherIndex_, tableCount_ * 4);
+        pipe_.InitBuffer(base_, tableCount_ * 4);
+        pipe_.InitBuffer(offsets_, tableCount_ * 4);
+        pipe_.InitBuffer(selected_, batch_ * 16 * 4);
+        pipe_.InitBuffer(tmp_, batch_ * 16 * 4);
+        pipe_.InitBuffer(pattern_, 32);
+    }
+    __aicore__ inline void Process()
+    {
+        using namespace AscendC;
+        int32_t group = static_cast<int32_t>(GetBlockIdx());
+        if (group >= active_) return;
+        auto index = maxIndex_.Get<uint32_t>();
+        auto gather = gatherIndex_.Get<uint32_t>();
+        auto base = base_.Get<uint32_t>();
+        auto offsets = offsets_.Get<uint32_t>();
+        CreateVecIndex(index.ReinterpretCast<int32_t>(), int32_t(0), batch_ * 64);
+        PipeBarrier<PIPE_V>();
+        // For candidate position j: row=j/32, member=j%2, rank=(j%32)/2.
+        ShiftRight(base, index, uint32_t(5), tableCount_);
+        ShiftRight(gather, index, uint32_t(5), tableCount_);
+        ShiftLeft(offsets, index, uint32_t(27), tableCount_);
+        PipeBarrier<PIPE_V>();
+        ShiftLeft(base, base, uint32_t(7), tableCount_);
+        ShiftLeft(gather, gather, uint32_t(8), tableCount_);
+        ShiftRight(offsets, offsets, uint32_t(28), tableCount_);
+        PipeBarrier<PIPE_V>();
+        ShiftLeft(offsets, offsets, uint32_t(3), tableCount_);
+        PipeBarrier<PIPE_V>();
+        Add(gather.ReinterpretCast<int32_t>(), gather.ReinterpretCast<int32_t>(),
+            offsets.ReinterpretCast<int32_t>(), tableCount_);
+        PipeBarrier<PIPE_V>();
+        Adds(gather.ReinterpretCast<int32_t>(), gather.ReinterpretCast<int32_t>(),
+             int32_t(4), tableCount_);
+        ShiftLeft(offsets, index, uint32_t(31), tableCount_);
+        PipeBarrier<PIPE_V>();
+        ShiftRight(offsets, offsets, uint32_t(25), tableCount_);
+        PipeBarrier<PIPE_V>();
+        Add(base.ReinterpretCast<int32_t>(), base.ReinterpretCast<int32_t>(),
+            offsets.ReinterpretCast<int32_t>(), tableCount_);
+        ShiftLeft(index, index, uint32_t(26), batch_ * 64);
+        PipeBarrier<PIPE_V>();
+        if (batch_ * 32 < tableCount_) {
+            // The rounded vector table may contain an inactive extra row.
+            // Keep its Gather descriptors in range even for CPU checkers
+            // that inspect lanes beyond the requested logical element count.
+            Duplicate(gather[batch_ * 32], uint32_t(4), tableCount_ - batch_ * 32);
+            Duplicate(base[batch_ * 32], uint32_t(0), tableCount_ - batch_ * 32);
+            PipeBarrier<PIPE_V>();
+        }
+        ShiftRight(index, index, uint32_t(26), batch_ * 64);
+        auto pattern = pattern_.Get<uint32_t>();
+        for (int32_t j = 0; j < 8; ++j) pattern.SetValue(j, 0u);
+        pattern.SetValue(0, BuildVendorValueMask(16));
+        auto event = static_cast<event_t>(pipe_.FetchEventID(HardEvent::S_V));
+        SetFlag<HardEvent::S_V>(event);
+        WaitFlag<HardEvent::S_V>(event);
+        PipeBarrier<PIPE_V>();
+        CopyIn(group);
+        while (group < groups_) {
+            const int32_t next = group + active_;
+            if (next < groups_) CopyIn(next);
+            Compute(group);
+            group = next;
+        }
+    }
+private:
+    __aicore__ inline int32_t Valid(int32_t group) const
+    {
+        const int32_t left = rows_ - group * batch_;
+        return left < batch_ ? left : batch_;
+    }
+    __aicore__ inline void CopyIn(int32_t group)
+    {
+        auto input = inputQueue_.AllocTensor<half>();
+        AscendC::DataCopy(input, input_[int64_t(group) * batch_ * 128], Valid(group) * 128);
+        inputQueue_.EnQue(input);
+    }
+    __aicore__ inline void Compute(int32_t group)
+    {
+        using namespace AscendC;
+        const int32_t rows = Valid(group);
+        auto input = inputQueue_.DeQue<half>();
+        auto values = values_.Get<float>();
+        auto maxima = maxima_.Get<float>();
+        Cast(values, input, RoundMode::CAST_NONE, rows * 128);
+        PipeBarrier<PIPE_V>();
+        // Each iteration compares two 64-value halves of one row.
+        BinaryRepeatParams stride(1, 1, 1, 8, 16, 16);
+        Max(maxima, values, values[64], uint64_t(64), static_cast<uint8_t>(rows), stride);
+        PipeBarrier<PIPE_V>();
+        auto a = pairA_.Get<float>();
+        auto b = pairB_.Get<float>();
+        auto index = maxIndex_.Get<uint32_t>();
+        Sort32(a, maxima, index, rows * 2);
+        PipeBarrier<PIPE_V>();
+        DataCopyParams copy;
+        copy.blockCount = static_cast<uint16_t>(rows * 2);
+        copy.blockLen = 4; copy.srcStride = 4; copy.dstStride = 0;
+        DataCopy(b, a, copy);
+        PipeBarrier<PIPE_V>();
+        // Two length-16 prefixes are four contiguous sorted length-8 lists.
+        MrgSort4Info merge;
+        for (int32_t j = 0; j < 4; ++j) merge.elementLengths[j] = 8;
+        merge.ifExhaustedSuspension = false;
+        merge.validBit = 15;
+        merge.repeatTimes = static_cast<uint16_t>(rows);
+        MrgSortSrcList<float> lists;
+        lists.src1 = b[0]; lists.src2 = b[16];
+        lists.src3 = b[32]; lists.src4 = b[48];
+        MrgSort<float>(a, lists, merge);
+        PipeBarrier<PIPE_V>();
+        auto offsets = offsets_.Get<int32_t>();
+        Gather(offsets, a.ReinterpretCast<int32_t>(), gatherIndex_.Get<uint32_t>(), 0, rows * 32);
+        PipeBarrier<PIPE_V>();
+        Add(offsets, offsets, base_.Get<int32_t>(), rows * 32);
+        PipeBarrier<PIPE_V>();
+        ShiftLeft(offsets, offsets, int32_t(2), rows * 32);
+        PipeBarrier<PIPE_V>();
+        // Maxima and pair buffers are dead now; original values remain live
+        // in a separate root tensor until every retained member is gathered.
+        Gather(maxima, values, offsets.ReinterpretCast<uint32_t>(), 0, rows * 32);
+        PipeBarrier<PIPE_V>();
+        Sort32(b, maxima, index, rows);
+        PipeBarrier<PIPE_V>();
+        auto selected = selected_.Get<float>();
+        GatherMaskParams extract;
+        extract.src0BlockStride = 1;
+        extract.repeatTimes = static_cast<uint8_t>(rows);
+        extract.src0RepeatStride = 8;
+        extract.src1RepeatStride = 0;
+        uint64_t count = 0;
+        GatherMask(selected, b, pattern_.Get<uint32_t>(), true, 64, extract, count);
+        PipeBarrier<PIPE_V>();
+        StableSoftplusSqrt(selected, tmp_.Get<float>(), rows * 16);
+        auto output = outputQueue_.AllocTensor<half>();
+        Cast(output, selected, RoundMode::CAST_RINT, rows * 16);
+        PipeBarrier<PIPE_V>();
+        inputQueue_.FreeTensor(input);
+        outputQueue_.EnQue(output);
+        output = outputQueue_.DeQue<half>();
+        DataCopy(output_[int64_t(group) * batch_ * 16], output, rows * 16);
+        outputQueue_.FreeTensor(output);
+    }
+    int32_t rows_, batch_, groups_, active_, tableCount_;
+    AscendC::TPipe pipe_;
+    AscendC::GlobalTensor<half> input_, output_;
+    AscendC::TQue<AscendC::QuePosition::VECIN, 2> inputQueue_;
+    AscendC::TQue<AscendC::QuePosition::VECOUT, 1> outputQueue_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> values_, maxima_, pairA_, pairB_, maxIndex_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> gatherIndex_, base_, offsets_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> selected_, tmp_, pattern_;
+};
+
 class SqrtSoftplusVendorPerfTopKHalfMediumKernel {
 public:
     __aicore__ inline void Init(
@@ -2709,7 +2947,7 @@ public:
     {
         rows_ = rows;
         const int32_t perCore = (rows + cores - 1) / cores;
-        batch_ = perCore < 8 ? perCore : 8;
+        batch_ = perCore < 10 ? perCore : 10;
         groups_ = (rows + batch_ - 1) / batch_;
         active_ = groups_ < cores ? groups_ : cores;
         input_.SetGlobalBuffer(reinterpret_cast<__gm__ float*>(input));
@@ -2723,10 +2961,6 @@ public:
         pipe_.InitBuffer(gatherIndex_, batch_ * 256 * 4);
         pipe_.InitBuffer(base_, batch_ * 256 * 4);
         pipe_.InitBuffer(offsets_, batch_ * 256 * 4);
-        pipe_.InitBuffer(packed_, batch_ * 256 * 4);
-        pipe_.InitBuffer(pairA_, batch_ * 256 * 8);
-        pipe_.InitBuffer(pairB_, batch_ * 256 * 8);
-        pipe_.InitBuffer(tmp_, batch_ * 64 * 4);
         pipe_.InitBuffer(pattern_, 32);
     }
 
@@ -2823,18 +3057,43 @@ private:
         const int32_t rows = Valid(group);
         auto input = inputQueue_.DeQue<float>();
         auto maxima = maxima_.Get<float>();
-        for (int32_t row = 0; row < rows; ++row) {
-            Max(maxima[row * 256], input[row * 1024], input[row * 1024 + 256], 256);
+        if (rows >= 4) {
+            // Max.md: FP32 continuous mask=64, one row per repeat. Strides are
+            // 32-byte blocks: maxima row=256 floats -> 32; input row=1024 -> 128.
+            // Four disjoint segments cover the same 256 groups in each pass.
+            BinaryRepeatParams first(1, 1, 1, 32, 128, 128);
+            BinaryRepeatParams next(1, 1, 1, 32, 32, 128);
+            const uint8_t repeats = static_cast<uint8_t>(rows);
+            for (int32_t segment = 0; segment < 256; segment += 64) {
+                Max(maxima[segment], input[segment], input[segment + 256],
+                    uint64_t(64), repeats, first);
+            }
+            PipeBarrier<PIPE_V>();
+            for (int32_t segment = 0; segment < 256; segment += 64) {
+                Max(maxima[segment], maxima[segment], input[segment + 512],
+                    uint64_t(64), repeats, next);
+            }
+            PipeBarrier<PIPE_V>();
+            for (int32_t segment = 0; segment < 256; segment += 64) {
+                Max(maxima[segment], maxima[segment], input[segment + 768],
+                    uint64_t(64), repeats, next);
+            }
+            PipeBarrier<PIPE_V>();
+        } else {
+            // Preserve the original reduction for the small final group.
+            for (int32_t row = 0; row < rows; ++row) {
+                Max(maxima[row * 256], input[row * 1024], input[row * 1024 + 256], 256);
+            }
+            PipeBarrier<PIPE_V>();
+            for (int32_t row = 0; row < rows; ++row) {
+                Max(maxima[row * 256], maxima[row * 256], input[row * 1024 + 512], 256);
+            }
+            PipeBarrier<PIPE_V>();
+            for (int32_t row = 0; row < rows; ++row) {
+                Max(maxima[row * 256], maxima[row * 256], input[row * 1024 + 768], 256);
+            }
+            PipeBarrier<PIPE_V>();
         }
-        PipeBarrier<PIPE_V>();
-        for (int32_t row = 0; row < rows; ++row) {
-            Max(maxima[row * 256], maxima[row * 256], input[row * 1024 + 512], 256);
-        }
-        PipeBarrier<PIPE_V>();
-        for (int32_t row = 0; row < rows; ++row) {
-            Max(maxima[row * 256], maxima[row * 256], input[row * 1024 + 768], 256);
-        }
-        PipeBarrier<PIPE_V>();
         auto maxA = maxA_.Get<float>(); auto maxB = maxB_.Get<float>();
         Sort32(maxA, maxima, index_.Get<uint32_t>(), rows * 8);
         PipeBarrier<PIPE_V>();
@@ -2846,11 +3105,13 @@ private:
         PipeBarrier<PIPE_V>();
         ShiftLeft(offsets, offsets, int32_t(2), rows * 256);
         PipeBarrier<PIPE_V>();
-        auto packed = packed_.Get<float>();
+        // Group maxima are dead after their Sort32; reuse the root tensor for candidates.
+        auto packed = maxima;
         Gather(packed, input, offsets.ReinterpretCast<uint32_t>(), 0, rows * 256);
         PipeBarrier<PIPE_V>();
         inputQueue_.FreeTensor(input);
-        auto a = pairA_.Get<float>(); auto b = pairB_.Get<float>();
+        // maxA/maxB are dead after the first Gather materializes group IDs in offsets.
+        auto a = maxA; auto b = maxB;
         Sort32(a, packed, index_.Get<uint32_t>(), rows * 8);
         PipeBarrier<PIPE_V>();
         Top64From256(a, b, rows);
@@ -2865,7 +3126,8 @@ private:
         uint64_t count = 0;
         GatherMask(output, a, pattern_.Get<uint32_t>(), true, 64, p, count);
         PipeBarrier<PIPE_V>();
-        StableSoftplusSqrt(output, tmp_.Get<float>(), rows * 64);
+        // Candidate values are dead after Sort32; maxima also holds the transform scratch.
+        StableSoftplusSqrt(output, maxima, rows * 64);
         outputQueue_.EnQue(output);
         output = outputQueue_.DeQue<float>();
         DataCopy(output_[int64_t(group) * batch_ * 64], output, rows * 64);
@@ -2877,7 +3139,7 @@ private:
     AscendC::TQue<AscendC::QuePosition::VECIN, 2> inputQueue_;
     AscendC::TQue<AscendC::QuePosition::VECOUT, 1> outputQueue_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> maxima_, maxA_, maxB_, index_;
-    AscendC::TBuf<AscendC::TPosition::VECCALC> gatherIndex_, base_, offsets_, packed_, pairA_, pairB_, tmp_, pattern_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> gatherIndex_, base_, offsets_, pattern_;
 };
 
 class SqrtSoftplusVendorPerfTopKFloatLargeKernel {
@@ -3755,6 +4017,13 @@ __aicore__ inline void RunVendorTopKDispatch(
     uint32_t topkTmpBytes,
     const AscendC::tiling::TopkTiling& topkTiling)
 {
+    if (experts == 128 && k == 16) {
+        SqrtSoftplusPairGroupTop16HalfKernel op;
+        op.Init(routerLogits, topkScores, rows, blockNum);
+        op.Process();
+        return;
+    }
+
     if (experts == 512 && k == 10) {
         SqrtSoftplusBlockMaxMediumTopKHalfKernel op;
         op.Init(routerLogits, topkScores, rows, k, blockNum);

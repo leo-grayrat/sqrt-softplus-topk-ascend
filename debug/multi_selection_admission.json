@@ -1,0 +1,165 @@
+{
+  "status": "admitted after local comparison; pending full Judge",
+  "baseline": "3e44aed0f98fab2985ea4397bee1240e14ec2177",
+  "c15_class_sha256": "c78a4e458770219cfbc0e70a151760df4ceaffa2507c820a5cb2181421a9197d",
+  "c10_class_sha256": "5ea8afa14ac4811b5b4fd20846177474ce75e23b03152c2df571f4cc58a5cbf4",
+  "c79_function_sha256": "881506a35a2e881adfd1216de2781c1dcc1b363e552511cb9c0e1d9387928672",
+  "rationale": "One bundled C7/C9/C10/C15 submission per user request; C15 small benefit is supplemental, not a standalone large gain.",
+  "comparison_metric": "maximum per-core duration_time(us)",
+  "comparisons": [
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r1-e1024-k64-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 3.99,
+      "candidate_us": 3.58,
+      "reduction_percent": 10.275689223057649
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r1-e150-k6-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 4.98,
+      "candidate_us": 4.6,
+      "reduction_percent": 7.63052208835343
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r1-e160-k7-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 4.98,
+      "candidate_us": 4.6,
+      "reduction_percent": 7.63052208835343
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r1043-e1024-k64-c32",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 39.51,
+      "candidate_us": 38.05,
+      "reduction_percent": 3.6952670210073424
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r192-e150-k6-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 27.97,
+      "candidate_us": 22.9,
+      "reduction_percent": 18.12656417590276
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r192-e160-k7-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 27.11,
+      "candidate_us": 22.05,
+      "reduction_percent": 18.66469937292512
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r32-e1024-k64-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 32.17,
+      "candidate_us": 31.0,
+      "reduction_percent": 3.6369288156667734
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r385-e150-k6-c8",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 11.69,
+      "candidate_us": 10.1,
+      "reduction_percent": 13.601368691189053
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r385-e160-k7-c8",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 10.25,
+      "candidate_us": 9.0,
+      "reduction_percent": 12.195121951219512
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r64-e1024-k64-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 61.22,
+      "candidate_us": 59.05,
+      "reduction_percent": 3.5445932701731464
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r96-e150-k6-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 16.03,
+      "candidate_us": 13.5,
+      "reduction_percent": 15.782907049282603
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r96-e160-k7-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 15.34,
+      "candidate_us": 12.82,
+      "reduction_percent": 16.427640156453716
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r1-e128-k16-c1",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 3.89,
+      "candidate_us": 3.45,
+      "reduction_percent": 11.311053984575835
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r192-e128-k16-c1",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 20.85,
+      "candidate_us": 18.58,
+      "reduction_percent": 10.887290167865727
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r4096-e128-k16-c32",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 14.96,
+      "candidate_us": 13.71,
+      "reduction_percent": 8.355614973262027
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r49-e128-k16-c8",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 4.01,
+      "candidate_us": 3.89,
+      "reduction_percent": 2.9925187032418865
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r96-e128-k16-c1",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 11.81,
+      "candidate_us": 10.86,
+      "reduction_percent": 8.04403048264184
+    }
+  ],
+  "evidence": "notes/multi-selection-evidence-2026-10-17/model-summary.json"
+}

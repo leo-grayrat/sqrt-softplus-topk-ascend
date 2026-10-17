@@ -1,0 +1,39 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp32-large rows=11 E=1024 inner=1024 k=64 cores=1
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][CORE_0][pid 4634] error happened! ========= 
+SIGSEGV Signal (Invalid memory reference) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x000000000056d5b1: Handler(int) at ??:?
+[#3] 0x00000000000026bd: memcpy_s at ??:?
+[#4] 0x00000000004f83d6: PV_MEM::read_in_page(unsigned long, unsigned int, unsigned char*) at ??:?
+[#5] 0x00000000004f8658: PV_MEM::read(unsigned long, unsigned int, unsigned char*) at ??:?
+[#6] 0x0000000000606404: PemBuf::pv_read(unsigned long, unsigned int, unsigned char*, bool) at ??:?
+[#7] 0x00000000007f293c: pv_mem_read at ??:?
+[#8] 0x00000000000c737a: AscendC::ModelFactory::GetOutput(unsigned long, AscendC::PVMemScope, void*, unsigned long) const at ??:?
+[#9] 0x000000000012d9c0: void AscendC::GatherCompute<unsigned int>(std::string const&, std::string const&, unsigned int*, unsigned int*, unsigned int, unsigned short, unsigned char) at ??:?
+[#10] 0x000000000012c56b: AscendC::vgather(unsigned int*, unsigned int*, unsigned int, unsigned short, unsigned char) at ??:?
+[#11] 0x000000000054c42f: void AscendC::Gather<int>(AscendC::LocalTensor<int> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<unsigned int> const&, unsigned int, unsigned long, unsigned char, unsigned short) at ??:?
+[#12] 0x00000000005450ab: void AscendC::Gather<int>(AscendC::LocalTensor<int> const&, AscendC::LocalTensor<int> const&, AscendC::LocalTensor<unsigned int> const&, unsigned int, unsigned int) at ??:?
+[#13] 0x00000000004fb757: (anonymous namespace)::SqrtSoftplusGroupMaxTopKFloatLargeKernel::Process() at topk_c15_group_production_probe.asc:?
+[#14] 0x00000000004f4920: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<float>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_c15_group_production_probe.asc:?
+[#15] 0x00000000004e729c: void (anonymous namespace)::sqrt_softplus_top_k_dispatch_custom<float>(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at topk_c15_group_production_probe.asc:?
+[#16] 0x000000000056f745: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#17] 0x000000000051dfac: void AscendC::AscCPUKernelLaunch<void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling>(unsigned int, void*, void*, char const*, void (*)(unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling), unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling) at ??:?
+[#18] 0x00000000004e0918: run_kernel at ??:?
+[#19] 0x00000000004e8b53: main at ??:?
+[#20] 0x00000000004e0384: _start at ??:?
+
+[MISMATCH] rows=11 E=1024 k=64 row=0 i=0 actual=0 exact=8.94427204 rawTop=80

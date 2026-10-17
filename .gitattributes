@@ -24,3 +24,5 @@ tools/run_c13*.sh text eol=lf
 notes/c14-ten-blocks-evidence-2026-10-16/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
 # Research class fragments deliberately retain a separating blank line at EOF.
 debug/cpu_topk_probe/c14*_kernel.h text eol=lf whitespace=-blank-at-eof
+tools/run_multi*.sh text eol=lf
+notes/multi-selection-evidence-2026-10-17/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof

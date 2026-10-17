@@ -146,3 +146,9 @@ Failed to check validBit value in MrgSort, its valid value is 3 / 7 / 15
 2026-10-16，#81的研究把`uint64_t(65535)`当作低16位置位掩码，传给`Duplicate(dst,value,uint64_t mask,repeat,stride,stride)`。SDK的`kernel_operator_vec_duplicate_intf_impl.h`明确将该重载归为MASK_COUNT_MODE；位掩码重载接受`uint64_t mask[]`。误用使跨行填充覆盖下一行候选，单行不能暴露全部问题。连续填充16/24个值应分别传`uint64_t(16)`和`uint64_t(24)`。修正后的研究raw/full均通过17组CPU比较，没有关闭检查器。
 
 同次研究还发现，原始FP16值经float再以CAST_RINT转回half会将负无穷饱和成-65504，不能用它做逐值原始选择检查。raw诊断改为FP32输出，生产half输出和变换合同保持原样。另一首版三路合并的`validBit=7`不符合SDK对repeat>1要求四路等长、validBit=15的约束；改成四份等长列表并填充第四份。CANN9的`asc_mrgsort4_impl.h`第27–28行记载此限制。普通printf仅放在CPU条件编译块，不能把stdio调用带进device链接。
+
+## 14. C15 cap11的独立Gather CPU失败必须保留
+
+2026-10-17，#83首版阶段复用把C15 batch8提到11，默认51组及单独10行CPU通过，单独11行却在Gather<int>读取maxB组索引时进入PV_MEM.read_in_page/GetOutput并SIGSEGV，随后输出不匹配。地址/容量静态检查没有发现越界，阶段别名首次复用发生在这次Gather之后，不能仅凭时间先后认定别名或硬件根缓冲大小是原因。该现象与第11项CPU模型问题相关，但此轮未证明相同根因。
+
+候选回退cap10，在全新目录重建，双方默认与边界9/10/11/12/19/20/21/22/23行全部通过；原失败目录没有补写COMPLETE，不计成功。失败源和日志见[multi-selection-evidence-2026-10-17/cann-multi-candidate-v1](multi-selection-evidence-2026-10-17/cann-multi-candidate-v1)，最终生产也不宣称真机有32KiB Gather源限制。

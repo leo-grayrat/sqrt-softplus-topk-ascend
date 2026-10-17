@@ -1,0 +1,103 @@
+2026-10-17 01:20:26 [WARN]  The option "--application" will be deprecated in future version. It is recommended to specify <app> [arguments] instead.
+2026-10-17 01:20:26 [INFO]  Op profiling analysis start.
+2026-10-17 01:20:26 [INFO]  Running simulation task: Binary Simulation Running, use simulator Ascend910B1 by --soc-version
+[INFO] Config file [config_stars.json] from environment variable [CAMODEL_CONFIG_PATH]. Path: /home/leo/cann-multi-candidate-v2/profile-r1043-e1024-k64-c32/OPPROF_20261017012026_QBPXBHUXZJHLYSIH/device0/tmp_dump/config/config_stars.json
+[INFO] Config file is found, path is /home/leo/cann-multi-candidate-v2/profile-r1043-e1024-k64-c32/OPPROF_20261017012026_QBPXBHUXZJHLYSIH/device0/tmp_dump/config/config_stars.json.
+[FuncCache]: size:0x20000, line_size:128, way_num:16, line_num:1024, idx_num:64
+             idx_lsb:7, idx_mask:0x3f, tag_lsb:13, tag_mask:0xffffffffffffffff, ofst_mask:0x7f
+
+[TmSim]: Run in parallel worker mode, core num is: 24
+
+[INFO] Config file [config.json] from environment variable [CAMODEL_CONFIG_PATH]. Path: /home/leo/cann-multi-candidate-v2/profile-r1043-e1024-k64-c32/OPPROF_20261017012026_QBPXBHUXZJHLYSIH/device0/tmp_dump/config/config.json
+[INFO] AicWrapper attach AIC 0, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 1, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 2, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 3, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 4, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 5, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 6, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 7, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 8, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 9, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 10, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 11, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 12, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 13, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 14, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 15, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 16, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 17, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 18, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 19, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 20, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 21, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 22, num_vec_core=2, num_subcore=3
+[INFO] AicWrapper attach AIC 23, num_vec_core=2, num_subcore=3
+[INFO] Chip 0 AIC / Scheduler / Soc periods: 200.0000 / 200.0000 / 105.0000
+[INFO] chip 0 die 0 device created
+>> Start ModelParsim with 24 threads for 25 thread units, mode is 0
+================================================================================
+>>>>                                                                        
+>>>>                             " PEM MODEL "                                
+>>>>             Total no. of 1 chip(s) Model Init Success!                
+>>>>                                                                        
+================================================================================
+[INFO] Model Start Time: 2026-10-17 01:20:26
+[DRVSTUB_LOG] driver_api.c:556 sendSwapBuf:swapbuf_base_addr:10000000
+[DRVSTUB_LOG] driver_api.c:557 sendSwapBuf:sq:0 swapbuf_addr:10000000
+[DRVSTUB_LOG] driver_api.c:556 sendSwapBuf:swapbuf_base_addr:10000000
+[DRVSTUB_LOG] driver_api.c:557 sendSwapBuf:sq:1 swapbuf_addr:10000040
+[DRVSTUB_LOG] driver_api.c:556 sendSwapBuf:swapbuf_base_addr:10000000
+[DRVSTUB_LOG] driver_api.c:557 sendSwapBuf:sq:2 swapbuf_addr:10000080
+[DRVSTUB_LOG] driver_api.c:556 sendSwapBuf:swapbuf_base_addr:10000000
+[DRVSTUB_LOG] driver_api.c:557 sendSwapBuf:sq:3 swapbuf_addr:100000c0
+RUN fp32-large rows=1043 E=1024 inner=1024 k=64 cores=32
+[INFO] <ProfInit> Start profiling on kernel: _ZN12_GLOBAL__N_135sqrt_softplus_top_k_dispatch_customIfEEvPhS1_iiiiiijN7AscendC6tiling10TopkTilingE
+2026-10-17 01:20:26 [INFO]  Extract 4773 relations from kernel
+2026-10-17 01:20:26 [WARN]  Kernel missed debug_line information. If you need code call stack, please recompile kernel with -g option
+[INFO] Model Stop Time: 2026-10-17 01:21:46
+Model RUN TIME: 80055.6 ms
+[INFO] Total tick: 71897
+[INFO] Model stopped successfully.
+PASS: 1 C15 production cases
+2026-10-17 01:21:48 [WARN]  Code call stack is empty
+2026-10-17 01:21:48 [WARN]  Lack of code info of files
+2026-10-17 01:21:48 [INFO]  Core operator results run in simulator as follow:
+core_name           duration_time(us)   running_time(us)    
+core0.veccore0      38.03               37.75               
+core1.veccore0      37.61               37.33               
+core10.veccore0     29.23               28.95               
+core11.veccore0     29.14               28.86               
+core12.veccore0     29.2                28.92               
+core13.veccore0     28.91               28.62               
+core14.veccore0     29.2                28.91               
+core15.veccore0     29.16               28.88               
+core16.veccore0     29.19               28.91               
+core17.veccore0     28.91               28.63               
+core18.veccore0     29.21               28.92               
+core19.veccore0     29.16               28.88               
+core2.veccore0      38.05               37.77               
+core20.veccore0     29.2                28.91               
+core21.veccore0     28.9                28.62               
+core22.veccore0     29.23               28.95               
+core23.veccore0     29.15               28.86               
+core24.veccore0     29.22               28.94               
+core25.veccore0     28.89               28.61               
+core26.veccore0     29.22               28.94               
+core27.veccore0     29.14               28.86               
+core28.veccore0     29.21               28.93               
+core29.veccore0     28.89               28.61               
+core3.veccore0      37.94               37.66               
+core30.veccore0     29.21               28.93               
+core31.veccore0     29.16               28.87               
+core4.veccore0      38.02               37.74               
+core5.veccore0      37.62               37.34               
+core6.veccore0      38.05               37.76               
+core7.veccore0      37.97               37.68               
+core8.veccore0      32.16               31.85               
+core9.veccore0      28.91               28.63               
+2026-10-17 01:21:49 [INFO]  Profiling running finished. All task success.
+2026-10-17 01:21:49 [INFO]  Start parse dump file
+2026-10-17 01:21:49 [INFO]  Profiling results saved in /home/leo/cann-multi-candidate-v2/profile-r1043-e1024-k64-c32/OPPROF_20261017012026_QBPXBHUXZJHLYSIH
+2026-10-17 01:21:49 [INFO]  Profiling data parse finished.
+2026-10-17 01:21:49 [INFO]  Op profiling finish. Welcome to next use.
