@@ -1,0 +1,5 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp16-production rows=65 E=512 k=10 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 2076] exit success!
+PASS: 1 C14 production dispatch cases

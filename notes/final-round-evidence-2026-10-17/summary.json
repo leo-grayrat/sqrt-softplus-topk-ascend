@@ -1,0 +1,142 @@
+{
+  "baseline_commit": "b8bebe9307de2adb503a92bb470ae18b789a9a13",
+  "kind": "local CPU and simulator evidence; no final-round Judge submission",
+  "runs": {
+    "cann-final-throughput-v1": {
+      "cpu_cases": 0,
+      "cpu": {},
+      "models": {},
+      "header_sha256": "0b22f7bc2e1fc7a14b02d758d3e61fbb8eeedb132b31849a485563a2972961a0"
+    },
+    "cann-final-throughput-v2": {
+      "cpu_cases": 152,
+      "cpu": {
+        "extra-c14-r113.log": 1,
+        "extra-c14-r31.log": 1,
+        "extra-c14-r32.log": 1,
+        "extra-c14-r55.log": 1,
+        "extra-half-r64.log": 1,
+        "extra-float-r31.log": 1,
+        "extra-float-r30.log": 1,
+        "extra-float-r57.log": 1,
+        "extra-half-r56.log": 1,
+        "extra-c14-r56.log": 1,
+        "extra-half-r30.log": 1,
+        "extra-float-r64.log": 1,
+        "extra-float-r113.log": 1,
+        "extra-half-r63.log": 1,
+        "extra-float-r32.log": 1,
+        "extra-c14-r57.log": 1,
+        "topk_c14_block_production_probe-cpu.log": 31,
+        "topk_fp32_large_production_probe-cpu.log": 46,
+        "extra-float-r56.log": 1,
+        "extra-half-r57.log": 1,
+        "topk_fp16_large_production_probe-cpu.log": 45,
+        "extra-float-r55.log": 1,
+        "extra-float-r63.log": 1,
+        "extra-c14-r30.log": 1,
+        "extra-half-r65.log": 1,
+        "extra-half-r32.log": 1,
+        "extra-c14-r63.log": 1,
+        "extra-half-r113.log": 1,
+        "extra-float-r65.log": 1,
+        "extra-c14-r65.log": 1,
+        "extra-half-r31.log": 1,
+        "extra-half-r55.log": 1,
+        "extra-c14-r64.log": 1
+      },
+      "models": {
+        "half-r4096-e256-k64-c32-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 45.28
+        },
+        "c14-r128-c1-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 25.1
+        },
+        "float-r128-e97-k32-c1-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 19.13
+        },
+        "c14-r4096-c32-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 27.54
+        },
+        "half-r128-e256-k64-c1-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 44.57
+        },
+        "float-r4096-e97-k32-c32-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 20.36
+        }
+      },
+      "header_sha256": "584b665651e4a11f1af12c63709da62ecfae4407be276765526833216e7a1e74"
+    },
+    "cann-final-throughput-baseline": {
+      "cpu_cases": 0,
+      "cpu": {},
+      "models": {
+        "half-r4096-e256-k64-c32-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 45.86
+        },
+        "float-r128-e97-k32-c1-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 19.74
+        },
+        "half-r128-e256-k64-c1-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 45.82
+        },
+        "float-r4096-e97-k32-c32-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 20.21
+        }
+      },
+      "header_sha256": "2eeae0d8e623e5e9f8eda02a5753b34c2ff7b6e40d54c662b9342c84c3b9389d"
+    },
+    "cann-final-c14-28": {
+      "cpu_cases": 37,
+      "cpu": {
+        "extra-r55.log": 1,
+        "extra-r28.log": 1,
+        "extra-r29.log": 1,
+        "cpu.log": 31,
+        "extra-r56.log": 1,
+        "extra-r27.log": 1,
+        "extra-r57.log": 1
+      },
+      "models": {
+        "c14-r128-c1-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 24.76
+        },
+        "c14-r4096-c32-sim.log": {
+          "output_pass": true,
+          "timeout": false,
+          "max_core_us": 25.16
+        }
+      },
+      "header_sha256": "aa37b3f5e2d8049892e77ba60759739cfefc35d9b635222ffc8eeba849fb129e"
+    }
+  },
+  "unfinished_c79": {
+    "compiled": false,
+    "judge_tested": false,
+    "source_sha256": "75576fb6bfcfad0ceb4e707a8073bfdf47496f088d14ce634735ce069845f41c",
+    "patch": "debug/final-round-2026-10-17/c7-c9-UNVALIDATED.patch",
+    "launch_blocked": "Automatic approval review could not complete because usage limit was exhausted. No new run started."
+  }
+}

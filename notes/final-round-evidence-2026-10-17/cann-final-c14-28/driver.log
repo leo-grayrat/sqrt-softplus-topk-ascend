@@ -1,0 +1,7 @@
+PASS: 31 C14 production dispatch cases
+CPU_COMPLETE
+/home/leo/cann-final-c14-28 c14-r128-c1 PASS
+/home/leo/cann-final-throughput-v2 c14-r128-c1 PASS
+/home/leo/cann-final-c14-28 c14-r4096-c32 PASS
+/home/leo/cann-final-throughput-v2 c14-r4096-c32 PASS
+MODELS_COMPLETE
