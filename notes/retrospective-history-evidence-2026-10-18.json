@@ -9,7 +9,7 @@
         "23-31": "submission include migration and manual file delivery",
         "34-49": "request for major change and pivot regression",
         "52-87": "profiling harness and build failures",
-        "105-106": "user requests branch/file delivery; dense coverage repair",
+        "105-106": "platform requires manual file copying into an empty project; user requests branch/file delivery; dense coverage repair",
         "122-130": "batch4 attribution, user flags defensive process, Judge tie",
         "131-144": "research, repeated ReduceMax and leaderboard reference correction",
         "147-164": "Huawei Perf implementation and batched transform"
@@ -39,6 +39,7 @@
   "gate_review": {
     "comparison_source": "notes/judge-case-shapes-2026-09-15.md",
     "knowledge_timeline": "The Sep12-14 experiments preceded access to the 15-case shapes recorded on Sep15. Matching below is retrospective; actual case coverage was unknown during those experiments.",
+    "execution_context": "Early cloud experiments required the user to copy files, compile, run and return logs. Stopping a Judge-neutral candidate was a reasonable resource decision under those conditions. The matching table supplements historical explanation and does not establish that further coverage experiments were warranted at the time.",
     "method": "Retrospective comparison of archived production dispatch with the subsequently recorded 15-case shape table.",
     "dense_repeat": {
       "commit": "61ebad2",
