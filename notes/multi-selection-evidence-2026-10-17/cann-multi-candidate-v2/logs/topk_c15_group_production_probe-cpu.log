@@ -1,0 +1,483 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp32-large rows=1 E=97 inner=128 k=32 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1412] exit success!
+RUN fp32-large rows=17 E=97 inner=128 k=32 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1414] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1415] exit success!
+[SUCCESS][CORE_2][pid 1416] exit success!
+[SUCCESS][CORE_3][pid 1417] exit success!
+[SUCCESS][CORE_4][pid 1418] exit success!
+[SUCCESS][CORE_5][pid 1419] exit success!
+[SUCCESS][CORE_6][pid 1420] exit success!
+[SUCCESS][CORE_7][pid 1421] exit success!
+RUN fp32-large rows=33 E=128 inner=128 k=32 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1430] exit success!
+[SUCCESS][CORE_1][pid 1431] exit success!
+[SUCCESS][CORE_2][pid 1432] exit success!
+[SUCCESS][CORE_3][pid 1433] exit success!
+[SUCCESS][CORE_4][pid 1434] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_5][pid 1435] exit success!
+[SUCCESS][CORE_6][pid 1436] exit success!
+[SUCCESS][CORE_7][pid 1437] exit success!
+RUN fp32-large rows=1 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1446] exit success!
+RUN fp32-large rows=9 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1448] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1449] exit success!
+[SUCCESS][CORE_2][pid 1450] exit success!
+[SUCCESS][CORE_3][pid 1451] exit success!
+[SUCCESS][CORE_4][pid 1452] exit success!
+[SUCCESS][CORE_5][pid 1453] exit success!
+[SUCCESS][CORE_6][pid 1454] exit success!
+[SUCCESS][CORE_7][pid 1455] exit success!
+RUN fp32-large rows=17 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1464] exit success!
+[SUCCESS][CORE_1][pid 1465] exit success!
+[SUCCESS][CORE_2][pid 1466] exit success!
+[SUCCESS][CORE_3][pid 1467] exit success!
+[SUCCESS][CORE_4][pid 1468] exit success!
+[SUCCESS][CORE_5][pid 1469] exit success!
+[SUCCESS][CORE_6][pid 1470] exit success!
+[SUCCESS][CORE_7][pid 1471] exit success!
+RUN fp32-large rows=4 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1480] exit success!
+RUN fp32-large rows=5 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1482] exit success!
+RUN fp32-large rows=16 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1484] exit success!
+RUN fp32-large rows=33 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1486] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1487] exit success!
+[SUCCESS][CORE_2][pid 1488] exit success!
+[SUCCESS][CORE_3][pid 1489] exit success!
+[SUCCESS][CORE_4][pid 1490] exit success!
+[SUCCESS][CORE_5][pid 1491] exit success!
+[SUCCESS][CORE_6][pid 1492] exit success!
+[SUCCESS][CORE_7][pid 1493] exit success!
+RUN fp32-large rows=65 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1502] exit success!
+[SUCCESS][CORE_1][pid 1503] exit success!
+[SUCCESS][CORE_2][pid 1504] exit success!
+[SUCCESS][CORE_3][pid 1505] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1506] exit success!
+[SUCCESS][CORE_5][pid 1507] exit success!
+[SUCCESS][CORE_6][pid 1508] exit success!
+[SUCCESS][CORE_7][pid 1509] exit success!
+RUN fp32-large rows=129 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1518] exit success!
+[SUCCESS][CORE_1][pid 1519] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1520] exit success!
+[SUCCESS][CORE_3][pid 1521] exit success!
+[SUCCESS][CORE_4][pid 1522] exit success!
+[SUCCESS][CORE_5][pid 1523] exit success!
+[SUCCESS][CORE_6][pid 1524] exit success!
+[SUCCESS][CORE_7][pid 1525] exit success!
+RUN fp32-large rows=65 E=1001 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1534] exit success!
+[SUCCESS][CORE_1][pid 1535] exit success!
+[SUCCESS][CORE_2][pid 1536] exit success!
+[SUCCESS][CORE_3][pid 1537] exit success!
+[SUCCESS][CORE_4][pid 1538] exit success!
+[SUCCESS][CORE_5][pid 1539] exit success!
+[SUCCESS][CORE_6][pid 1540] exit success!
+[SUCCESS][CORE_7][pid 1541] exit success!
+RUN fp32-large rows=65 E=1023 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1550] exit success!
+[SUCCESS][CORE_1][pid 1551] exit success!
+[SUCCESS][CORE_2][pid 1552] exit success!
+[SUCCESS][CORE_3][pid 1553] exit success!
+[SUCCESS][CORE_4][pid 1554] exit success!
+[SUCCESS][CORE_5][pid 1555] exit success!
+[SUCCESS][CORE_6][pid 1556] exit success!
+[SUCCESS][CORE_7][pid 1557] exit success!
+RUN fp32-large rows=2 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1566] exit success!
+RUN fp32-large rows=3 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1568] exit success!
+RUN fp32-large rows=6 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1570] exit success!
+RUN fp32-large rows=7 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1572] exit success!
+RUN fp32-large rows=8 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1574] exit success!
+RUN fp32-large rows=13 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1576] exit success!
+RUN fp32-large rows=14 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1587] exit success!
+RUN fp32-large rows=15 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1589] exit success!
+RUN fp32-large rows=28 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1591] exit success!
+RUN fp32-large rows=29 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1593] exit success!
+RUN fp32-large rows=56 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1595] exit success!
+RUN fp32-large rows=57 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1597] exit success!
+RUN fp32-large rows=57 E=993 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1599] exit success!
+[SUCCESS][CORE_1][pid 1600] exit success!
+[SUCCESS][CORE_2][pid 1601] exit success!
+[SUCCESS][CORE_3][pid 1602] exit success!
+[SUCCESS][CORE_4][pid 1603] exit success!
+[SUCCESS][CORE_5][pid 1604] exit success!
+[SUCCESS][CORE_6][pid 1605] exit success!
+[SUCCESS][CORE_7][pid 1606] exit success!
+RUN fp32-large rows=15 E=993 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1615] exit success!
+RUN fp32-large rows=57 E=1000 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1617] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1618] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1619] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 1620] exit success!
+[SUCCESS][CORE_4][pid 1621] exit success!
+[SUCCESS][CORE_5][pid 1622] exit success!
+[SUCCESS][CORE_6][pid 1623] exit success!
+[SUCCESS][CORE_7][pid 1624] exit success!
+RUN fp32-large rows=15 E=1000 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1633] exit success!
+RUN fp32-large rows=57 E=1001 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1635] exit success!
+[SUCCESS][CORE_1][pid 1636] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1637] exit success!
+[SUCCESS][CORE_3][pid 1638] exit success!
+[SUCCESS][CORE_4][pid 1639] exit success!
+[SUCCESS][CORE_5][pid 1640] exit success!
+[SUCCESS][CORE_6][pid 1641] exit success!
+[SUCCESS][CORE_7][pid 1642] exit success!
+RUN fp32-large rows=15 E=1001 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1651] exit success!
+RUN fp32-large rows=57 E=1008 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1657] exit success!
+[SUCCESS][CORE_1][pid 1658] exit success!
+[SUCCESS][CORE_2][pid 1659] exit success!
+[SUCCESS][CORE_3][pid 1660] exit success!
+[SUCCESS][CORE_4][pid 1661] exit success!
+[SUCCESS][CORE_5][pid 1662] exit success!
+[SUCCESS][CORE_6][pid 1663] exit success!
+[SUCCESS][CORE_7][pid 1664] exit success!
+RUN fp32-large rows=15 E=1008 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1673] exit success!
+RUN fp32-large rows=57 E=1016 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1675] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1676] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1677] exit success!
+[SUCCESS][CORE_3][pid 1678] exit success!
+[SUCCESS][CORE_4][pid 1679] exit success!
+[SUCCESS][CORE_5][pid 1680] exit success!
+[SUCCESS][CORE_6][pid 1681] exit success!
+[SUCCESS][CORE_7][pid 1682] exit success!
+RUN fp32-large rows=15 E=1016 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1691] exit success!
+RUN fp32-large rows=57 E=1017 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1693] exit success!
+[SUCCESS][CORE_1][pid 1694] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1695] exit success!
+[SUCCESS][CORE_3][pid 1696] exit success!
+[SUCCESS][CORE_4][pid 1697] exit success!
+[SUCCESS][CORE_5][pid 1698] exit success!
+[SUCCESS][CORE_6][pid 1699] exit success!
+[SUCCESS][CORE_7][pid 1700] exit success!
+RUN fp32-large rows=15 E=1017 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1709] exit success!
+RUN fp32-large rows=57 E=1023 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1711] exit success!
+[SUCCESS][CORE_1][pid 1712] exit success!
+[SUCCESS][CORE_2][pid 1713] exit success!
+[SUCCESS][CORE_3][pid 1714] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1715] exit success!
+[SUCCESS][CORE_5][pid 1716] exit success!
+[SUCCESS][CORE_6][pid 1717] exit success!
+[SUCCESS][CORE_7][pid 1718] exit success!
+RUN fp32-large rows=15 E=1023 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1727] exit success!
+RUN fp32-large rows=57 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1729] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1730] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 1731] exit success!
+[SUCCESS][CORE_3][pid 1732] exit success!
+[SUCCESS][CORE_4][pid 1733] exit success!
+[SUCCESS][CORE_5][pid 1734] exit success!
+[SUCCESS][CORE_6][pid 1735] exit success!
+[SUCCESS][CORE_7][pid 1736] exit success!
+RUN fp32-large rows=15 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1745] exit success!
+RUN fp32-large rows=113 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1747] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1748] exit success!
+[SUCCESS][CORE_2][pid 1749] exit success!
+[SUCCESS][CORE_3][pid 1750] exit success!
+[SUCCESS][CORE_4][pid 1751] exit success!
+[SUCCESS][CORE_5][pid 1752] exit success!
+[SUCCESS][CORE_6][pid 1753] exit success!
+[SUCCESS][CORE_7][pid 1754] exit success!
+RUN fp32-large rows=225 E=993 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1763] exit success!
+[SUCCESS][CORE_1][pid 1764] exit success!
+[SUCCESS][CORE_2][pid 1765] exit success!
+[SUCCESS][CORE_3][pid 1766] exit success!
+[SUCCESS][CORE_4][pid 1767] exit success!
+[SUCCESS][CORE_5][pid 1768] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_6][pid 1769] exit success!
+[SUCCESS][CORE_7][pid 1770] exit success!
+RUN fp32-large rows=17 E=97 inner=128 k=32 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1779] exit success!
+RUN fp32-large rows=33 E=128 inner=128 k=32 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1781] exit success!
+RUN fp32-large rows=32 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1783] exit success!
+RUN fp32-large rows=64 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1785] exit success!
+RUN fp32-large rows=128 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1787] exit success!
+RUN fp32-large rows=129 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1789] exit success!
+RUN fp32-large rows=1043 E=1024 inner=1024 k=64 cores=32
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1791] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 1792] exit success!
+[SUCCESS][CORE_2][pid 1793] exit success!
+[SUCCESS][CORE_3][pid 1794] exit success!
+[SUCCESS][CORE_4][pid 1795] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_5][pid 1796] exit success!
+[SUCCESS][CORE_6][pid 1797] exit success!
+[SUCCESS][CORE_7][pid 1798] exit success!
+[SUCCESS][CORE_8][pid 1799] exit success!
+[SUCCESS][CORE_9][pid 1800] exit success!
+[SUCCESS][CORE_10][pid 1801] exit success!
+[SUCCESS][CORE_11][pid 1802] exit success!
+[SUCCESS][CORE_12][pid 1803] exit success!
+[SUCCESS][CORE_13][pid 1804] exit success!
+[SUCCESS][CORE_14][pid 1805] exit success!
+[SUCCESS][CORE_15][pid 1806] exit success!
+[SUCCESS][CORE_16][pid 1807] exit success!
+[SUCCESS][CORE_17][pid 1808] exit success!
+[SUCCESS][CORE_18][pid 1809] exit success!
+[SUCCESS][CORE_19][pid 1810] exit success!
+[SUCCESS][CORE_20][pid 1811] exit success!
+[SUCCESS][CORE_21][pid 1812] exit success!
+[SUCCESS][CORE_22][pid 1813] exit success!
+[SUCCESS][CORE_23][pid 1814] exit success!
+[SUCCESS][CORE_24][pid 1815] exit success!
+[SUCCESS][CORE_25][pid 1816] exit success!
+[SUCCESS][CORE_26][pid 1817] exit success!
+[SUCCESS][CORE_27][pid 1818] exit success!
+[SUCCESS][CORE_28][pid 1819] exit success!
+[SUCCESS][CORE_29][pid 1820] exit success!
+[SUCCESS][CORE_30][pid 1821] exit success!
+[SUCCESS][CORE_31][pid 1822] exit success!
+PASS: 51 C15 production cases

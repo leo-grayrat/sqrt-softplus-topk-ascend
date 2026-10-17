@@ -1,0 +1,1 @@
+{"status": "PASS", "seed": 83015, "mapped_output_lanes": 56320, "batch_range": [1, 10], "max_ub_bytes": 176672, "input_root_max_bytes": 40960, "nan_policy": "excluded; unchanged contract"}

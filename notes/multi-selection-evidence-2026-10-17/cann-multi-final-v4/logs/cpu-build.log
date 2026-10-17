@@ -1,0 +1,16 @@
+-- System processer: x86_64
+-- CMAKE_ASC_COMPILER: /home/leo/Ascend/cann-9.0.0/bin/bisheng
+-- ASCEND_CANN_PACKAGE_LINUX_PATH: /home/leo/Ascend/cann-9.0.0/x86_64-linux
+-- CMAKE_ASC_LLD_LINKER: /home/leo/Ascend/cann-9.0.0/x86_64-linux/ccec_compiler/bin/ld.lld
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/leo/cann-multi-final-v4/cpu
+[100%] Building ASC object CMakeFiles/topk_multi_half_production_probe.dir/topk_multi_half_production_probe.asc.o
+[100%] Linking ASC executable topk_multi_half_production_probe
+[100%] Built target topk_multi_half_production_probe

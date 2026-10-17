@@ -6,13 +6,15 @@
 
 ## 当前主线
 
+**当前实验候选：一次打包case7/9/10/15，待完整Judge，尚未合并。** [实现、模型A/B与负结果](notes/multi-selection-2026-10-17.md)，[#83](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/83)。模型连续batch改善分别约12%–19%、case10 8%–11%、case15 3.5%–3.7%；与下述已验证main分开记录。
+
 `main`更新至PR #82的case14第二阶段：用户完整Judge **15/15 Pass，错误占比全部0.00%**，case14 **326.63→251.03 us，耗时减少23.15%（约1.30倍加速）**。同次case3/12/13/15为52.47/49.06/74.15/1080.00 us。[本次完整15点与阶段集成](notes/current-status-2026-10-17-c14.md)。
 
 [十块精确筛选、成对搬运与缓冲复用](notes/c14-ten-blocks-2026-10-16.md)：仅FP16 E512/k10，Sort32输入192→160值、merge产物128→80对，batch16→24。4096行/32核模型减少23.47%，本次完整Judge减少23.15%，分别记录。完整形状仿真超时和CPU失败方案仍保留。[CANNBot与CANN9官方资料核对](notes/cannbot-resources-2026-10-16.md)。
 
 此前[case13](notes/current-status-2026-10-16-c13.md)、[case3](notes/current-status-2026-10-16-c3.md)、[case15](notes/current-status-2026-10-15-c15.md)、[case14第一阶段](notes/current-status-2026-10-15-c14.md)和[case12](notes/current-status-2026-10-12-c12.md)均已集成。后续实验从新的已验证main开始。
 
-当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。这些数值来自同一次完整提交；没有拼接不同分支的单点最优结果。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
+本分支待测文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。上方main的Judge数值来自同一次完整提交，没有拼接不同分支的单点最优；当前候选的本地模型另见实验记录。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
 
 - [当前主线完整15点](notes/current-status-2026-10-17-c14.md)
 - [上一轮case13结构性优化与完整基线](notes/current-status-2026-10-16-c13.md)
@@ -70,7 +72,7 @@ sqrt(softplus(TopK(x)))
 
 每个大阶段只维护一个活动实验分支，从最新 main 创建。阶段完成后，经本地验证、用户完整 Judge 和 PR 合入 main，再开始下一阶段；不从上一条实验分支继续串接新的长期开发。
 
-现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/c13-strided-group-selection`，上一轮为 `exp/fp32-k8-block-selection`；更早六条 exp 分支清单见 2026-10-04 状态文档。
+现有历史实验分支保留以维持旧链接可追溯性；已合并的实验分支不再追加开发。最近已完成阶段分支为 `exp/c14-exact-ten-blocks`，此前为 `exp/c13-strided-group-selection`；更早六条 exp 分支清单见 2026-10-04 状态文档。
 
 ## 验证原则
 

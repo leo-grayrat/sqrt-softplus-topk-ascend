@@ -1,0 +1,919 @@
+{
+  "baseline": "3e44aed0f98fab2985ea4397bee1240e14ec2177",
+  "unit": "us",
+  "metric": "maximum per-core duration_time(us)",
+  "scope": "CANN9 simulator estimates; not physical NPU Judge times",
+  "builds": {
+    "cann-multi-baseline-v1": {
+      "status": "completed",
+      "profiles": {
+        "sim-r1-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.99
+          },
+          "max_core_us": 3.99
+        },
+        "sim-r1-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 4.98
+          },
+          "max_core_us": 4.98
+        },
+        "sim-r1-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 4.98
+          },
+          "max_core_us": 4.98
+        },
+        "sim-r1043-e1024-k64-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 39.51,
+            "core1.veccore0": 39.42,
+            "core10.veccore0": 32.15,
+            "core11.veccore0": 32.14,
+            "core12.veccore0": 32.14,
+            "core13.veccore0": 32.26,
+            "core14.veccore0": 32.14,
+            "core15.veccore0": 32.26,
+            "core16.veccore0": 32.14,
+            "core17.veccore0": 32.26,
+            "core18.veccore0": 32.13,
+            "core19.veccore0": 32.26,
+            "core2.veccore0": 35.09,
+            "core20.veccore0": 32.14,
+            "core21.veccore0": 32.27,
+            "core22.veccore0": 32.26,
+            "core23.veccore0": 32.13,
+            "core24.veccore0": 32.26,
+            "core25.veccore0": 32.14,
+            "core26.veccore0": 32.25,
+            "core27.veccore0": 32.16,
+            "core28.veccore0": 32.14,
+            "core29.veccore0": 32.25,
+            "core3.veccore0": 32.27,
+            "core30.veccore0": 32.25,
+            "core31.veccore0": 32.16,
+            "core4.veccore0": 32.14,
+            "core5.veccore0": 32.27,
+            "core6.veccore0": 32.13,
+            "core7.veccore0": 32.27,
+            "core8.veccore0": 32.13,
+            "core9.veccore0": 32.27
+          },
+          "max_core_us": 39.51
+        },
+        "sim-r192-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 27.97
+          },
+          "max_core_us": 27.97
+        },
+        "sim-r192-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 27.11
+          },
+          "max_core_us": 27.11
+        },
+        "sim-r32-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 32.17
+          },
+          "max_core_us": 32.17
+        },
+        "sim-r385-e150-k6-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 11.69,
+            "core1.veccore0": 11.26,
+            "core2.veccore0": 11.24,
+            "core3.veccore0": 11.25,
+            "core4.veccore0": 11.25,
+            "core5.veccore0": 11.26,
+            "core6.veccore0": 11.26,
+            "core7.veccore0": 11.26
+          },
+          "max_core_us": 11.69
+        },
+        "sim-r385-e160-k7-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 10.25,
+            "core1.veccore0": 9.84,
+            "core2.veccore0": 9.84,
+            "core3.veccore0": 9.84,
+            "core4.veccore0": 9.84,
+            "core5.veccore0": 9.83,
+            "core6.veccore0": 9.84,
+            "core7.veccore0": 9.81
+          },
+          "max_core_us": 10.25
+        },
+        "sim-r64-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 61.22
+          },
+          "max_core_us": 61.22
+        },
+        "sim-r96-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 16.03
+          },
+          "max_core_us": 16.03
+        },
+        "sim-r96-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 15.34
+          },
+          "max_core_us": 15.34
+        }
+      },
+      "cpu_pass_summaries": {
+        "c15-extra-r10-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r11-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r12-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r19-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r20-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r21-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r22-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r23-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r9-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "topk_c15_group_production_probe-cpu.log": [
+          "PASS: 51 C15 production cases"
+        ],
+        "topk_fp32_scratch_production_probe-cpu.log": [
+          "PASS: 87 production TopK cases"
+        ]
+      },
+      "header_sha256": "2e21a5405d6fc69776f815e8d9fd4d0f7adde6a6e21d147e802bea48e5986845"
+    },
+    "cann-multi-candidate-v1": {
+      "status": "failed; not admitted",
+      "profiles": {},
+      "cpu_pass_summaries": {
+        "c15-extra-r10-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r11-cpu.log": [],
+        "topk_c15_group_production_probe-cpu.log": [
+          "PASS: 51 C15 production cases"
+        ],
+        "topk_fp32_scratch_production_probe-cpu.log": [
+          "PASS: 87 production TopK cases"
+        ]
+      },
+      "header_sha256": "244ea7f47819a3da8735e70bd15246b7c48c77199f88309a04778a63a375b207"
+    },
+    "cann-multi-candidate-v2": {
+      "status": "completed",
+      "profiles": {
+        "sim-r1-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.58
+          },
+          "max_core_us": 3.58
+        },
+        "sim-r1-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 4.6
+          },
+          "max_core_us": 4.6
+        },
+        "sim-r1-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 4.6
+          },
+          "max_core_us": 4.6
+        },
+        "sim-r1043-e1024-k64-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 38.03,
+            "core1.veccore0": 37.61,
+            "core10.veccore0": 29.23,
+            "core11.veccore0": 29.14,
+            "core12.veccore0": 29.2,
+            "core13.veccore0": 28.91,
+            "core14.veccore0": 29.2,
+            "core15.veccore0": 29.16,
+            "core16.veccore0": 29.19,
+            "core17.veccore0": 28.91,
+            "core18.veccore0": 29.21,
+            "core19.veccore0": 29.16,
+            "core2.veccore0": 38.05,
+            "core20.veccore0": 29.2,
+            "core21.veccore0": 28.9,
+            "core22.veccore0": 29.23,
+            "core23.veccore0": 29.15,
+            "core24.veccore0": 29.22,
+            "core25.veccore0": 28.89,
+            "core26.veccore0": 29.22,
+            "core27.veccore0": 29.14,
+            "core28.veccore0": 29.21,
+            "core29.veccore0": 28.89,
+            "core3.veccore0": 37.94,
+            "core30.veccore0": 29.21,
+            "core31.veccore0": 29.16,
+            "core4.veccore0": 38.02,
+            "core5.veccore0": 37.62,
+            "core6.veccore0": 38.05,
+            "core7.veccore0": 37.97,
+            "core8.veccore0": 32.16,
+            "core9.veccore0": 28.91
+          },
+          "max_core_us": 38.05
+        },
+        "sim-r129-e210-k8-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 5.95,
+            "core1.veccore0": 5.95,
+            "core2.veccore0": 5.95,
+            "core3.veccore0": 5.95,
+            "core4.veccore0": 5.9,
+            "core5.veccore0": 6.08,
+            "core6.veccore0": 5.78,
+            "core7.veccore0": 5.12
+          },
+          "max_core_us": 6.08
+        },
+        "sim-r17-e1023-k64-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 6.9,
+            "core1.veccore0": 6.9,
+            "core2.veccore0": 6.9,
+            "core3.veccore0": 6.91,
+            "core4.veccore0": 6.91,
+            "core5.veccore0": 5.63,
+            "core6.veccore0": 2.21,
+            "core7.veccore0": 2.21
+          },
+          "max_core_us": 6.91
+        },
+        "sim-r192-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 22.9
+          },
+          "max_core_us": 22.9
+        },
+        "sim-r192-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 22.05
+          },
+          "max_core_us": 22.05
+        },
+        "sim-r257-e888-k8-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 14.08,
+            "core1.veccore0": 13.53,
+            "core2.veccore0": 13.53,
+            "core3.veccore0": 13.52,
+            "core4.veccore0": 13.38,
+            "core5.veccore0": 13.8,
+            "core6.veccore0": 13.54,
+            "core7.veccore0": 13.54
+          },
+          "max_core_us": 14.08
+        },
+        "sim-r32-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 31.0
+          },
+          "max_core_us": 31.0
+        },
+        "sim-r385-e150-k6-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 10.01,
+            "core1.veccore0": 9.95,
+            "core2.veccore0": 10.1,
+            "core3.veccore0": 10.1,
+            "core4.veccore0": 9.6,
+            "core5.veccore0": 9.94,
+            "core6.veccore0": 10.1,
+            "core7.veccore0": 10.1
+          },
+          "max_core_us": 10.1
+        },
+        "sim-r385-e160-k7-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 9.0,
+            "core1.veccore0": 8.61,
+            "core2.veccore0": 8.59,
+            "core3.veccore0": 8.6,
+            "core4.veccore0": 8.6,
+            "core5.veccore0": 8.6,
+            "core6.veccore0": 8.27,
+            "core7.veccore0": 8.46
+          },
+          "max_core_us": 9.0
+        },
+        "sim-r49-e129-k6-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 4.6,
+            "core1.veccore0": 4.61,
+            "core2.veccore0": 4.6,
+            "core3.veccore0": 4.6,
+            "core4.veccore0": 4.6,
+            "core5.veccore0": 4.6,
+            "core6.veccore0": 4.6,
+            "core7.veccore0": 2.22
+          },
+          "max_core_us": 4.61
+        },
+        "sim-r49-e159-k7-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 4.44,
+            "core1.veccore0": 4.6,
+            "core2.veccore0": 4.6,
+            "core3.veccore0": 4.6,
+            "core4.veccore0": 4.44,
+            "core5.veccore0": 4.6,
+            "core6.veccore0": 4.6,
+            "core7.veccore0": 2.21
+          },
+          "max_core_us": 4.6
+        },
+        "sim-r64-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 59.05
+          },
+          "max_core_us": 59.05
+        },
+        "sim-r96-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 13.5
+          },
+          "max_core_us": 13.5
+        },
+        "sim-r96-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 12.82
+          },
+          "max_core_us": 12.82
+        }
+      },
+      "cpu_pass_summaries": {
+        "c15-extra-r10-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r11-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r12-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r19-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r20-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r21-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r22-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r23-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "c15-extra-r9-cpu.log": [
+          "PASS: 1 C15 production cases"
+        ],
+        "topk_c15_group_production_probe-cpu.log": [
+          "PASS: 51 C15 production cases"
+        ],
+        "topk_fp32_scratch_production_probe-cpu.log": [
+          "PASS: 87 production TopK cases"
+        ]
+      },
+      "header_sha256": "cc38c4839cfebc182fbd6ff3b2a4020c938c3aca32571e5c6be8cca096299fd7"
+    },
+    "cann-multi-c10-baseline-v1": {
+      "status": "completed",
+      "profiles": {
+        "sim-r1-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.89
+          },
+          "max_core_us": 3.89
+        },
+        "sim-r192-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 20.85
+          },
+          "max_core_us": 20.85
+        },
+        "sim-r4096-e128-k16-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 14.96,
+            "core1.veccore0": 14.95,
+            "core10.veccore0": 14.96,
+            "core11.veccore0": 14.96,
+            "core12.veccore0": 14.85,
+            "core13.veccore0": 14.86,
+            "core14.veccore0": 14.81,
+            "core15.veccore0": 14.95,
+            "core16.veccore0": 14.84,
+            "core17.veccore0": 14.95,
+            "core18.veccore0": 14.94,
+            "core19.veccore0": 14.84,
+            "core2.veccore0": 14.84,
+            "core20.veccore0": 14.86,
+            "core21.veccore0": 14.86,
+            "core22.veccore0": 14.95,
+            "core23.veccore0": 14.95,
+            "core24.veccore0": 14.86,
+            "core25.veccore0": 14.85,
+            "core26.veccore0": 14.85,
+            "core27.veccore0": 14.86,
+            "core28.veccore0": 14.85,
+            "core29.veccore0": 14.86,
+            "core3.veccore0": 14.86,
+            "core30.veccore0": 14.94,
+            "core31.veccore0": 14.84,
+            "core4.veccore0": 14.96,
+            "core5.veccore0": 14.96,
+            "core6.veccore0": 14.84,
+            "core7.veccore0": 14.95,
+            "core8.veccore0": 14.95,
+            "core9.veccore0": 14.96
+          },
+          "max_core_us": 14.96
+        },
+        "sim-r49-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 3.96,
+            "core1.veccore0": 4.0,
+            "core2.veccore0": 4.01,
+            "core3.veccore0": 3.97,
+            "core4.veccore0": 3.98,
+            "core5.veccore0": 3.98,
+            "core6.veccore0": 3.95,
+            "core7.veccore0": 2.01
+          },
+          "max_core_us": 4.01
+        },
+        "sim-r96-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 11.81
+          },
+          "max_core_us": 11.81
+        }
+      },
+      "cpu_pass_summaries": {
+        "half-cpu.log": [
+          "PASS: 29 bundled FP16 production dispatch cases"
+        ]
+      },
+      "header_sha256": "2e21a5405d6fc69776f815e8d9fd4d0f7adde6a6e21d147e802bea48e5986845"
+    },
+    "cann-multi-final-v3": {
+      "status": "completed",
+      "profiles": {
+        "sim-r1-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.55
+          },
+          "max_core_us": 3.55
+        },
+        "sim-r192-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 18.71
+          },
+          "max_core_us": 18.71
+        },
+        "sim-r33-e127-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 3.86,
+            "core1.veccore0": 3.87,
+            "core2.veccore0": 3.86,
+            "core3.veccore0": 3.86,
+            "core4.veccore0": 3.86,
+            "core5.veccore0": 3.86,
+            "core6.veccore0": 3.84,
+            "core7.veccore0": 2.18
+          },
+          "max_core_us": 3.87
+        },
+        "sim-r33-e128-k17-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 6.89,
+            "core1.veccore0": 5.87,
+            "core2.veccore0": 5.74,
+            "core3.veccore0": 5.74,
+            "core4.veccore0": 5.74,
+            "core5.veccore0": 5.87,
+            "core6.veccore0": 5.87,
+            "core7.veccore0": 5.87
+          },
+          "max_core_us": 6.89
+        },
+        "sim-r4096-e128-k16-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 14.85,
+            "core1.veccore0": 14.85,
+            "core10.veccore0": 14.85,
+            "core11.veccore0": 14.85,
+            "core12.veccore0": 14.65,
+            "core13.veccore0": 14.85,
+            "core14.veccore0": 14.85,
+            "core15.veccore0": 14.86,
+            "core16.veccore0": 14.85,
+            "core17.veccore0": 14.86,
+            "core18.veccore0": 14.85,
+            "core19.veccore0": 14.85,
+            "core2.veccore0": 14.85,
+            "core20.veccore0": 14.85,
+            "core21.veccore0": 12.51,
+            "core22.veccore0": 10.79,
+            "core23.veccore0": 10.99,
+            "core24.veccore0": 10.79,
+            "core25.veccore0": 10.79,
+            "core26.veccore0": 10.99,
+            "core27.veccore0": 10.99,
+            "core28.veccore0": 10.99,
+            "core29.veccore0": 10.99,
+            "core3.veccore0": 14.85,
+            "core30.veccore0": 10.99,
+            "core31.veccore0": 10.99,
+            "core4.veccore0": 14.85,
+            "core5.veccore0": 14.85,
+            "core6.veccore0": 14.85,
+            "core7.veccore0": 14.65,
+            "core8.veccore0": 14.85,
+            "core9.veccore0": 14.85
+          },
+          "max_core_us": 14.86
+        },
+        "sim-r49-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 3.83,
+            "core1.veccore0": 3.83,
+            "core2.veccore0": 3.81,
+            "core3.veccore0": 3.82,
+            "core4.veccore0": 3.82,
+            "core5.veccore0": 3.83,
+            "core6.veccore0": 3.62,
+            "core7.veccore0": 1.7
+          },
+          "max_core_us": 3.83
+        },
+        "sim-r64-e1024-k64-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 59.6
+          },
+          "max_core_us": 59.6
+        },
+        "sim-r65-e512-k10-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 5.42,
+            "core1.veccore0": 5.42,
+            "core2.veccore0": 5.42,
+            "core3.veccore0": 5.43,
+            "core4.veccore0": 5.42,
+            "core5.veccore0": 5.42,
+            "core6.veccore0": 5.42,
+            "core7.veccore0": 4.59
+          },
+          "max_core_us": 5.43
+        },
+        "sim-r96-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 10.99
+          },
+          "max_core_us": 10.99
+        },
+        "sim-r96-e150-k6-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 13.5
+          },
+          "max_core_us": 13.5
+        },
+        "sim-r96-e160-k7-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 12.82
+          },
+          "max_core_us": 12.82
+        }
+      },
+      "cpu_pass_summaries": {
+        "float-c15-cpu.log": [
+          "PASS: 1 production TopK cases"
+        ],
+        "float-cpu.log": [
+          "PASS: 87 production TopK cases"
+        ],
+        "half-cpu.log": [
+          "PASS: 29 bundled FP16 production dispatch cases"
+        ]
+      },
+      "header_sha256": "8d2d235a315dd860696f6d47a1e2520c5f93950ef72ffa556d99b14ba457513f"
+    },
+    "cann-multi-final-v4": {
+      "status": "completed",
+      "profiles": {
+        "sim-r1-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 3.45
+          },
+          "max_core_us": 3.45
+        },
+        "sim-r192-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 18.58
+          },
+          "max_core_us": 18.58
+        },
+        "sim-r33-e127-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 4.07,
+            "core1.veccore0": 4.08,
+            "core2.veccore0": 4.07,
+            "core3.veccore0": 4.07,
+            "core4.veccore0": 4.05,
+            "core5.veccore0": 4.07,
+            "core6.veccore0": 4.05,
+            "core7.veccore0": 2.19
+          },
+          "max_core_us": 4.08
+        },
+        "sim-r33-e128-k17-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 6.9,
+            "core1.veccore0": 5.88,
+            "core2.veccore0": 5.74,
+            "core3.veccore0": 5.87,
+            "core4.veccore0": 5.87,
+            "core5.veccore0": 5.88,
+            "core6.veccore0": 5.88,
+            "core7.veccore0": 5.74
+          },
+          "max_core_us": 6.9
+        },
+        "sim-r4096-e128-k16-c32": {
+          "duration_time_us": {
+            "core0.veccore0": 13.66,
+            "core1.veccore0": 13.71,
+            "core10.veccore0": 13.69,
+            "core11.veccore0": 13.66,
+            "core12.veccore0": 13.7,
+            "core13.veccore0": 13.65,
+            "core14.veccore0": 13.66,
+            "core15.veccore0": 13.67,
+            "core16.veccore0": 13.68,
+            "core17.veccore0": 13.68,
+            "core18.veccore0": 13.66,
+            "core19.veccore0": 13.67,
+            "core2.veccore0": 13.69,
+            "core20.veccore0": 13.68,
+            "core21.veccore0": 13.66,
+            "core22.veccore0": 13.7,
+            "core23.veccore0": 13.65,
+            "core24.veccore0": 13.68,
+            "core25.veccore0": 13.7,
+            "core26.veccore0": 13.66,
+            "core27.veccore0": 13.67,
+            "core28.veccore0": 13.68,
+            "core29.veccore0": 13.67,
+            "core3.veccore0": 13.66,
+            "core30.veccore0": 13.66,
+            "core31.veccore0": 11.32,
+            "core4.veccore0": 13.71,
+            "core5.veccore0": 13.66,
+            "core6.veccore0": 13.69,
+            "core7.veccore0": 13.69,
+            "core8.veccore0": 13.68,
+            "core9.veccore0": 13.69
+          },
+          "max_core_us": 13.71
+        },
+        "sim-r49-e128-k16-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 3.86,
+            "core1.veccore0": 3.87,
+            "core2.veccore0": 3.88,
+            "core3.veccore0": 3.85,
+            "core4.veccore0": 3.86,
+            "core5.veccore0": 3.86,
+            "core6.veccore0": 3.89,
+            "core7.veccore0": 1.74
+          },
+          "max_core_us": 3.89
+        },
+        "sim-r65-e512-k10-c8": {
+          "duration_time_us": {
+            "core0.veccore0": 5.39,
+            "core1.veccore0": 5.39,
+            "core2.veccore0": 5.39,
+            "core3.veccore0": 5.39,
+            "core4.veccore0": 5.38,
+            "core5.veccore0": 5.4,
+            "core6.veccore0": 5.39,
+            "core7.veccore0": 4.48
+          },
+          "max_core_us": 5.4
+        },
+        "sim-r96-e128-k16-c1": {
+          "duration_time_us": {
+            "core0.veccore0": 10.86
+          },
+          "max_core_us": 10.86
+        }
+      },
+      "cpu_pass_summaries": {
+        "extra-half-r128-c1-cpu.log": [
+          "PASS: 1 bundled FP16 production dispatch cases"
+        ],
+        "extra-half-r16384-c32-cpu.log": [
+          "PASS: 1 bundled FP16 production dispatch cases"
+        ],
+        "extra-half-r43-c1-cpu.log": [
+          "PASS: 1 bundled FP16 production dispatch cases"
+        ],
+        "extra-half-r48-c1-cpu.log": [
+          "PASS: 1 bundled FP16 production dispatch cases"
+        ],
+        "half-cpu.log": [
+          "PASS: 29 bundled FP16 production dispatch cases"
+        ]
+      },
+      "header_sha256": "2eeae0d8e623e5e9f8eda02a5753b34c2ff7b6e40d54c662b9342c84c3b9389d"
+    }
+  },
+  "provenance_checks": [
+    "both baseline headers match pinned main bytes",
+    "final v4 header matches delivered header bytes",
+    "C7/C9 and C15 class texts identical in v2/v3/v4",
+    "v3 to v4 C10 changes only balanced batch formula"
+  ],
+  "comparisons": [
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r1-e1024-k64-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 3.99,
+      "candidate_us": 3.58,
+      "reduction_percent": 10.275689223057649
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r1-e150-k6-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 4.98,
+      "candidate_us": 4.6,
+      "reduction_percent": 7.63052208835343
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r1-e160-k7-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 4.98,
+      "candidate_us": 4.6,
+      "reduction_percent": 7.63052208835343
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r1043-e1024-k64-c32",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 39.51,
+      "candidate_us": 38.05,
+      "reduction_percent": 3.6952670210073424
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r192-e150-k6-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 27.97,
+      "candidate_us": 22.9,
+      "reduction_percent": 18.12656417590276
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r192-e160-k7-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 27.11,
+      "candidate_us": 22.05,
+      "reduction_percent": 18.66469937292512
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r32-e1024-k64-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 32.17,
+      "candidate_us": 31.0,
+      "reduction_percent": 3.6369288156667734
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r385-e150-k6-c8",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 11.69,
+      "candidate_us": 10.1,
+      "reduction_percent": 13.601368691189053
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r385-e160-k7-c8",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 10.25,
+      "candidate_us": 9.0,
+      "reduction_percent": 12.195121951219512
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r64-e1024-k64-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 61.22,
+      "candidate_us": 59.05,
+      "reduction_percent": 3.5445932701731464
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r96-e150-k6-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 16.03,
+      "candidate_us": 13.5,
+      "reduction_percent": 15.782907049282603
+    },
+    {
+      "path": "C7/C9/C15",
+      "shape": "sim-r96-e160-k7-c1",
+      "baseline_build": "cann-multi-baseline-v1",
+      "candidate_build": "cann-multi-candidate-v2",
+      "baseline_us": 15.34,
+      "candidate_us": 12.82,
+      "reduction_percent": 16.427640156453716
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r1-e128-k16-c1",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 3.89,
+      "candidate_us": 3.45,
+      "reduction_percent": 11.311053984575835
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r192-e128-k16-c1",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 20.85,
+      "candidate_us": 18.58,
+      "reduction_percent": 10.887290167865727
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r4096-e128-k16-c32",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 14.96,
+      "candidate_us": 13.71,
+      "reduction_percent": 8.355614973262027
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r49-e128-k16-c8",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 4.01,
+      "candidate_us": 3.89,
+      "reduction_percent": 2.9925187032418865
+    },
+    {
+      "path": "C10 balanced",
+      "shape": "sim-r96-e128-k16-c1",
+      "baseline_build": "cann-multi-c10-baseline-v1",
+      "candidate_build": "cann-multi-final-v4",
+      "baseline_us": 11.81,
+      "candidate_us": 10.86,
+      "reduction_percent": 8.04403048264184
+    }
+  ],
+  "successful_simulator_runs": 53
+}

@@ -201,3 +201,7 @@ foreach(kind IN ITEMS half half_raw)
  target_compile_definitions(topk_c14_ten_${kind} PRIVATE C14_HALF_SCRATCH=1)
 endforeach()
 target_compile_definitions(topk_c14_ten_half_raw PRIVATE VALUES_ONLY_RAW=1)
+
+add_executable(topk_multi_half_production_probe topk_multi_half_production_probe.asc)
+target_link_libraries(topk_multi_half_production_probe PRIVATE tiling_api register platform unified_dlog dl m graph_base)
+target_compile_options(topk_multi_half_production_probe PRIVATE $<$<COMPILE_LANGUAGE:ASC>:--npu-arch=${CMAKE_ASC_ARCHITECTURES}>)
