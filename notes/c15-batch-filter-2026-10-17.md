@@ -1,6 +1,6 @@
-# C15 批量精确筛选：待完整 Judge
+# C15 矩估计批量筛选：Judge退化，停止合入
 
-跟踪 [#85](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/85)。分支 `exp/batched-exact-filter-c15`，只需替换 `submission/dense_repeat_override.h`。main仍是PR #84用户确认的15点基线，case15显示1.02 ms；本候选尚无真实NPU/Judge数据。
+跟踪 [#85](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/85)。分支 `exp/batched-exact-filter-c15`，只需替换 `submission/dense_repeat_override.h`。main仍是PR #84用户确认的15点基线，case15显示1.02 ms。用户完整Judge15/15、误差全0，但case15升至1.26 ms，按显示值慢23.53%；此候选停止合入。完整原始回报见[c15-batch-filter-judge-2026-10-17.json](c15-batch-filter-judge-2026-10-17.json)。
 
 仅修改FP32 E1024/k64的C15类。batch10、UB176672字节和双输入队列保持原样。每四个原值采样一个，估计mean+1.35*std阈值；随后比较全部原值、精确统计每行候选数。只有所有行都在64..128范围内才走快路径，否则整批走原算法，非有限阈值也回退。阈值只影响命中率，不影响精确Top64。
 
@@ -36,4 +36,4 @@ python tools/check_c15_batch_filter_scope.py
 python tools/check_c15_batch_filter.py
 ```
 
-原运行驱动快照保留在证据目录；派生复现脚本已做bash语法检查，未另跑一遍全流程。issue开放等待用户完整Judge，实验未合main。
+原运行驱动快照保留在证据目录；派生复现脚本已做bash语法检查，未另跑一遍全流程。本轮已获完整Judge：正确性通过，性能退化。PR #86不合main；issue #85保持开放追踪后续研究。模型不能代表Judge分布或真机速度，退化原因尚未被硬件trace证实。
