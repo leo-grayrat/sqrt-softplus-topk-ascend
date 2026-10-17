@@ -1,0 +1,120 @@
+{
+  "date": "2026-10-18",
+  "scope": "End contest stages and stopped experiments; preserve unresolved optimization and numerical issues.",
+  "production_policy": "Keep PR84 validated implementation byte-identical. Do not merge PR86/87 or final-round experiment patches.",
+  "issues": [
+    {
+      "number": 45,
+      "state": "closed",
+      "state_reason": "completed",
+      "title": "[阶段完成] FP16 medium-k：keep-16 vendor 路径优化 case 10/14",
+      "rationale": "原keep-16阶段已进入可信main，并经过后续用户完整15/15 Judge验证。最终C5/C10/C14为6.48/35.87/251.07us；进一步性能差距分别由#88（C10）和#47（C14）继续跟踪。关闭的是实现阶段，不宣称已消除所有吞吐差距。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/45"
+    },
+    {
+      "number": 51,
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[实验停止] FP16 small-k：values-only 跨行选择网络",
+      "rationale": "原型已完成本地验证并归档，完整模型约慢2.38倍，未接入生产，不继续该具体网络。按not_planned关闭；C12整体吞吐仍由#47保留。证据：notes/values-only-c12-2026-10-08.md。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/51"
+    },
+    {
+      "number": 55,
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[实验停止] FP32 k=8：独立scratch复用与扩大batch",
+      "rationale": "独立复用研究完整模型E210仅改善2.3%–3.1%、E888约10%，未达到当时准入标准，生产改动撤回。后续C3/C13结构性阶段已分别经PR #78/#80完成，不能将其收益归给本实验。按not_planned关闭该研究，不宣称本原型获Judge收益。证据：notes/fp32-scratch-reuse-2026-10-10.md。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/55"
+    },
+    {
+      "number": 63,
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[实验停止] FP32 case15：独立large-k scratch复用",
+      "rationale": "该独立原型只有约1.26%/1.29%的模型改善，未交Judge且生产已撤回。按not_planned关闭；C15整体结构性吞吐继续由#48跟踪。证据：notes/fp32-large-scratch-2026-10-11.md。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/63"
+    },
+    {
+      "number": 66,
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[实验停止] FP16填充行：跨行Cast替代逐行转换",
+      "rationale": "该原型两尺度模型仅改善3.17%/4.28%，单行变慢，已撤回生产，无新Judge。按not_planned关闭具体方案；其失败不表示FP16整体性能已解决。证据：notes/fp16-padded-cast-2026-10-12.md。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/66"
+    },
+    {
+      "number": 85,
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[实验停止] C15批量阈值筛选：两轮Judge未形成净收益",
+      "rationale": "两次完整Judge均15/15、误差全0：矩估计版1.26ms；排序阈值版1.03ms；可信main此前1.02ms。PR #86/#87关闭且不合并，历史分支保留。按not_planned结束这两轮具体筛选研究；C15整体成本、模型/Judge失配和后续路线保留在#48。原始本队回报随复盘归档，未知Judge输入分布，不作根因推断。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/85"
+    },
+    {
+      "number": 47,
+      "state": "open",
+      "state_reason": null,
+      "title": "[待优化] FP16 C12/C14吞吐：已验证阶段完成，竞争差距仍在",
+      "rationale": "原阶段及后续PR #72/#74/#82均已获用户完整Judge确认并合入main。最终同次成绩C12=48.65us、C14=251.07us，分别约为前32对应中位数的1.55/2.30倍；整体吞吐仍未解决，保留开放。最后cap32 CPU Gather失败，cap28独立37组CPU及模型通过，多核模型仅改善8.64%，无Judge，作为研究补丁归档。未来需要从可信main重建完整成本证据，不重复把扩大batch视为已实现大收益。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/47"
+    },
+    {
+      "number": 48,
+      "state": "open",
+      "state_reason": null,
+      "title": "[待优化] FP32 C15结构性吞吐与模型/Judge失配",
+      "rationale": "可信main为PR #84后已验证生产实现，历史Judge C15显示1.02ms；最终榜单测试了PR #87排序阈值版，显示1.03ms，整体仍约慢于前32中位数2.50倍。原阈值、scratch及两轮批量筛选具体实验停止，#63/#85与PR #86/#87收尾关闭，性能问题本身保留开放。关键未解项：选择/归并/索引成本，以及模型收益与Judge失配；尚无隐藏输入或真机剖析证据，未来不凭模型比例预测分数。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/48"
+    },
+    {
+      "number": 52,
+      "state": "open",
+      "state_reason": null,
+      "title": "数值 probe：FP16 极大输入的变换结果落在舍入边界",
+      "rationale": "仍待处理，保留开放。极大FP16正数在现有变换近似与最终舍入组合下的严格边界失败未获修复或重新验证；最终比赛15/15不能证明该独立边界问题不存在。不放宽checker，未来需独立确认实际合同与设备行为。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/52"
+    },
+    {
+      "number": 67,
+      "state": "open",
+      "state_reason": null,
+      "title": "[待优化] FP16 C8吞吐：合并/原生half及扩批试验收益不足",
+      "rationale": "原两种合并/原生half方案均未达准入标准。最后一轮复用缓冲并扩大均衡batch后，C8多核模型45.86→45.28us，仅改善1.26%，无Judge，研究补丁归档。最终Judge C8=33.47us，约为前32中位数1.75倍，吞吐缺口仍在，保留开放；不能将减少发射次数直接当作减少总排序工作。负值数值问题仍独立由#68跟踪。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/67"
+    },
+    {
+      "number": 68,
+      "state": "open",
+      "state_reason": null,
+      "title": "数值probe：FP16被选中负值-12的现有变换超出严格舍入容差",
+      "rationale": "仍待处理，保留开放。所选负值-12的现有变换严格容差失败尚未修复或重新验证；当时调整性能fixture只为分离选择与变换问题，不构成数值修复。最终15/15 Judge与此独立probe结论分别保留。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/68"
+    },
+    {
+      "number": 88,
+      "state": "open",
+      "state_reason": null,
+      "title": "[待优化] C7/C9/C10/C11性能与未验证分组筛选稿",
+      "rationale": "最后一轮已结束，没有形成新的用户Judge提交。C8/C11冻结版本共152组CPU、设备编译及模型输出通过，但C11多核20.21→20.36us变慢约0.74%，弱收益候选仅归档；C8单独转#67跟踪。C7/C9分组筛选只写出源码，启动验证时自动审批因用量耗尽未完成，未编译/未测量/未Judge，保存为debug/final-round-2026-10-17/c7-c9-UNVALIDATED.patch。保留本issue跟踪C7/C9/C10/C11的实际性能缺口和该未验证稿，不再标记为当前待上传。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/88"
+    }
+  ],
+  "pull_requests": [
+    {
+      "number": 86,
+      "state": "closed",
+      "merged": false,
+      "branch_preserved": true,
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/86"
+    },
+    {
+      "number": 87,
+      "state": "closed",
+      "merged": false,
+      "branch_preserved": true,
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/87"
+    }
+  ],
+  "privacy": "No raw leaderboard, other team names, submitters or per-team records published."
+}

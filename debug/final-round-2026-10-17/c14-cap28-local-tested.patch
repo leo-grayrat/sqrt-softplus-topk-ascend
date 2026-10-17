@@ -1,0 +1,12 @@
+--- a/submission/dense_repeat_override.h
++++ b/submission/dense_repeat_override.h
+@@ -1035,7 +1035,8 @@
+     {
+         rows_ = rows; k_ = k;
+         int32_t perCore = (rows + cores - 1) / cores;
+-        batch_ = perCore < 24 ? perCore : 24;
++        const int32_t batches = (perCore + 27) / 28;
++        batch_ = (perCore + batches - 1) / batches;
+         groups_ = (rows + batch_ - 1) / batch_; active_ = groups_ < cores ? groups_ : cores;
+         input_.SetGlobalBuffer(reinterpret_cast<__gm__ half*>(input));
+         output_.SetGlobalBuffer(reinterpret_cast<__gm__ OutputType*>(output));

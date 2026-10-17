@@ -1,0 +1,9 @@
+/home/leo/cann-final-throughput-v2 float-r128-e97-k32-c1 PASS
+/home/leo/cann-final-throughput-baseline float-r128-e97-k32-c1 PASS
+/home/leo/cann-final-throughput-v2 float-r4096-e97-k32-c32 PASS
+/home/leo/cann-final-throughput-baseline float-r4096-e97-k32-c32 PASS
+/home/leo/cann-final-throughput-v2 half-r128-e256-k64-c1 PASS
+/home/leo/cann-final-throughput-baseline half-r128-e256-k64-c1 PASS
+/home/leo/cann-final-throughput-v2 half-r4096-e256-k64-c32 PASS
+/home/leo/cann-final-throughput-baseline half-r4096-e256-k64-c32 PASS
+MODELS_COMPLETE

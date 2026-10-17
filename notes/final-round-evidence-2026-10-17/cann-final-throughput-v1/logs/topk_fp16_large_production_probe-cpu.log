@@ -1,0 +1,223 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp16-production rows=1 E=225 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 637] exit success!
+RUN fp16-production rows=15 E=225 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 639] exit success!
+RUN fp16-production rows=16 E=225 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 641] exit success!
+RUN fp16-production rows=17 E=225 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 643] exit success!
+RUN fp16-production rows=32 E=225 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 645] exit success!
+RUN fp16-production rows=33 E=225 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 647] exit success!
+RUN fp16-production rows=1 E=239 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 649] exit success!
+RUN fp16-production rows=15 E=239 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 651] exit success!
+RUN fp16-production rows=16 E=239 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 653] exit success!
+RUN fp16-production rows=17 E=239 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 655] exit success!
+RUN fp16-production rows=32 E=239 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 657] exit success!
+RUN fp16-production rows=33 E=239 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 659] exit success!
+RUN fp16-production rows=1 E=240 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 661] exit success!
+RUN fp16-production rows=15 E=240 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 663] exit success!
+RUN fp16-production rows=16 E=240 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 665] exit success!
+RUN fp16-production rows=17 E=240 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 667] exit success!
+RUN fp16-production rows=32 E=240 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 669] exit success!
+RUN fp16-production rows=33 E=240 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 671] exit success!
+RUN fp16-production rows=1 E=241 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 673] exit success!
+RUN fp16-production rows=15 E=241 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 675] exit success!
+RUN fp16-production rows=16 E=241 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 677] exit success!
+RUN fp16-production rows=17 E=241 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 679] exit success!
+RUN fp16-production rows=32 E=241 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 681] exit success!
+RUN fp16-production rows=33 E=241 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 683] exit success!
+RUN fp16-production rows=1 E=255 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 685] exit success!
+RUN fp16-production rows=15 E=255 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 687] exit success!
+RUN fp16-production rows=16 E=255 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 689] exit success!
+RUN fp16-production rows=17 E=255 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 691] exit success!
+RUN fp16-production rows=32 E=255 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 693] exit success!
+RUN fp16-production rows=33 E=255 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 695] exit success!
+RUN fp16-production rows=1 E=256 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 697] exit success!
+RUN fp16-production rows=15 E=256 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 699] exit success!
+RUN fp16-production rows=16 E=256 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 701] exit success!
+RUN fp16-production rows=17 E=256 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 703] exit success!
+RUN fp16-production rows=32 E=256 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 705] exit success!
+RUN fp16-production rows=33 E=256 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 707] exit success!
+RUN fp16-production rows=257 E=256 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 709] exit success!
+[SUCCESS][CORE_1][pid 710] exit success!
+[SUCCESS][CORE_2][pid 711] exit success!
+[SUCCESS][CORE_3][pid 712] exit success!
+[SUCCESS][CORE_4][pid 713] exit success!
+[SUCCESS][CORE_5][pid 714] exit success!
+[SUCCESS][CORE_6][pid 715] exit success!
+[SUCCESS][CORE_7][pid 716] exit success!
+RUN fp16-production rows=513 E=241 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 725] exit success!
+[SUCCESS][CORE_1][pid 726] exit success!
+[SUCCESS][CORE_2][pid 727] exit success!
+[SUCCESS][CORE_3][pid 728] exit success!
+[SUCCESS][CORE_4][pid 729] exit success!
+[SUCCESS][CORE_5][pid 730] exit success!
+[SUCCESS][CORE_6][pid 731] exit success!
+[SUCCESS][CORE_7][pid 732] exit success!
+RUN fp16-production rows=129 E=225 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 741] exit success!
+[SUCCESS][CORE_1][pid 742] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 743] exit success!
+[SUCCESS][CORE_3][pid 744] exit success!
+[SUCCESS][CORE_4][pid 745] exit success!
+[SUCCESS][CORE_5][pid 746] exit success!
+[SUCCESS][CORE_6][pid 747] exit success!
+[SUCCESS][CORE_7][pid 748] exit success!
+RUN fp16-production rows=65 E=255 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 757] exit success!
+[SUCCESS][CORE_1][pid 758] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 759] exit success!
+[SUCCESS][CORE_3][pid 760] exit success!
+[SUCCESS][CORE_4][pid 761] exit success!
+[SUCCESS][CORE_5][pid 762] exit success!
+[SUCCESS][CORE_6][pid 763] exit success!
+[SUCCESS][CORE_7][pid 764] exit success!
+RUN fp16-production rows=64 E=256 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 773] exit success!
+RUN fp16-production rows=128 E=256 k=64 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 775] exit success!
+RUN fp16-production rows=33 E=256 k=4 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 777] exit success!
+RUN fp16-production rows=33 E=200 k=16 cores=1
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 779] exit success!
+RUN fp16-production rows=33 E=512 k=10 cores=1
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][CORE_0][pid 781] error happened! ========= 
+SIGSEGV Signal (Invalid memory reference) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x00000000006e0731: Handler(int) at ??:?
+[#3] 0x00000000000026bd: memcpy_s at ??:?
+[#4] 0x00000000004f83d6: PV_MEM::read_in_page(unsigned long, unsigned int, unsigned char*) at ??:?
+[#5] 0x00000000004f8658: PV_MEM::read(unsigned long, unsigned int, unsigned char*) at ??:?
+[#6] 0x0000000000606404: PemBuf::pv_read(unsigned long, unsigned int, unsigned char*, bool) at ??:?
+[#7] 0x00000000007f293c: pv_mem_read at ??:?
+[#8] 0x00000000000c737a: AscendC::ModelFactory::GetOutput(unsigned long, AscendC::PVMemScope, void*, unsigned long) const at ??:?
+[#9] 0x000000000012d9c0: void AscendC::GatherCompute<unsigned int>(std::string const&, std::string const&, unsigned int*, unsigned int*, unsigned int, unsigned short, unsigned char) at ??:?
+[#10] 0x000000000012c56b: AscendC::vgather(unsigned int*, unsigned int*, unsigned int, unsigned short, unsigned char) at ??:?
+[#11] 0x00000000006d54af: void AscendC::Gather<unsigned int>(AscendC::LocalTensor<unsigned int> const&, AscendC::LocalTensor<unsigned int> const&, AscendC::LocalTensor<unsigned int> const&, unsigned int, unsigned long, unsigned char, unsigned short) at ??:?
+[#12] 0x00000000006d266b: void AscendC::Gather<unsigned int>(AscendC::LocalTensor<unsigned int> const&, AscendC::LocalTensor<unsigned int> const&, AscendC::LocalTensor<unsigned int> const&, unsigned int, unsigned int) at ??:?
+[#13] 0x000000000068560a: (anonymous namespace)::SqrtSoftplusBlockMaxMediumTopKHalfKernel::Compute(int) at topk_fp16_large_production_probe.asc:?
+[#14] 0x00000000006730da: (anonymous namespace)::RunVendorTopKDispatch((anonymous namespace)::VendorDispatchTag<half>, unsigned char*, unsigned char*, int, int, int, int, int, int, unsigned int, AscendC::tiling::TopkTiling const&) at topk_fp16_large_production_probe.asc:?
+[#15] 0x000000000068d37c: (anonymous namespace)::fp16_large_cpu_kernel(unsigned char*, unsigned char*, int, int, int, int, int) at topk_fp16_large_production_probe.asc:?
+[#16] 0x00000000006e1bd0: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int, int, int, int), unsigned char*, unsigned char*, int, int, int, int, int>(void (*)(unsigned char*, unsigned char*, int, int, int, int, int), char const*, unsigned int, unsigned char*, unsigned char*, int, int, int, int, int) at ??:?
+[#17] 0x0000000000659436: main at ??:?
+[#18] 0x000000000064e9f4: _start at ??:?
+
+[MISMATCH] rows=33 E=512 k=10 cores=1 row=0 i=0 actual=0 exact=5.47722578 hostHalf=5.47656 tol=0.00195513 rawTop=30

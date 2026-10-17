@@ -1,0 +1,115 @@
+{
+  "source": "user CANNJudge report",
+  "date": "2026-10-17",
+  "candidate": "exp/batched-exact-filter-c15",
+  "cases": [
+    {
+      "case": 1,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 2.33,
+      "best_us": 1.64
+    },
+    {
+      "case": 2,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 2.86,
+      "best_us": 2.07
+    },
+    {
+      "case": 3,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 52.57,
+      "best_us": 39.9
+    },
+    {
+      "case": 4,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 3.69,
+      "best_us": 2.14
+    },
+    {
+      "case": 5,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 6.38,
+      "best_us": 4.1
+    },
+    {
+      "case": 6,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 8.34,
+      "best_us": 5.5
+    },
+    {
+      "case": 7,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 14.57,
+      "best_us": 7.24
+    },
+    {
+      "case": 8,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 33.38,
+      "best_us": 15.04
+    },
+    {
+      "case": 9,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 21.48,
+      "best_us": 9.11
+    },
+    {
+      "case": 10,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 35.83,
+      "best_us": 16.05
+    },
+    {
+      "case": 11,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 51.86,
+      "best_us": 32.8
+    },
+    {
+      "case": 12,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 48.67,
+      "best_us": 26.71
+    },
+    {
+      "case": 13,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 73.97,
+      "best_us": 42.12
+    },
+    {
+      "case": 14,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 251.04,
+      "best_us": 95.73
+    },
+    {
+      "case": 15,
+      "status": "Pass",
+      "error_percent": 0,
+      "time_us": 1260,
+      "best_us": 358.55
+    }
+  ],
+  "case15_display": "1.26ms",
+  "baseline_case15_display": "1.02ms",
+  "case15_increase_percent": 23.529411764705888
+}

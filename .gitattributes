@@ -26,3 +26,7 @@ notes/c14-ten-blocks-evidence-2026-10-16/** -text whitespace=cr-at-eol,-blank-at
 debug/cpu_topk_probe/c14*_kernel.h text eol=lf whitespace=-blank-at-eof
 tools/run_multi*.sh text eol=lf
 notes/multi-selection-evidence-2026-10-17/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
+
+# Preserve original final-round evidence bytes.
+notes/final-round-evidence-2026-10-17/** -text -whitespace
+debug/final-round-2026-10-17/*.patch -text -whitespace
