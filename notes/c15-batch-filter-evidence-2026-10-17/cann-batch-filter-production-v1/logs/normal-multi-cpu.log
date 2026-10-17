@@ -1,0 +1,67 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp32-large rows=1043 E=1024 inner=1024 k=64 cores=32
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 7482] exit success!
+[SUCCESS][CORE_1][pid 7483] exit success!
+[SUCCESS][CORE_2][pid 7484] exit success!
+[SUCCESS][CORE_3][pid 7485] exit success!
+[SUCCESS][CORE_4][pid 7486] exit success!
+[SUCCESS][CORE_5][pid 7487] exit success!
+[SUCCESS][CORE_6][pid 7488] exit success!
+[SUCCESS][CORE_7][pid 7489] exit success!
+[SUCCESS][CORE_8][pid 7490] exit success!
+[SUCCESS][CORE_9][pid 7491] exit success!
+[SUCCESS][CORE_10][pid 7492] exit success!
+[SUCCESS][CORE_11][pid 7493] exit success!
+[SUCCESS][CORE_12][pid 7494] exit success!
+[SUCCESS][CORE_13][pid 7495] exit success!
+[SUCCESS][CORE_14][pid 7496] exit success!
+[SUCCESS][CORE_15][pid 7497] exit success!
+[SUCCESS][CORE_16][pid 7498] exit success!
+[SUCCESS][CORE_17][pid 7499] exit success!
+[SUCCESS][CORE_18][pid 7500] exit success!
+[SUCCESS][CORE_19][pid 7501] exit success!
+[SUCCESS][CORE_20][pid 7502] exit success!
+[SUCCESS][CORE_21][pid 7503] exit success!
+[SUCCESS][CORE_22][pid 7504] exit success!
+[SUCCESS][CORE_23][pid 7505] exit success!
+[SUCCESS][CORE_24][pid 7506] exit success!
+[SUCCESS][CORE_25][pid 7507] exit success!
+[SUCCESS][CORE_26][pid 7508] exit success!
+[SUCCESS][CORE_27][pid 7509] exit success!
+[SUCCESS][CORE_28][pid 7510] exit success!
+[SUCCESS][CORE_29][pid 7511] exit success!
+[SUCCESS][CORE_30][pid 7512] exit success!
+[SUCCESS][CORE_31][pid 7513] exit success!
+PASS: 1 C15 production cases

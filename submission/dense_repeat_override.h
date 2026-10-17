@@ -3051,11 +3051,143 @@ private:
         AscendC::PipeBarrier<PIPE_V>();
         Merge32(b, a, rows);
     }
+
+    // One threshold and count guard per batch; one flat compaction; then
+    // fixed-capacity rows are restored and sorted together. All static index
+    // tables survive failure, so the original exact path remains available.
+    __aicore__ inline bool TryBatchFilter(AscendC::LocalTensor<float>& input,
+                                         int32_t rows, int32_t group)
+    {
+        using namespace AscendC;
+        const int32_t n = rows * 1024;
+        auto a = maxA_.Get<float>();
+        auto flat = maxB_.Get<float>();
+        auto work = maxima_.Get<float>();
+        auto stat = offsets_.Get<float>();
+        const int32_t first = n / 2;
+        const int32_t samples = n / 4;
+        Duplicate(stat, 0.0f, 24);
+        PipeBarrier<PIPE_V>();
+        uint64_t sampled = 0;
+        Duplicate(a.ReinterpretCast<uint32_t>(), uint32_t(0x11111111u), 8);
+        PipeBarrier<PIPE_V>();
+        GatherMaskParams sampling{1, static_cast<uint16_t>(n / 64), 8, 0};
+        GatherMask(flat, input, a.ReinterpretCast<uint32_t>(), true, 64, sampling, sampled);
+        PipeBarrier<PIPE_V>();
+        ReduceSum(stat, flat, a, samples);
+        PipeBarrier<PIPE_V>();
+        Mul(work, flat, flat, samples);
+        PipeBarrier<PIPE_V>();
+        ReduceSum(stat[8], work, a, samples);
+        PipeBarrier<PIPE_V>();
+        Muls(stat, stat, 1.0f / samples, 8);
+        Muls(stat[8], stat[8], 1.0f / samples, 8);
+        PipeBarrier<PIPE_V>();
+        Mul(stat[16], stat, stat, 8);
+        PipeBarrier<PIPE_V>();
+        Sub(stat[8], stat[8], stat[16], 8);
+        PipeBarrier<PIPE_V>();
+        Maxs(stat[8], stat[8], 0.0f, 8);
+        PipeBarrier<PIPE_V>();
+        Sqrt(stat[8], stat[8], 8);
+        PipeBarrier<PIPE_V>();
+        Muls(stat[8], stat[8], 1.35f, 8);
+        PipeBarrier<PIPE_V>();
+        Add(stat, stat, stat[8], 8);
+        PipeBarrier<PIPE_V>();
+        auto ev = static_cast<event_t>(pipe_.FetchEventID(HardEvent::V_S));
+        SetFlag<HardEvent::V_S>(ev); WaitFlag<HardEvent::V_S>(ev);
+        const float threshold = stat.GetValue(0);
+        if (!(threshold == threshold) || threshold == INFINITY || threshold == -INFINITY) return false;
+
+        auto mask = maxA_.Get<uint8_t>();
+        CompareScalar(mask, input, threshold, CMPMODE::GE, n);
+        PipeBarrier<PIPE_V>();
+        // The half-input slices may split a row. Place their 64-lane sums
+        // contiguously, then reduce all sixteen partials of each row.
+        for (int32_t slice = 0; slice < 2; ++slice) {
+            Duplicate(flat, 1.0f, first);
+            PipeBarrier<PIPE_V>();
+            Select(flat, mask[slice * first / 8], flat, 0.0f,
+                   SELMODE::VSEL_TENSOR_SCALAR_MODE, first);
+            PipeBarrier<PIPE_V>();
+            WholeReduceSum(work[slice * rows * 8], flat, 64, rows * 8, 1, 1, 8);
+            PipeBarrier<PIPE_V>();
+        }
+        WholeReduceSum(stat, work, 16, rows, 1, 1, 2);
+        PipeBarrier<PIPE_V>();
+        SetFlag<HardEvent::V_S>(ev); WaitFlag<HardEvent::V_S>(ev);
+        int32_t counts[10];
+        int32_t total = 0;
+        for (int32_t row = 0; row < rows; ++row) {
+            counts[row] = static_cast<int32_t>(stat.GetValue(row));
+            if (counts[row] < 64 || counts[row] > 128) return false;
+            total += counts[row];
+        }
+        Duplicate(flat, -INFINITY, rows * 128);
+        PipeBarrier<PIPE_V>();
+        uint64_t selected = 0;
+        GatherMaskParams compress{1, 1, 8, 1};
+        GatherMask(flat, input, mask.ReinterpretCast<uint32_t>(), true,
+                   n, compress, selected);
+        PipeBarrier<PIPE_V>();
+        // The per-row counts above guarantee capacity before compaction.
+        // Invalid Gather lanes remain inside the initialized flat root and
+        // are masked to -inf before any sort.
+        auto offsets = offsets_.Get<int32_t>();
+        // Reuse the cached modulo-256 group indices, rather than rebuilding
+        // two rank planes per row with scalar-dependent CreateVecIndex.
+        ShiftLeft(offsets.ReinterpretCast<uint32_t>(), index_.Get<uint32_t>(), uint32_t(25), rows * 128);
+        PipeBarrier<PIPE_V>();
+        ShiftRight(offsets.ReinterpretCast<uint32_t>(), offsets.ReinterpretCast<uint32_t>(), uint32_t(25), rows * 128);
+        PipeBarrier<PIPE_V>();
+        auto rank = work[rows * 128];
+        Cast(rank, offsets, RoundMode::CAST_NONE, rows * 128);
+        int32_t prefix = 0;
+        for (int32_t row = 0; row < rows; ++row) {
+            Duplicate(a.ReinterpretCast<int32_t>()[row * 128], prefix, 128);
+            Duplicate(work[row * 128], static_cast<float>(counts[row]), 128);
+            prefix += counts[row];
+        }
+        PipeBarrier<PIPE_V>();
+        auto validMask = maxA_.Get<uint8_t>()[rows * 128 * 4];
+        Compare(validMask, rank, work, CMPMODE::LT, rows * 128);
+        Add(offsets, offsets, a.ReinterpretCast<int32_t>(), rows * 128);
+        PipeBarrier<PIPE_V>();
+        ShiftLeft(offsets, offsets, int32_t(2), rows * 128);
+        PipeBarrier<PIPE_V>();
+        Gather(work, flat, offsets.ReinterpretCast<uint32_t>(), 0, rows * 128);
+        PipeBarrier<PIPE_V>();
+        Select(work, validMask, work, -INFINITY,
+               SELMODE::VSEL_TENSOR_SCALAR_MODE, rows * 128);
+        PipeBarrier<PIPE_V>();
+        inputQueue_.FreeTensor(input);
+        Sort32(a, work, index_.Get<uint32_t>(), rows * 4);
+        PipeBarrier<PIPE_V>();
+        Merge32(flat, a, rows);
+        DataCopyParams copy;
+        copy.blockCount = rows; copy.blockLen = 16;
+        copy.srcStride = 16; copy.dstStride = 0;
+        DataCopy(a, flat, copy);
+        PipeBarrier<PIPE_V>();
+        auto output = outputQueue_.AllocTensor<float>();
+        GatherMaskParams extract{1, static_cast<uint16_t>(rows * 2), 8, 0};
+        GatherMask(output, a, pattern_.Get<uint32_t>(), true, 64, extract, selected);
+        PipeBarrier<PIPE_V>();
+        StableSoftplusSqrt(output, work, rows * 64);
+        outputQueue_.EnQue(output);
+        output = outputQueue_.DeQue<float>();
+        DataCopy(output_[int64_t(group) * batch_ * 64], output, rows * 64);
+        outputQueue_.FreeTensor(output);
+        return true;
+    }
+
     __aicore__ inline void Compute(int32_t group)
     {
         using namespace AscendC;
         const int32_t rows = Valid(group);
         auto input = inputQueue_.DeQue<float>();
+        if (TryBatchFilter(input, rows, group)) return;
         auto maxima = maxima_.Get<float>();
         if (rows >= 4) {
             // Max.md: FP32 continuous mask=64, one row per repeat. Strides are
@@ -3141,7 +3273,6 @@ private:
     AscendC::TBuf<AscendC::TPosition::VECCALC> maxima_, maxA_, maxB_, index_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> gatherIndex_, base_, offsets_, pattern_;
 };
-
 class SqrtSoftplusVendorPerfTopKFloatLargeKernel {
 public:
     __aicore__ inline void Init(

@@ -1,0 +1,34 @@
+-- System processer: x86_64
+-- CMAKE_ASC_COMPILER: /home/leo/Ascend/cann-9.0.0/bin/bisheng
+-- ASCEND_CANN_PACKAGE_LINUX_PATH: /home/leo/Ascend/cann-9.0.0/x86_64-linux
+-- CMAKE_ASC_LLD_LINKER: /home/leo/Ascend/cann-9.0.0/x86_64-linux/ccec_compiler/bin/ld.lld
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/leo/cann-batch-filter-v1/cpu
+[ 50%] Building ASC object CMakeFiles/topk_c15_batch_filter_full.dir/topk_c15_batch_filter_probe.asc.o
+In file included from /home/leo/cann-batch-filter-v1/src/debug/cpu_topk_probe/topk_c15_batch_filter_probe.asc:29:
+/home/leo/cann-batch-filter-v1/src/debug/cpu_topk_probe/c15_batch_filter_research_kernel.h:213:21: error: no matching member function for call to 'FreeTensor'
+        inputQueue_.FreeTensor(input);
+        ~~~~~~~~~~~~^~~~~~~~~~
+/home/leo/Ascend/cann-9.0.0/x86_64-linux/asc/include/basic_api/kernel_tpipe.h:59:50: note: candidate template ignored: deduced type 'LocalTensor<...>' of 1st parameter does not match adjusted type 'const LocalTensor<...>' of argument [with T = float]
+    template <typename T> __aicore__ inline void FreeTensor(LocalTensor<T>& tensor);
+                                                 ^
+1 error generated.
+In file included from /home/leo/cann-batch-filter-v1/src/debug/cpu_topk_probe/topk_c15_batch_filter_probe.asc:29:
+/home/leo/cann-batch-filter-v1/src/debug/cpu_topk_probe/c15_batch_filter_research_kernel.h:213:21: error: no matching member function for call to 'FreeTensor'
+        inputQueue_.FreeTensor(input);
+        ~~~~~~~~~~~~^~~~~~~~~~
+/home/leo/Ascend/cann-9.0.0/x86_64-linux/asc/include/basic_api/kernel_tpipe.h:59:50: note: candidate template ignored: deduced type 'LocalTensor<...>' of 1st parameter does not match adjusted type 'const LocalTensor<...>' of argument [with T = float]
+    template <typename T> __aicore__ inline void FreeTensor(LocalTensor<T>& tensor);
+                                                 ^
+1 error generated.
+gmake[3]: *** [CMakeFiles/topk_c15_batch_filter_full.dir/build.make:76: CMakeFiles/topk_c15_batch_filter_full.dir/topk_c15_batch_filter_probe.asc.o] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:1683: CMakeFiles/topk_c15_batch_filter_full.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:1690: CMakeFiles/topk_c15_batch_filter_full.dir/rule] Error 2
+gmake: *** [Makefile:865: topk_c15_batch_filter_full] Error 2

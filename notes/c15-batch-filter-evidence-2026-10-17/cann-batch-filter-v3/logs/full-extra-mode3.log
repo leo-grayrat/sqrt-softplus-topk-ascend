@@ -1,0 +1,37 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp32-large rows=23 E=1024 inner=1024 k=64 cores=1
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+addr2line: DWARF error: invalid or unhandled FORM value: 0x23
+[TmSim]: Run in serial mode.
+[ERROR][CORE_0][pid 4236] error happened! ========= 
+SIGSEGV Signal (Invalid memory reference) catched, backtrace info:
+[#0] 0x00000000000bc856: AscendC::StackTrace() at ??:?
+[#1] 0x00000000000bcc3f: AscendC::BacktracePrint(int) at ??:?
+[#2] 0x00000000005f0bd1: Handler(int) at ??:?
+[#3] 0x00000000000026bd: memcpy_s at ??:?
+[#4] 0x00000000004f8451: PV_MEM::write_in_page(unsigned long, unsigned int, unsigned char*) at ??:?
+[#5] 0x00000000004f8a88: PV_MEM::write(unsigned long, unsigned int, unsigned char*) at ??:?
+[#6] 0x00000000006061e4: PemBuf::pv_write(unsigned long, unsigned int, unsigned char*, bool) at ??:?
+[#7] 0x00000000007f2c95: pv_mem_write at ??:?
+[#8] 0x00000000000c713a: AscendC::ModelFactory::SetInput(unsigned long, AscendC::PVMemScope, void*, unsigned long) const at ??:?
+[#9] 0x000000000012ed30: void AscendC::VecReduce2ComputeCCE<unsigned int>(std::string, unsigned int*, unsigned int*, unsigned int*, unsigned short, unsigned char, unsigned char, unsigned short, unsigned char) at ??:?
+[#10] 0x000000000012e05e: AscendC::vreducev2(unsigned int*, unsigned int*, unsigned int*, unsigned short, unsigned char, unsigned char, unsigned short, unsigned char) at ??:?
+[#11] 0x00000000005d5996: void AscendC::GatherMaskCal<float, (AscendC::GatherMaskMode)1>(float*, float*, unsigned char, bool, unsigned int, AscendC::GatherMaskParams const&, unsigned long&) at ??:?
+[#12] 0x00000000005d2b46: void AscendC::GatherMask<float, (AscendC::GatherMaskMode)1>(AscendC::LocalTensor<float> const&, AscendC::LocalTensor<float> const&, unsigned char, bool, unsigned int, AscendC::GatherMaskParams const&, unsigned long&) at ??:?
+[#13] 0x00000000005f5594: C15BatchFilterResearchKernel::TryBatchFilter(AscendC::LocalTensor<float>&, int, int) at ??:?
+[#14] 0x00000000005f2e0e: C15BatchFilterResearchKernel::Compute(int) at ??:?
+[#15] 0x00000000005f241a: C15BatchFilterResearchKernel::Process() at ??:?
+[#16] 0x000000000059e83e: (anonymous namespace)::c15_research_launch(unsigned char*, unsigned char*, int, int) at topk_c15_batch_filter_probe.asc:?
+[#17] 0x00000000005f0840: void AscendC::RunKernelFunctionOnCpu<void (*)(unsigned char*, unsigned char*, int, int), unsigned char*, unsigned char*, int, int>(void (*)(unsigned char*, unsigned char*, int, int), char const*, unsigned int, unsigned char*, unsigned char*, int, int) at ??:?
+[#18] 0x0000000000568123: main at ??:?
+[#19] 0x000000000055fbb4: _start at ??:?
+
+[MISMATCH] rows=23 E=1024 k=64 row=0 i=0 actual=0 exact=1.88115323 rawTop=3.50925708

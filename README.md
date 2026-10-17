@@ -6,6 +6,8 @@
 
 ## 当前主线
 
+**待测实验**：[C15批量精确筛选](notes/c15-batch-filter-2026-10-17.md)，分支 `exp/batched-exact-filter-c15`。生产正态模型64行/1核及1043行/32核减少42.29%/37.95%，对抗回退慢7.23%；CPU、输出检查、完整设备编译通过，尚待完整CANNJudge，未合main。
+
 `main`更新至PR #84的case7/9/10/15合并阶段：用户完整Judge **15/15 Pass，误差全部0.00%**，四点分别为 **14.42/21.18/36.16/1020 us**，较上一轮减少11.91%/12.55%/14.37%/5.56%。case14仍为251.03 us。[完整15点、真实收益与阶段局限](notes/current-status-2026-10-17-multi.md)。
 
 [五叶合并、镜像双值组筛选与C15复用](notes/multi-selection-2026-10-17.md)的本地模型、失败与源码审查独立保留。本轮获得改善，仍未填平前32差距；不把模型或正确性覆盖当作排名收益。
@@ -14,7 +16,7 @@
 
 此前[case13](notes/current-status-2026-10-16-c13.md)、[case3](notes/current-status-2026-10-16-c3.md)、[case15](notes/current-status-2026-10-15-c15.md)、[case14第一阶段](notes/current-status-2026-10-15-c14.md)和[case12](notes/current-status-2026-10-12-c12.md)均已集成。后续实验从新的已验证main开始。
 
-当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。上方main的Judge数值来自同一次完整提交，没有拼接不同分支的单点最优；本地模型另见实验记录。失败的阈值研究只保留在 debug 和 notes，没有接入生产。
+当前生产文件：[submission/dense_repeat_override.h](submission/dense_repeat_override.h)。上方main的Judge数值来自同一次完整提交，没有拼接不同分支的单点最优；本地模型另见实验记录。旧阈值失败研究保留在debug/notes，本实验分支的批量精确筛选另行待测。
 
 - [当前主线完整15点](notes/current-status-2026-10-17-multi.md)
 - [case14第二阶段完整15点](notes/current-status-2026-10-17-c14.md)

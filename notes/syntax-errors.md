@@ -152,3 +152,7 @@ Failed to check validBit value in MrgSort, its valid value is 3 / 7 / 15
 2026-10-17，#83首版阶段复用把C15 batch8提到11，默认51组及单独10行CPU通过，单独11行却在Gather<int>读取maxB组索引时进入PV_MEM.read_in_page/GetOutput并SIGSEGV，随后输出不匹配。地址/容量静态检查没有发现越界，阶段别名首次复用发生在这次Gather之后，不能仅凭时间先后认定别名或硬件根缓冲大小是原因。该现象与第11项CPU模型问题相关，但此轮未证明相同根因。
 
 候选回退cap10，在全新目录重建，双方默认与边界9/10/11/12/19/20/21/22/23行全部通过；原失败目录没有补写COMPLETE，不计成功。失败源和日志见[multi-selection-evidence-2026-10-17/cann-multi-candidate-v1](multi-selection-evidence-2026-10-17/cann-multi-candidate-v1)，最终生产也不宣称真机有32KiB Gather源限制。
+
+## 15. FreeTensor需要可变LocalTensor引用
+
+2026-10-17，#85批量筛选helper若接收const LocalTensor<float>&，队列FreeTensor无法编译；改为LocalTensor<float>&。v1原始编译失败保留在[c15证据](c15-batch-filter-evidence-2026-10-17/cann-batch-filter-v1/logs/cpu-build.log)。同阶段v3固定pattern采样CPU写入SIGSEGV的根因未证实，单独重跑通过；显式mask最终版通过CPU/模型，不能把此差异当成硬件约束或根因证明。

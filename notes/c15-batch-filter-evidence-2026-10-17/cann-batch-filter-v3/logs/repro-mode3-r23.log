@@ -1,0 +1,1 @@
+/home/leo/cann-batch-filter-v3/cpu/topk_c15_batch_filter_full: error while loading shared libraries: libascend_hal.so: cannot open shared object file: No such file or directory

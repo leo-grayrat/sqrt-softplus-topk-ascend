@@ -1,0 +1,8 @@
+PASS: 25 C15 batch filter cases
+PASS: 25 C15 batch filter cases
+PASS: 25 C15 batch filter cases
+PASS: 25 C15 batch filter cases
+CPU_COMPLETE
+core0.veccore0      31.21               30.31               
+core0.veccore0      62.95               62.47               
+COMPLETE
