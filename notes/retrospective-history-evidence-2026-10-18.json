@@ -1,0 +1,72 @@
+{
+  "review_date": "2026-10-18",
+  "conversation_sources": [
+    {
+      "title": "CANN2",
+      "coverage": "2026-09-12 to 2026-09-15; local HTML export, 165 messages",
+      "selected_messages": {
+        "3": "earlier prefix-merge handoff",
+        "23-31": "submission include migration and manual file delivery",
+        "34-49": "request for major change and pivot regression",
+        "52-87": "profiling harness and build failures",
+        "105-106": "user requests branch/file delivery; dense coverage repair",
+        "122-130": "batch4 attribution, user flags defensive process, Judge tie",
+        "131-144": "research, repeated ReduceMax and leaderboard reference correction",
+        "147-164": "Huawei Perf implementation and batched transform"
+      }
+    },
+    {
+      "title": "CANN3",
+      "coverage": "readable final five turns, 2026-09-28",
+      "selected_facts": [
+        "Sort32 repeat256 produced WA on C12/C14",
+        "assistant initially interpreted failed-version timing as evidence for large batch",
+        "corrected Judge C12/C14=176.35/612.94us",
+        "rows65/cores8 did not exercise batch31",
+        "user set first-tier goal"
+      ]
+    },
+    {
+      "title": "CANN4",
+      "coverage": "three readable turns, 2026-10-08 to 2026-10-10",
+      "selected_facts": [
+        "user reviewed local continuation after CANN3",
+        "user requested another research direction after prolonged rank100+",
+        "research report archived in repository"
+      ]
+    }
+  ],
+  "gate_review": {
+    "comparison_source": "notes/judge-case-shapes-2026-09-15.md",
+    "knowledge_timeline": "The Sep12-14 experiments preceded access to the 15-case shapes recorded on Sep15. Matching below is retrospective; actual case coverage was unknown during those experiments.",
+    "method": "Retrospective comparison of archived production dispatch with the subsequently recorded 15-case shape table.",
+    "dense_repeat": {
+      "commit": "61ebad2",
+      "path": "submission/dense_repeat_override.h",
+      "condition": "const bool useDenseRepeat =\n        experts == inner &&\n        (k == 4 || k == 8) &&\n        chunkCount >= 4 &&\n        chunkCount % 4 == 0;",
+      "matching_case_ids": []
+    },
+    "row_batch4": {
+      "commit": "cb60ef5",
+      "path": "submission/dense_repeat_override.h",
+      "constants": {
+        "dtype": "fp32",
+        "E": 1024,
+        "k": 8,
+        "batch_rows": 4
+      },
+      "condition": "const bool useRowBatch4 =\n        experts == SqrtSoftplusDenseRowBatch4TopKKernel::EXPERTS &&\n        inner == SqrtSoftplusDenseRowBatch4TopKKernel::EXPERTS &&\n        k == SqrtSoftplusDenseRowBatch4TopKKernel::K &&\n        rows % SqrtSoftplusDenseRowBatch4TopKKernel::BATCH_ROWS == 0 &&\n        rows >= SqrtSoftplusDenseRowBatch4TopKKernel::BATCH_ROWS * blockNum;",
+      "matching_case_ids": []
+    },
+    "repeated_max": {
+      "commit": "a40696e",
+      "path": "submission/dense_repeat_override.h",
+      "condition": "const bool useRepeatedMax = k >= 2 && k <= 4;",
+      "host_condition": "dtype == 0 && k32 <= 8",
+      "matching_case_ids": [
+        1
+      ]
+    }
+  },
+  "publication_scope": "Project milestones and selected process facts; own performance data and top32 aggregate statistics."
+}
