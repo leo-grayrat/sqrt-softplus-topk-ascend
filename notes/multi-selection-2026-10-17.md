@@ -1,5 +1,7 @@
 # 多用例合并候选：case7/9/10/15（2026-10-17）
 
+**阶段更新：用户完整Judge15/15通过，case7/9/10/15分别为14.42/21.18/36.16/1020 us，经PR #84集成。** [完整结果与阶段局限](current-status-2026-10-17-multi.md)。下文保留交付前本地研究记录，“待Judge”等描述指当时状态。
+
 本轮从已获用户完整15/15确认的PR #82后main开始，一次交付四个用例的候选，跟踪[#83](https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/83)。**尚待用户完整CANNJudge，未合入main。** main仍保留case14=251.03 us的已验证版本。本轮不声称新分数或新排名。
 
 仅需替换[submission/dense_repeat_override.h](../submission/dense_repeat_override.h)。没有修改变换公式、输出类型、容差或其他case的生产分支。旧的数值边界问题#52/#68仍单独跟踪。分支`exp/multi-case-selection-c7-c9-c15`保留创建时名称，本轮也包含case10。
