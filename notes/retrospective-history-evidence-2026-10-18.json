@@ -2,6 +2,22 @@
   "review_date": "2026-10-18",
   "conversation_sources": [
     {
+      "title": "CANN1",
+      "coverage": "2026-09-09 to 2026-09-12; user-provided shared conversation; extracted 46 user messages and 38 final assistant responses, plus intermediate updates and tool feedback",
+      "index_scheme": "Message indices below refer to the chronological local extraction, including intermediate messages and tool outputs.",
+      "selected_messages": {
+        "1-38": "competition research, AI-led prize goal, initial feasibility assessment, monotonic transform and official samples",
+        "59-174": "user invokes Superpowers, then repeatedly requests plain language, less design and direct implementation; empty-repository branch overhead",
+        "182-351": "real starter import, correction of NSMALL interpretation, initial host stdio precheck rejection",
+        "354-485": "user already has CANN in WSL; local compilation; user requests per-error issues, verification before closure and Chinese notes",
+        "487-727": "first full AC, batch2, user rejects redundant approval stop, leaderboard reference correction and priority of main-path cost",
+        "928-1662": "hierarchical TopK, runtime diagnosis, CPU twin-debug, shape gate restores regressions and preserves modest C3 gain",
+        "1664-1894": "prefix-merge probes, local-copy alignment and singleton validBit failures, user reruns in WSL, transition to production integration"
+      },
+      "execution_context": "The assistant delivered code through GitHub; the user compiled and ran CPU debug in WSL and submitted to cloud Judge. Direct local execution by the assistant began later.",
+      "publication": "Selected project facts only; the full shared conversation and its raw leaderboard tables are not copied into the repository."
+    },
+    {
       "title": "CANN2",
       "coverage": "2026-09-12 to 2026-09-15; local HTML export, 165 messages",
       "selected_messages": {
