@@ -1,0 +1,1 @@
+Stopped setup: baseline target would include candidate header; no A/B from this run is valid. No COMPLETE asserted.

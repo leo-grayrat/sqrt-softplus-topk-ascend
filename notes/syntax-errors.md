@@ -155,4 +155,6 @@ Failed to check validBit value in MrgSort, its valid value is 3 / 7 / 15
 
 ## 15. FreeTensor需要可变LocalTensor引用
 
+后续#85逐行排序阈值研究中，生产CPU的23行均匀输入在GatherMask Counter大mask的SetInput/PV_MEM写入处稳定失败；8/9/10行通过，绕开尾批仍失败。最终改成公开Normal模式、64值repeat、每64bit选择掩码占32字节槽，通过66组生产/raw检查和设备模型。CPU库反汇编显示两种模式均可能高估输入拷贝长度，Normal只是大幅缩短，未经gdb运行时确认，不能声称已修复CPU库根因或硬件存在32KB限制。原失败、长度推导与库版本见[逐行筛选证据](c15-order-filter-evidence-2026-10-17/cpu-length-analysis.txt)。
+
 2026-10-17，#85批量筛选helper若接收const LocalTensor<float>&，队列FreeTensor无法编译；改为LocalTensor<float>&。v1原始编译失败保留在[c15证据](c15-batch-filter-evidence-2026-10-17/cann-batch-filter-v1/logs/cpu-build.log)。同阶段v3固定pattern采样CPU写入SIGSEGV的根因未证实，单独重跑通过；显式mask最终版通过CPU/模型，不能把此差异当成硬件约束或根因证明。

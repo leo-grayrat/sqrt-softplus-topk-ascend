@@ -1,0 +1,67 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp32-large rows=1043 E=1024 inner=1024 k=64 cores=32
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_0][pid 1225] exit success!
+[SUCCESS][CORE_1][pid 1226] exit success!
+[SUCCESS][CORE_2][pid 1227] exit success!
+[SUCCESS][CORE_3][pid 1228] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 1229] exit success!
+[SUCCESS][CORE_5][pid 1230] exit success!
+[SUCCESS][CORE_6][pid 1231] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_7][pid 1232] exit success!
+[SUCCESS][CORE_8][pid 1233] exit success!
+[SUCCESS][CORE_9][pid 1234] exit success!
+[SUCCESS][CORE_10][pid 1235] exit success!
+[SUCCESS][CORE_11][pid 1236] exit success!
+[SUCCESS][CORE_12][pid 1237] exit success!
+[SUCCESS][CORE_13][pid 1238] exit success!
+[SUCCESS][CORE_14][pid 1239] exit success!
+[SUCCESS][CORE_15][pid 1240] exit success!
+[SUCCESS][CORE_16][pid 1241] exit success!
+[SUCCESS][CORE_17][pid 1242] exit success!
+[SUCCESS][CORE_18][pid 1243] exit success!
+[SUCCESS][CORE_19][pid 1244] exit success!
+[SUCCESS][CORE_20][pid 1245] exit success!
+[SUCCESS][CORE_21][pid 1246] exit success!
+[SUCCESS][CORE_22][pid 1247] exit success!
+[SUCCESS][CORE_23][pid 1248] exit success!
+[SUCCESS][CORE_24][pid 1249] exit success!
+[SUCCESS][CORE_25][pid 1250] exit success!
+[SUCCESS][CORE_26][pid 1251] exit success!
+[SUCCESS][CORE_27][pid 1252] exit success!
+[SUCCESS][CORE_28][pid 1253] exit success!
+[SUCCESS][CORE_29][pid 1254] exit success!
+[SUCCESS][CORE_30][pid 1255] exit success!
+[SUCCESS][CORE_31][pid 1256] exit success!
+PASS: 1 C15 production cases

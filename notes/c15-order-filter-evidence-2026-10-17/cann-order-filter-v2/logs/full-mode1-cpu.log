@@ -1,0 +1,172 @@
+[../../../../cpudebug/src/acl_stub/ascendc_acl_stub.cpp][check_interface:342]
+RUN fp32-large rows=1 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=1 threshold=1.3822354 count=90
+[SUCCESS][CORE_0][pid 777] exit success!
+RUN fp32-large rows=2 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=2 threshold=1.3822354 count=191
+[SUCCESS][CORE_0][pid 779] exit success!
+RUN fp32-large rows=3 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=3 threshold=1.3822354 count=280
+[SUCCESS][CORE_0][pid 781] exit success!
+RUN fp32-large rows=4 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=4 threshold=1.3822354 count=357
+[SUCCESS][CORE_0][pid 793] exit success!
+RUN fp32-large rows=5 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=5 threshold=1.3822354 count=435
+[SUCCESS][CORE_0][pid 798] exit success!
+RUN fp32-large rows=6 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=6 threshold=1.3822354 count=520
+[SUCCESS][CORE_0][pid 800] exit success!
+RUN fp32-large rows=7 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=7 threshold=1.3822354 count=608
+[SUCCESS][CORE_0][pid 802] exit success!
+RUN fp32-large rows=8 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=8 threshold=1.3822354 count=692
+[SUCCESS][CORE_0][pid 804] exit success!
+RUN fp32-large rows=9 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=9 threshold=1.3822354 count=770
+[SUCCESS][CORE_0][pid 806] exit success!
+RUN fp32-large rows=15 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 808] exit success!
+RUN fp32-large rows=16 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 810] exit success!
+RUN fp32-large rows=17 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 812] exit success!
+RUN fp32-large rows=28 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 814] exit success!
+RUN fp32-large rows=29 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 816] exit success!
+RUN fp32-large rows=56 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 818] exit success!
+RUN fp32-large rows=57 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 820] exit success!
+RUN fp32-large rows=64 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 822] exit success!
+RUN fp32-large rows=65 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 827] exit success!
+RUN fp32-large rows=128 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 829] exit success!
+RUN fp32-large rows=129 E=1024 inner=1024 k=64 cores=1
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 831] exit success!
+RUN fp32-large rows=9 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=2 threshold=1.3822354 count=191
+[SUCCESS][CORE_0][pid 833] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 834] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_2][pid 835] exit success!
+[SUCCESS][CORE_3][pid 836] exit success!
+[SUCCESS][CORE_4][pid 837] exit success!
+[SUCCESS][CORE_5][pid 838] exit success!
+[SUCCESS][CORE_6][pid 839] exit success!
+[SUCCESS][CORE_7][pid 840] exit success!
+RUN fp32-large rows=17 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=3 threshold=1.3822354 count=280
+[SUCCESS][CORE_0][pid 849] exit success!
+[SUCCESS][CORE_1][pid 850] exit success!
+[SUCCESS][CORE_2][pid 851] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_3][pid 852] exit success!
+[SUCCESS][CORE_4][pid 853] exit success!
+[SUCCESS][CORE_5][pid 854] exit success!
+[SUCCESS][CORE_6][pid 855] exit success!
+[SUCCESS][CORE_7][pid 856] exit success!
+RUN fp32-large rows=65 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=9 threshold=1.3822354 count=770
+[SUCCESS][CORE_0][pid 865] exit success!
+[SUCCESS][CORE_1][pid 866] exit success!
+[SUCCESS][CORE_2][pid 867] exit success!
+[SUCCESS][CORE_3][pid 868] exit success!
+[SUCCESS][CORE_4][pid 869] exit success!
+[SUCCESS][CORE_5][pid 870] exit success!
+[SUCCESS][CORE_6][pid 871] exit success!
+[SUCCESS][CORE_7][pid 872] exit success!
+RUN fp32-large rows=129 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 881] exit success!
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_1][pid 882] exit success!
+[SUCCESS][CORE_2][pid 883] exit success!
+[SUCCESS][CORE_3][pid 884] exit success!
+[TmSim]: Run in serial mode.
+[SUCCESS][CORE_4][pid 885] exit success!
+[SUCCESS][CORE_5][pid 886] exit success!
+[SUCCESS][CORE_6][pid 887] exit success!
+[SUCCESS][CORE_7][pid 888] exit success!
+RUN fp32-large rows=257 E=1024 inner=1024 k=64 cores=8
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+[TmSim]: Run in serial mode.
+FILTER_ACCEPT rows=10 threshold=1.3822354 count=868
+[SUCCESS][CORE_0][pid 897] exit success!
+[SUCCESS][CORE_1][pid 898] exit success!
+[SUCCESS][CORE_2][pid 899] exit success!
+[SUCCESS][CORE_3][pid 900] exit success!
+[SUCCESS][CORE_4][pid 901] exit success!
+[SUCCESS][CORE_5][pid 902] exit success!
+[SUCCESS][CORE_6][pid 903] exit success!
+[SUCCESS][CORE_7][pid 904] exit success!
+PASS: 25 C15 batch filter cases

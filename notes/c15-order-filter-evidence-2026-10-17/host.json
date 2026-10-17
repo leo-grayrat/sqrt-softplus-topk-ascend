@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "seed": 851017,
+  "rows_checked": 8000,
+  "normal_mask_rows_checked": 1100,
+  "results": {
+    "normal": {
+      "batches": 100,
+      "old_accepted": 97,
+      "new_accepted": 100,
+      "new_exact_fast_rows": 1000
+    },
+    "uniform": {
+      "batches": 100,
+      "old_accepted": 54,
+      "new_accepted": 100,
+      "new_exact_fast_rows": 1000
+    },
+    "shifted": {
+      "batches": 100,
+      "old_accepted": 0,
+      "new_accepted": 100,
+      "new_exact_fast_rows": 1000
+    },
+    "ties": {
+      "batches": 100,
+      "old_accepted": 3,
+      "new_accepted": 0,
+      "new_exact_fast_rows": 0
+    },
+    "prefix_winners": {
+      "batches": 100,
+      "old_accepted": 0,
+      "new_accepted": 100,
+      "new_exact_fast_rows": 1000
+    },
+    "concentrated_groups": {
+      "batches": 100,
+      "old_accepted": 100,
+      "new_accepted": 0,
+      "new_exact_fast_rows": 0
+    },
+    "all_equal": {
+      "batches": 100,
+      "old_accepted": 0,
+      "new_accepted": 0,
+      "new_exact_fast_rows": 0
+    },
+    "nonfinite": {
+      "batches": 100,
+      "old_accepted": 48,
+      "new_accepted": 50,
+      "new_exact_fast_rows": 500
+    }
+  }
+}

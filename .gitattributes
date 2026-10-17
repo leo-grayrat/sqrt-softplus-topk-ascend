@@ -28,3 +28,4 @@ tools/run_multi*.sh text eol=lf
 notes/multi-selection-evidence-2026-10-17/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
 notes/c15-batch-filter-evidence-2026-10-17/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof
 debug/cpu_topk_probe/c15_batch_filter_research_kernel.h text eol=lf whitespace=-blank-at-eof
+notes/c15-order-filter-evidence-2026-10-17/** -text whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof

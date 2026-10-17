@@ -1,0 +1,328 @@
+{
+  "baseline_commit": "b8bebe9307de2adb503a92bb470ae18b789a9a13",
+  "common_harness_commit": "f46737f3dda8506853bf6cbb7a904c707c376718",
+  "runs": {
+    "cann-order-filter-v2": {
+      "root": "/home/leo/cann-order-filter-v2",
+      "complete": true,
+      "cpu": {
+        "raw-mode5-cpu.log": 25,
+        "full-mode5-cpu.log": 25,
+        "raw-mode2-cpu.log": 25,
+        "full-mode7-cpu.log": 25,
+        "full-mode3-cpu.log": 25,
+        "full-mode6-cpu.log": 25,
+        "full-mode2-cpu.log": 25,
+        "raw-mode4-cpu.log": 25,
+        "raw-mode3-cpu.log": 25,
+        "raw-mode7-cpu.log": 25,
+        "raw-mode6-cpu.log": 25,
+        "raw-mode8-cpu.log": 25,
+        "full-mode8-cpu.log": 25,
+        "raw-mode1-cpu.log": 25,
+        "raw-mode0-cpu.log": 25,
+        "full-mode0-cpu.log": 25,
+        "full-mode1-cpu.log": 25,
+        "full-mode4-cpu.log": 25
+      },
+      "cpu_cases": 450,
+      "sim": {
+        "logs/full-mode2-r64-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 37.8,
+          "all_core_us": [
+            37.8
+          ]
+        },
+        "logs/baseline-mode1-r64-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 53.62,
+          "all_core_us": [
+            53.62
+          ]
+        },
+        "logs/baseline-mode0-r64-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 58.63,
+          "all_core_us": [
+            58.63
+          ]
+        },
+        "logs/full-mode2-r1043-c32-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 24.56,
+          "all_core_us": [
+            24.56,
+            24.55,
+            19.18,
+            19.17,
+            19.16,
+            19.16,
+            19.16,
+            19.17,
+            19.16,
+            19.18,
+            19.18,
+            19.17,
+            24.56,
+            19.17,
+            19.18,
+            19.18,
+            19.17,
+            19.16,
+            19.18,
+            19.18,
+            19.16,
+            19.16,
+            19.16,
+            24.56,
+            19.17,
+            19.16,
+            24.55,
+            24.55,
+            24.56,
+            24.56,
+            21.25,
+            19.17
+          ]
+        },
+        "logs/full-mode3-r64-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 37.8,
+          "all_core_us": [
+            37.8
+          ]
+        },
+        "logs/baseline-mode2-r64-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 53.68,
+          "all_core_us": [
+            53.68
+          ]
+        },
+        "logs/baseline-mode2-r1043-c32-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 34.55,
+          "all_core_us": [
+            34.24,
+            34.55,
+            26.51,
+            26.18,
+            26.48,
+            26.22,
+            26.46,
+            26.51,
+            26.29,
+            26.29,
+            26.3,
+            26.32,
+            34.54,
+            26.29,
+            26.31,
+            26.49,
+            26.25,
+            26.46,
+            26.47,
+            26.3,
+            26.29,
+            26.41,
+            26.44,
+            34.17,
+            26.2,
+            26.49,
+            34.44,
+            34.45,
+            34.47,
+            34.46,
+            28.99,
+            26.29
+          ]
+        },
+        "logs/full-mode0-r64-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 69.59,
+          "all_core_us": [
+            69.59
+          ]
+        },
+        "logs/full-mode1-r64-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 37.8,
+          "all_core_us": [
+            37.8
+          ]
+        },
+        "logs/baseline-mode3-r64-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 53.62,
+          "all_core_us": [
+            53.62
+          ]
+        }
+      },
+      "frozen_source_sha256": {
+        "src/debug/cpu_topk_probe/c15_batch_filter_research_kernel.h": "43ceb9185bbe79c811e11c7ef4e8b3fa99c468c78d31c02da9939b8057d53b0f",
+        "src/debug/cpu_topk_probe/topk_c15_batch_filter_probe.asc": "f6696759f2382c0a5ea10f773b4a5ded9b72e729cad79d6f080d74ad244e5345"
+      }
+    },
+    "cann-moment-uniform-diagnostic": {
+      "root": "/home/leo/cann-moment-uniform-diagnostic",
+      "complete": true,
+      "cpu": {},
+      "cpu_cases": 0,
+      "sim": {
+        "logs/moment-mode2-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 58.39,
+          "all_core_us": [
+            58.39
+          ]
+        },
+        "logs/baseline-mode2-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 54.1,
+          "all_core_us": [
+            54.1
+          ]
+        }
+      },
+      "frozen_source_sha256": {}
+    },
+    "cann-order-filter-production-v4": {
+      "root": "/home/leo/cann-order-filter-production-v4",
+      "complete": true,
+      "cpu": {
+        "raw-r23-mode3-cpu.log": 1,
+        "extra-mode2-cpu.log": 1,
+        "extra-mode7-cpu.log": 1,
+        "raw-r13-mode2-cpu.log": 1,
+        "extra-mode5-cpu.log": 1,
+        "extra-mode3-cpu.log": 1,
+        "extra-mode8-cpu.log": 1,
+        "extra-mode1-cpu.log": 1,
+        "extra-mode6-cpu.log": 1,
+        "raw-r23-mode2-cpu.log": 1,
+        "raw-r23-mode8-cpu.log": 1,
+        "default-cpu.log": 51,
+        "normal-multi-cpu.log": 1,
+        "raw-r33-mode2-cpu.log": 1,
+        "extra-mode4-cpu.log": 1,
+        "repro-mode2-r23-cpu.log": 1
+      },
+      "cpu_cases": 66,
+      "sim": {
+        "logs/mode2-r128-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 76.34,
+          "all_core_us": [
+            76.34
+          ]
+        },
+        "logs/mode2-r1043-c32-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 26.76,
+          "all_core_us": [
+            26.76,
+            26.7,
+            20.98,
+            20.98,
+            21.16,
+            20.84,
+            20.98,
+            20.98,
+            20.98,
+            20.99,
+            20.98,
+            20.99,
+            26.71,
+            20.99,
+            20.98,
+            21.17,
+            20.84,
+            21.13,
+            21.01,
+            20.97,
+            21.02,
+            21.19,
+            20.95,
+            26.6,
+            20.98,
+            20.98,
+            26.63,
+            26.68,
+            26.51,
+            26.71,
+            23.32,
+            21.03
+          ]
+        },
+        "baseline/logs/mode2-r128-c1-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 105.06,
+          "all_core_us": [
+            105.06
+          ]
+        },
+        "baseline/logs/mode2-r1043-c32-sim.log": {
+          "pass": true,
+          "timeout": false,
+          "max_core_us": 34.86,
+          "all_core_us": [
+            34.82,
+            34.85,
+            26.81,
+            26.78,
+            26.83,
+            26.66,
+            26.82,
+            26.85,
+            26.81,
+            26.79,
+            26.83,
+            26.81,
+            34.86,
+            26.79,
+            26.82,
+            26.79,
+            26.86,
+            26.84,
+            26.83,
+            26.8,
+            26.82,
+            26.77,
+            26.81,
+            34.74,
+            26.81,
+            26.8,
+            34.79,
+            34.8,
+            34.84,
+            34.79,
+            29.5,
+            26.8
+          ]
+        }
+      },
+      "frozen_source_sha256": {
+        "src/submission/dense_repeat_override.h": "751c8ae0a0ad06189f1fcf5225da0b5ff65651da53c57456d9a39bb235dd9981",
+        "src/debug/cpu_topk_probe/topk_c15_group_production_probe.asc": "7c33485397764b07ffea3252cdb4ba9bf1f0d9441234d993027426431e3be46f",
+        "src/debug/cpu_topk_probe/c15_batch_filter_research_kernel.h": "78c49e2543bcdec1355ad87c773a062d3591831dc6739a0eef860ea2cf302b1a"
+      }
+    }
+  }
+}

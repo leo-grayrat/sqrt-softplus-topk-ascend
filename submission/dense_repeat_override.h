@@ -2962,6 +2962,7 @@ public:
         pipe_.InitBuffer(base_, batch_ * 256 * 4);
         pipe_.InitBuffer(offsets_, batch_ * 256 * 4);
         pipe_.InitBuffer(pattern_, 32);
+        pipe_.InitBuffer(maskIndex_, batch_ * 128 * 4);
     }
 
     __aicore__ inline void Process()
@@ -3004,6 +3005,23 @@ public:
         auto event = static_cast<event_t>(pipe_.FetchEventID(HardEvent::S_V));
         SetFlag<HardEvent::S_V>(event);
         WaitFlag<HardEvent::S_V>(event);
+        PipeBarrier<PIPE_V>();
+        // Pattern packing offsets depend only on the batch capacity.
+        // Cache them once per core; keep the original static tables intact.
+        auto maskIndex = maskIndex_.Get<uint32_t>();
+        const int32_t maskWords = batch_ * 128;
+        CreateVecIndex(offsets.ReinterpretCast<int32_t>(), int32_t(0), maskWords);
+        PipeBarrier<PIPE_V>();
+        ShiftRight(maskIndex, offsets, uint32_t(3), maskWords);
+        ShiftLeft(offsets, offsets, uint32_t(31), maskWords);
+        PipeBarrier<PIPE_V>();
+        ShiftLeft(maskIndex, maskIndex, uint32_t(1), maskWords);
+        ShiftRight(offsets, offsets, uint32_t(31), maskWords);
+        PipeBarrier<PIPE_V>();
+        Add(maskIndex.ReinterpretCast<int32_t>(), maskIndex.ReinterpretCast<int32_t>(),
+            offsets.ReinterpretCast<int32_t>(), maskWords);
+        PipeBarrier<PIPE_V>();
+        ShiftLeft(maskIndex, maskIndex, uint32_t(2), maskWords);
         PipeBarrier<PIPE_V>();
         CopyIn(group);
         while (group < groups_) {
@@ -3065,43 +3083,35 @@ private:
         auto work = maxima_.Get<float>();
         auto stat = offsets_.Get<float>();
         const int32_t first = n / 2;
-        const int32_t samples = n / 4;
-        Duplicate(stat, 0.0f, 24);
+        // 128 disjoint groups of eight cover every original value.
+        // Their 64th maximum is a deterministic lower bound on row Top64.
+        // No moment estimate or assumed distribution enters this threshold.
+        BinaryRepeatParams init(1, 1, 1, 16, 128, 128);
+        BinaryRepeatParams next(1, 1, 1, 16, 16, 128);
+        for (int32_t segment = 0; segment < 128; segment += 64) {
+            Max(work[segment], input[segment], input[segment + 128],
+                uint64_t(64), static_cast<uint8_t>(rows), init);
+        }
         PipeBarrier<PIPE_V>();
-        uint64_t sampled = 0;
-        Duplicate(a.ReinterpretCast<uint32_t>(), uint32_t(0x11111111u), 8);
+        for (int32_t plane = 2; plane < 8; ++plane) {
+            for (int32_t segment = 0; segment < 128; segment += 64) {
+                Max(work[segment], work[segment], input[segment + plane * 128],
+                    uint64_t(64), static_cast<uint8_t>(rows), next);
+            }
+            PipeBarrier<PIPE_V>();
+        }
+        Sort32(a, work, index_.Get<uint32_t>(), rows * 4);
         PipeBarrier<PIPE_V>();
-        GatherMaskParams sampling{1, static_cast<uint16_t>(n / 64), 8, 0};
-        GatherMask(flat, input, a.ReinterpretCast<uint32_t>(), true, 64, sampling, sampled);
-        PipeBarrier<PIPE_V>();
-        ReduceSum(stat, flat, a, samples);
-        PipeBarrier<PIPE_V>();
-        Mul(work, flat, flat, samples);
-        PipeBarrier<PIPE_V>();
-        ReduceSum(stat[8], work, a, samples);
-        PipeBarrier<PIPE_V>();
-        Muls(stat, stat, 1.0f / samples, 8);
-        Muls(stat[8], stat[8], 1.0f / samples, 8);
-        PipeBarrier<PIPE_V>();
-        Mul(stat[16], stat, stat, 8);
-        PipeBarrier<PIPE_V>();
-        Sub(stat[8], stat[8], stat[16], 8);
-        PipeBarrier<PIPE_V>();
-        Maxs(stat[8], stat[8], 0.0f, 8);
-        PipeBarrier<PIPE_V>();
-        Sqrt(stat[8], stat[8], 8);
-        PipeBarrier<PIPE_V>();
-        Muls(stat[8], stat[8], 1.35f, 8);
-        PipeBarrier<PIPE_V>();
-        Add(stat, stat, stat[8], 8);
-        PipeBarrier<PIPE_V>();
+        Merge32(flat, a, rows);
         auto ev = static_cast<event_t>(pipe_.FetchEventID(HardEvent::V_S));
         SetFlag<HardEvent::V_S>(ev); WaitFlag<HardEvent::V_S>(ev);
-        const float threshold = stat.GetValue(0);
-        if (!(threshold == threshold) || threshold == INFINITY || threshold == -INFINITY) return false;
-
+        const float threshold = flat.GetValue(126);
         auto mask = maxA_.Get<uint8_t>();
-        CompareScalar(mask, input, threshold, CMPMODE::GE, n);
+        for (int32_t row = 0; row < rows; ++row) {
+            const float bound = flat.GetValue(row * 256 + 126);
+            if (!(bound == bound) || bound == INFINITY || bound == -INFINITY) return false;
+            CompareScalar(mask[row * 128], input[row * 1024], bound, CMPMODE::GE, 1024);
+        }
         PipeBarrier<PIPE_V>();
         // The half-input slices may split a row. Place their 64-lane sums
         // contiguously, then reduce all sixteen partials of each row.
@@ -3124,12 +3134,17 @@ private:
             if (counts[row] < 64 || counts[row] > 128) return false;
             total += counts[row];
         }
+        // Expand each 64-bit selection mask into a 32-byte repeat slot.
+        // Normal-mode repeats avoid the CPU Counter-model large-mask copy.
+        const int32_t maskWords = rows * 128;
+        Gather(work.ReinterpretCast<uint32_t>(), mask.ReinterpretCast<uint32_t>(), maskIndex_.Get<uint32_t>(), 0, maskWords);
+        PipeBarrier<PIPE_V>();
         Duplicate(flat, -INFINITY, rows * 128);
         PipeBarrier<PIPE_V>();
         uint64_t selected = 0;
-        GatherMaskParams compress{1, 1, 8, 1};
-        GatherMask(flat, input, mask.ReinterpretCast<uint32_t>(), true,
-                   n, compress, selected);
+        GatherMaskParams compress{1, static_cast<uint16_t>(n / 64), 8, 1};
+        GatherMask(flat, input, work.ReinterpretCast<uint32_t>(), false,
+                   0, compress, selected);
         PipeBarrier<PIPE_V>();
         // The per-row counts above guarantee capacity before compaction.
         // Invalid Gather lanes remain inside the initialized flat root and
@@ -3271,8 +3286,9 @@ private:
     AscendC::TQue<AscendC::QuePosition::VECIN, 2> inputQueue_;
     AscendC::TQue<AscendC::QuePosition::VECOUT, 1> outputQueue_;
     AscendC::TBuf<AscendC::TPosition::VECCALC> maxima_, maxA_, maxB_, index_;
-    AscendC::TBuf<AscendC::TPosition::VECCALC> gatherIndex_, base_, offsets_, pattern_;
+    AscendC::TBuf<AscendC::TPosition::VECCALC> gatherIndex_, base_, offsets_, pattern_, maskIndex_;
 };
+
 class SqrtSoftplusVendorPerfTopKFloatLargeKernel {
 public:
     __aicore__ inline void Init(
