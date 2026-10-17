@@ -1,6 +1,6 @@
 {
   "date": "2026-10-18",
-  "scope": "End contest stages and stopped experiments; preserve unresolved optimization and numerical issues.",
+  "scope": "Close completed stages and stopped experiments; archive numerical probe observations and remaining performance gaps.",
   "production_policy": "Production implementation remains at the Judge-validated PR84 version; research patches are archived under debug/.",
   "issues": [
     {
@@ -8,7 +8,7 @@
       "state": "closed",
       "state_reason": "completed",
       "title": "[阶段完成] FP16 medium-k：keep-16 vendor 路径优化 case 10/14",
-      "rationale": "keep-16阶段已合入main并通过完整Judge。C10后续性能由#88跟踪，C12/C14由#47跟踪。",
+      "rationale": "keep-16阶段已合入main并通过完整Judge，后续性能记录归档。",
       "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/45"
     },
     {
@@ -16,7 +16,7 @@
       "state": "closed",
       "state_reason": "not_planned",
       "title": "[实验停止] FP16 small-k：values-only 跨行选择网络",
-      "rationale": "values-only原型的完整模型约慢2.38倍，实验结束并归档。C12吞吐保留在#47。",
+      "rationale": "values-only原型的完整模型约慢2.38倍，实验结束并归档。",
       "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/51"
     },
     {
@@ -32,7 +32,7 @@
       "state": "closed",
       "state_reason": "not_planned",
       "title": "[实验停止] FP32 case15：独立large-k scratch复用",
-      "rationale": "独立large-k scratch原型模型改善约1.3%，实验结束。C15后续工作由#48跟踪。",
+      "rationale": "独立large-k scratch原型模型改善约1.3%，实验结束并归档。",
       "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/63"
     },
     {
@@ -48,56 +48,78 @@
       "state": "closed",
       "state_reason": "not_planned",
       "title": "[实验停止] C15批量阈值筛选：两轮Judge未形成净收益",
-      "rationale": "矩估计和排序阈值版Judge分别为1.26ms、1.03ms，原可信版本为1.02ms。PR #86/#87关闭，C15吞吐继续由#48跟踪。",
+      "rationale": "矩估计和排序阈值版Judge分别为1.26ms、1.03ms，原可信版本为1.02ms。PR #86/#87关闭，性能差距记入复盘。",
       "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/85"
     },
     {
       "number": 47,
-      "state": "open",
-      "state_reason": null,
-      "title": "[待优化] FP16 C12/C14吞吐：已验证阶段完成，竞争差距仍在",
-      "rationale": "最终C12/C14为48.65/251.07us，约为前32对应中位数的1.55/2.30倍。cap28研究多核模型改善8.64%，补丁已归档。",
-      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/47"
+      "state": "closed",
+      "state_reason": "completed",
+      "title": "[阶段完成] FP16 C12/C14：scratch复用与五轮优化已集成",
+      "rationale": "原scratch复用及五轮优化已通过Judge，由PR #50合入main。后续结构性优化也已集成，阶段任务结束。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/47",
+      "evidence": [
+        "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/47#issuecomment-5981044939",
+        "notes/fp16-optimization-archive-2026-10-03.md"
+      ]
     },
     {
       "number": 48,
-      "state": "open",
-      "state_reason": null,
-      "title": "[待优化] FP32 C15结构性吞吐与模型/Judge失配",
-      "rationale": "最终C15为1.03ms，约为前32对应中位数的2.50倍。待处理选择、归并和索引成本，并解释两轮筛选的模型/Judge差异。",
-      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/48"
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[阶段结束] FP32 C15：批量拷贝完成，阈值原型停止",
+      "rationale": "批量拷贝阶段已由PR #50集成；512/256阈值原型于10月4日停止，后续两轮筛选也已结束。关闭历史任务，性能差距记入复盘。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/48",
+      "evidence": [
+        "notes/threshold-device-probe-2026-10-04.md",
+        "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/48#issuecomment-5981046763"
+      ]
     },
     {
       "number": 52,
-      "state": "open",
-      "state_reason": null,
-      "title": "数值 probe：FP16 极大输入的变换结果落在舍入边界",
-      "rationale": "FP16极大正数在现有变换近似和最终舍入组合下出现严格边界偏差，待定位与修复。",
-      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/52"
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[观察归档] FP16极大输入的严格舍入检查",
+      "rationale": "归档65504输入下0.5 half ULP + 2e-6检查的CPU偏差。该检查为研究probe自设标准，目前没有确认比赛容差下的失败，也没有继续实施的计划。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/52",
+      "evidence": [
+        "notes/values-only-c12-2026-10-08.md"
+      ]
     },
     {
       "number": 67,
-      "state": "open",
-      "state_reason": null,
-      "title": "[待优化] FP16 C8吞吐：合并/原生half及扩批试验收益不足",
-      "rationale": "最终C8为33.47us，约为前32对应中位数的1.75倍。最后扩批原型多核模型改善1.26%，后续需另找主要成本。负值变换由#68跟踪。",
-      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/67"
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[实验停止] FP16 C8：批量合并、原生half与扩批已归档",
+      "rationale": "批量合并和原生half两方案于10月12日停止并撤回生产；最后扩批原型也已归档。实验结束。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/67",
+      "evidence": [
+        "notes/fp16-batch-merge-c8-2026-10-12.md",
+        "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/67#issuecomment-6111276438"
+      ]
     },
     {
       "number": 68,
-      "state": "open",
-      "state_reason": null,
-      "title": "数值probe：FP16被选中负值-12的现有变换超出严格舍入容差",
-      "rationale": "被选中负值-12的现有变换超出严格容差，待定位与修复。",
-      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/68"
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[观察归档] FP16负值-12的严格舍入检查",
+      "rationale": "归档负值-12在严格CPU probe中的偏差；未修改生产变换。该观察没有形成确认的比赛回归或继续实施的任务，结束跟踪。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/68",
+      "evidence": [
+        "notes/fp16-batch-merge-c8-evidence-2026-10-12/negative-input-failure/README.md"
+      ]
     },
     {
       "number": 88,
-      "state": "open",
-      "state_reason": null,
-      "title": "[待优化] C7/C9/C10/C11性能与未验证分组筛选稿",
-      "rationale": "C7/C9分组筛选保留待验证补丁；C11扩批多核模型慢0.74%。继续跟踪C7/C9/C10/C11的性能缺口。",
-      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/88"
+      "state": "closed",
+      "state_reason": "not_planned",
+      "title": "[阶段结束] 最后一轮C8/C11扩批及C7/C9研究稿",
+      "rationale": "截止前最后一轮已经结束。C8/C11实测和C7/C9待验证稿均已归档，生产候选交付停止。",
+      "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/issues/88",
+      "evidence": [
+        "debug/final-round-2026-10-17/README.md",
+        "notes/final-round-evidence-2026-10-17/summary.json"
+      ]
     }
   ],
   "pull_requests": [
@@ -116,5 +138,6 @@
       "url": "https://github.com/leo-grayrat/sqrt-softplus-topk-ascend/pull/87"
     }
   ],
-  "privacy": "Published ranking data consists of own result and top32 aggregate statistics."
+  "privacy": "Published ranking data consists of own result and top32 aggregate statistics.",
+  "issue_policy": "Issue status follows its concrete task. Remaining performance gaps are recorded in the retrospective."
 }
